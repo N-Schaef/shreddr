@@ -1,0 +1,16 @@
+# docker-compose.yml
+version: "3.8"
+services:
+  shreddr:
+    build:
+      context: .
+      dockerfile: ./docker/alpine/Dockerfile
+    image: shreddr:alpine
+    environment:
+      # Comma separated list of ISO-639 language values e.g.: eng,deu
+      - TESS_LANGUAGES=deu,eng
+    ports:
+      - "8000:8000"
+    volumes:
+        - ~/tmp/docker/data:/data
+        - ~/tmp/docker/consume:/consume

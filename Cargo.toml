@@ -1,0 +1,46 @@
+[package]
+name = "shreddr"
+version = "0.1.0"
+authors = ["Nico Schäfer <nschaefer@cs.uni-kl.de>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+log = "0.4"
+async-log = "2.0.*"
+simplelog = "0.7.*" # Logging
+sha2 = "0.9.1"
+notify = "4.0.*" # Watch directories
+pdf-extract = "0.6.*" # Extract PDF text
+tantivy = "0.12.*" # Full text search
+futures = "0.3.*"
+tokio = {version = "0.2.*", features = ["full"] }
+chrono = { version = "0.4.*", features = ["serde"] }
+leptess = "0.8.*"
+glob = "*"
+thiserror = "1.0"
+regex = "1"
+serde = "1.0.*"
+serde_derive = "1.0.*"
+serde_json = "*"
+# CLI
+clap = "3.0.0-beta.1" #CLI arguments
+shrust = "0.0.*" # Interactive cli
+dialoguer = "0.6.*" # I/O
+#indicatif = "0.15.*" #Progress bar
+#Server
+rocket = "0.4.*"
+rust-embed="5.5.*"
+rocket_contrib = "0.4.*"
+string_template = "0.2.*"
+# Meta Data extraction
+commonregex = "0.2.*"
+diligent-date-parser  = { git = "https://github.com/rust-syndication/diligent-date-parser" }
+array_tool = "1.0.*"
+whatlang = "0.9.0"
+
+[dependencies.confy]
+git = "https://github.com/rust-cli/confy"
+features = ["yaml_conf"]
+default-features = false

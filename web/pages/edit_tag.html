@@ -1,0 +1,62 @@
+<script>var curr_page = "Edit Tag";</script>
+<script src="/assets/dist/js/jscolor.js"></script>
+
+<main class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+<form  method="post">
+  <div class="mb-3">
+    <label for="tagName" class="form-label">Name</label>
+    <input type="text" class="form-control" name="name" id="tagName" aria-describedby="tagHelp" value="{{}}">
+    <div id="tagHelp" class="form-text">The display name of the tag</div>
+  </div>
+
+  <div class="mb-3">
+    <label for="tagColor" class="form-label">Color</label>
+    <input class="form-control" value="{{}}" name="color" id="tagColor" data-jscolor="{hash:true}">
+    <div id="colorHelp" class="form-text">The color the tag will have</div>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="matcherType">Matcher Type</label>
+    <select class="form-select" value="{{}}" name="matcher_type" aria-label="Matcher Type" id="matcherType">
+      <option value="1">Full Matcher</option>
+      <option value="2">Regex Matcher</option>
+    </select>
+    <div id="tagHelp" class="form-text">Type matcher to use</div>
+  </div>
+
+
+  <!--- Full Matcher -->
+  <div id="fullMatcher">
+  <div class="mb-3">
+    <label for="fullMatcherMatchStr" class="form-label">Match String</label>
+    <input type="text" class="form-control"  value="{{}}" name="full_matcher_match_str" id="fullMatcherMatchStr" aria-describedby="fullMatcherMatchStr-Help">
+    <div id="fullMatcherMatchStr-Help" class="form-text">The string to match</div>
+  </div>
+
+  <div class="mb-3">
+    <div class="form-check">
+      <input class="form-check-input" name="full_matcher_case_insensitive" type="checkbox" id="fullMatcherCaseInsensitive" {{}}>
+      <label class="form-check-label" for="fullMatcherCaseInsensitive">
+        Case insensitive
+      </label>
+    </div>
+  </div>
+  </div>
+
+  <!--- Regex Matcher -->
+
+    <div id="Regex" style="display:none;">
+      <div class="mb-3">
+        <label for="regexMatchStr" class="form-label" >Regular Expression</label>
+        <input type="text" class="form-control" value="{{}}" name="regex_match_string" id="regexMatchStr" aria-describedby="regexMatchStr-Help">
+        <div id="regexMatchStr-Help" class="form-text">A regular expression that has to match for the tag to be applied</div>
+      </div>
+    
+      </div>
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<script src="/assets/pages/edit_tag.js"></script>
+
+</main>

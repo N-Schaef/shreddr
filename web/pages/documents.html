@@ -1,0 +1,46 @@
+<script>var curr_page = "Documents";</script>
+<link href="/assets/pages/documents.css" rel="stylesheet">
+
+<main class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Documents</h1>
+    <div id="filter-content">
+
+    </div>
+
+    <div class="btn-toolbar mb-2 mb-md-0">
+      <!--
+      <div class="btn-group mr-2">
+        <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+      </div>
+      -->
+      <div id="filter-btn">
+
+      </div>
+      <div class="dropdown show">
+        <a class="btn btn-sm btn-outline-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span data-feather="arrow-down"></span> Sort By
+        </a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+          <a class="dropdown-item" href="?order=0">Imported Date</a>
+          <a class="dropdown-item" href="?order=1">Inferred Date</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container"></div>
+
+    <div class="row justify-content-center" id="documents">
+
+    </div>
+
+  </div>
+
+
+  <script src="https://unpkg.com/@webcreate/infinite-ajax-scroll/dist/infinite-ajax-scroll.min.js"></script>
+  <script src="/assets/pages/documents.js"></script>
+
+</main>

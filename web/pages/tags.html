@@ -1,0 +1,30 @@
+<script>var curr_page = "Tags";</script>
+      <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+        <div
+          class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+          <h1 class="h2">Tags</h1>
+          <div class="btn-toolbar mb-2 mb-md-0">
+              <a href="/tags/0/edit" class="btn btn-success" tabindex="-1" role="button"><i data-feather="plus"></i></a>
+          </div>
+        </div>
+
+        <div id="tags" class="d-flex flex-wrap  align-items-center pt-3 pb-2 mb-3">
+
+          <!-- Tag Card Template -->
+          <div class="card mb-3 mr-2" style="display: none" id="tag">
+            <h5 class="card-header text-white"></h5>
+
+              <div class="btn-group" style="border-radius: 0 !important;">
+                <a href="/tag/[i]/edit" class="btn btn-secondary edit-tag" style="border-radius: 0 !important;"><i data-feather="edit"></i></a>
+                <button type="button" class="btn btn-danger remove-tag" style="border-radius: 0 !important;"><i data-feather="trash-2"></i></button>
+              </div>
+
+          </div>
+          <!-- End Template -->
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/assets/pages/tags.js"></script>

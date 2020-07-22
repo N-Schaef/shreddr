@@ -1,0 +1,85 @@
+<script>var curr_page = "Document";</script>
+<link href="/assets/pages/document.css" rel="stylesheet">
+<link href="/assets/dist/css/bootstrap-datepicker3.min.css" rel="stylesheet">
+
+<main class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+  <div class="d-flex flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 id="title" class="h1 mr-2">{{title}}</h1>
+
+    <form method="post">
+      <input type="text" class="form-control mr-2" style="display: none;" name="title" id="titleForm"
+        aria-describedby="tagHelp" value="{{title}}">
+    </form>
+    <button class="mr-2 btn btn-sm btn-secondary" id="edit-title-btn"><span data-feather="edit"></span></button>
+    <div class="btn-group mr-2" role="group">
+      <a href="/api/documents/{{id}}/reimport" title="Reimport" class="btn btn-primary" id="reimport"><i
+          data-feather="refresh-cw"></i></a>
+      <a href="/api/documents/{{id}}/reimport?ocr=true" title="Reimport with forced OCR" class=" btn btn-primary"
+        id="force-ocr"><i data-feather="refresh-cw"></i> Force OCR</a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-3">
+      <a href="/api/documents/{{id}}/download">
+        <img class="img-thumbnail rounded float-right" src="/thumbnails/{{id}}.jpg" rel="nofollow" alt="Card image cap">
+      </a>
+    </div>
+    <div class="col-lg-3">
+
+      <div class="border-bottom">
+        <h4 class="h4 text-muted">Original filename: </h4>
+        <h3 class="h3 " id="original_filename">{{original_filename}}</h3>
+      </div>
+
+
+      <div class="border-bottom">
+        <h4 class="h4 text-muted">Document date: </h4>
+        <div class="w100 d-flex">
+          <h3 class="h3 mr-2" id="inferred"></h3>
+          <button class="mr-2 btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown"
+            id="edit-docdate-btn"><span data-feather="edit"></span></button>
+          <div class="dropdown-menu">
+            <form class="px-4 py-3" method="post">
+              <div id="datepicker" class="mb-2"></div>
+              <input type="text" class="form-control" name="inferred_date" style="display: none;" id="docDateInput"
+                placeholder="0">
+              <button type="submit" class="btn btn-primary">Apply</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-bottom">
+        <h4 class="h4 text-muted">Imported date: </h4>
+        <h3 class="h3 " id="imported"></h3>
+      </div>
+
+      <div class="border-bottom">
+        <h4 class="h4 text-muted">Language: </h4>
+        <div class="w100 d-flex">
+          <h3 class="h3 mr-2" id="lang"> {{lang}}</h3>
+          <form method="post">
+            <input type="text" class="form-control mr-2" style="display: none;" name="lang" id="langForm"
+              aria-describedby="tagHelp" value="{{lang}}">
+          </form>
+          <button class="mr-2 btn btn-sm btn-secondary" id="edit-lang-btn"><span data-feather="edit"></span></button>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="h4 text-muted">Tags: </h4>
+        <div id="tags">
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  <script src="/assets/dist/js/bootstrap-datepicker.min.js"></script>
+  <script src="/assets/pages/show_doc.js"></script>
+
+  <script>$("#inferred").text(displayDate({{inferred_date}}));</script>
+  <script>$("#imported").text(displayDateTime({{imported_date}}));</script>
+  <script>createTagButtons({{id}}, {{tags}});</script>
+</main>
