@@ -1,4 +1,5 @@
 # Shreddr
+![Rust](https://github.com/N-Schaef/shreddr/workflows/Rust/badge.svg)
 Shreddr aims to be a lightweight electronic document management system with minimal external dependencies.
 
 There are many good EDMS out there, like [paperless](https://github.com/the-paperless-project/paperless), [Mayan-EDMS](https://www.mayan-edms.com/), and [Ambar](https://ambar.cloud/).
