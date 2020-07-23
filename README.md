@@ -1,5 +1,6 @@
 # Shreddr
-![Rust](https://github.com/N-Schaef/shreddr/workflows/Rust/badge.svg)
+
+![Builds](https://github.com/N-Schaef/shreddr/workflows/Continuous%20integration/badge.svg)
 
 Shreddr aims to be a lightweight electronic document management system with minimal external dependencies.
 
