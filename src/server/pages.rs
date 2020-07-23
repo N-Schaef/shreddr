@@ -193,9 +193,9 @@ pub fn document_edit(
     }
 
     if let Some(lang) = &doc_data.lang {
-        if lang.is_empty() || lang == "-"{
+        if lang.is_empty() || lang == "-" {
             doc.language = None;
-        }else{
+        } else {
             doc.language = Some(lang.clone());
         }
     }

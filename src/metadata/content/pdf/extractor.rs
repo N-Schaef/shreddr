@@ -1,11 +1,9 @@
-
 use std::path::Path;
 
 //Error Handling
 use thiserror::Error;
 #[derive(Error, Debug)]
 pub enum ExtractError {
-
     #[error("could not interact with temporary ocr directory")]
     IOError(#[from] std::io::Error),
     #[error("could not extract text as UTF-8")]
