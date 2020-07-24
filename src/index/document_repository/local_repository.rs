@@ -287,7 +287,7 @@ impl LocalDocumentRepository {
         Ok(set)
     }
 
-    fn _contains_hash(&self, hash: &str) -> Result<Option<DocId>, IndexerError>{
+    fn _contains_hash(&self, hash: &str) -> Result<Option<DocId>, IndexerError> {
         let cfg: Vec<DocumentData> = confy::load_path(&self.doc_file)?;
         match cfg.iter().find(|&d| d.hash == hash) {
             Some(d) => Ok(Some(d.id)),
@@ -331,7 +331,7 @@ impl DocumentRepository for LocalDocumentRepository {
         self._get_documents(offset, count).map_err(|e| e.into())
     }
 
-    fn contains_hash(&self, hash: &str) -> Result<Option<DocId>, DocumentRepositoryError>{
+    fn contains_hash(&self, hash: &str) -> Result<Option<DocId>, DocumentRepositoryError> {
         self._contains_hash(hash).map_err(|e| e.into())
     }
 

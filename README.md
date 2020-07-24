@@ -1,12 +1,13 @@
 # Shreddr
-![Rust](https://github.com/N-Schaef/shreddr/workflows/Rust/badge.svg)
+
+![Builds](https://github.com/N-Schaef/shreddr/workflows/Continuous%20integration/badge.svg)
 
 Shreddr aims to be a lightweight electronic document management system with minimal external dependencies.
 
 There are many good EDMS out there, like [paperless](https://github.com/the-paperless-project/paperless), [Mayan-EDMS](https://www.mayan-edms.com/), and [Ambar](https://ambar.cloud/).
-If you are searching for a feature complete stable system I'd suggest giving them a look.
+If you are searching for a feature complete stable system, I'd suggest giving them a look.
 
-That being said, Shreddr tries to be a solution for simple management solution for daily household documents, which do not require advanced features like invoice creation, workflows, etc.
+That being said, Shreddr tries to be a solution for simple management of daily household documents, which do not require advanced features like invoice creation, workflows, etc.
 It also tries to have minimal external dependencies.
 The only external packages which are currently required are Tesseract, Imagemagick, and Unpaper for OCR-ing documents.
 
@@ -26,7 +27,7 @@ Currently, I would consider Shreddr in a sort of alpha phase.
 I created it in my spare-time to learn rust, and because I wanted a simple-to-use EDMS, which I can easily extend with more features.
 
 Thus, the code quality and stability of the system is not yet up to production standards.
-I will continuously improve the system, but would not yet recommend it to be used primary EDMS, as the API and storage methods are still in flux and may lead to total data loss.
+I will continuously improve the system but would not yet recommend it to be used primary EDMS, as the API and storage methods are still in flux and may lead to total data loss.
 
 I encourage anyone anyway, to try out the system and propose features/fixes/... or even field pull requests.
 I especially would welcome any help with the frontend, as I am in no means a frontend developer and struggle to provide the most basic of interfaces :sweat_smile:.
@@ -58,13 +59,13 @@ It supports multiple languages, which may be configured by the `-t` flag.
 
 The languages have to be specified in [ISO 639](https://en.wikipedia.org/wiki/ISO_639-3) code.
 The order of the languages is also the order in which tesseract will try to extract text from the documents.
-For each language, the tesseract data files have to be installed on the system.
+For each language, the tesseract data files must be installed on the system.
 You can install them in most linux distributions with the `tesseract-ocr-data-<code>` packages.
 
 ### Webserver
 By default, Shreddr starts in CLI mode. 
 This is only useful, if you do not want to have the program running continuously and only sporadically manage documents.
-To start a webserver, you have to aldo set the `-s` flag.
+To start a webserver, you must also set the `-s` flag.
 You can then access the server at `http://localhost:8000`.
 
 Keep in mind, Shreddr does not have any user management/security, so do not expose the port to the internet.
@@ -72,7 +73,7 @@ Keep in mind, Shreddr does not have any user management/security, so do not expo
 
 ## Installing
 To install Shreddr you can either use the included `docker-compose.yml` or build it yourself using rust.
-You have to use rust nightly and have to install some compile-time dependencies.
+You must use rust nightly and have to install some compile-time dependencies.
 
 For alpine the dependencies are (may be different for other distributions):
 ```

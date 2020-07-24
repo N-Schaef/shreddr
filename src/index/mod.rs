@@ -9,7 +9,7 @@ use document_repository::{
     DocumentData, DocumentRepository, DocumentRepositoryError, FilterOptions,
 };
 
-use crate::metadata::content::{ContentExtractor};
+use crate::metadata::content::ContentExtractor;
 use crate::metadata::file_extractor::{FileExtractError, FileExtractor};
 use crate::metadata::tag::{TagConfig, TagId, Tagger, TaggingError};
 
@@ -65,7 +65,10 @@ impl Index {
         let thumbnails_dir = data_dir.join("thumbnails");
         std::fs::create_dir_all(&thumbnails_dir)?;
         let tagger = Arc::new(RwLock::new(Tagger::new(data_dir)?));
-        let extractor = Arc::new(RwLock::new(ContentExtractor::new(&tmp_dir, tesseract_languages)));
+        let extractor = Arc::new(RwLock::new(ContentExtractor::new(
+            &tmp_dir,
+            tesseract_languages,
+        )));
 
         Ok(Index {
             file_repo,
@@ -146,7 +149,7 @@ impl Index {
         //Create thumbnail
         let mut thumbnail_file = self.thumbnails_dir.join("tmp");
         thumbnail_file.set_file_name(format!("{}.jpg", id.to_string()));
-        
+
         ContentExtractor::render_thumbnail(&file, &thumbnail_file);
 
         let original_filename: String = original_name

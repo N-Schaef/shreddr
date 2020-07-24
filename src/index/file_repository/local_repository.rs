@@ -70,7 +70,7 @@ impl LocalFileRepository {
             None => {
                 debug!("No file with id {} in repository", id);
                 Ok(())
-            },
+            }
             Some(f) => {
                 info!("Removing file `{:#?} for document {}`", &f, id);
                 match std::fs::remove_file(&f) {

@@ -63,7 +63,6 @@ pub fn render_pages_for_ocr(file: &Path, tmp_dir: &Path) -> Vec<PathBuf> {
 }
 
 pub fn render_thumbnail(file: &Path, thumbnail_file: &Path) {
-
     //Adapt input filename
     let mut input: PathBuf = file.into();
     input.set_file_name(format!(
