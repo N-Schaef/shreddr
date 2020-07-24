@@ -1,6 +1,6 @@
 [package]
 name = "shreddr"
-version = "0.1.0"
+version = "0.1.1-dev"
 authors = ["Nico Schäfer <nschaefer@cs.uni-kl.de>"]
 edition = "2018"
 
@@ -12,7 +12,7 @@ async-log = "2.0.*"
 simplelog = "0.7.*" # Logging
 sha2 = "0.9.1"
 notify = "4.0.*" # Watch directories
-pdf-extract = "0.6.*" # Extract PDF text
+pdf-extract = { git = "https://github.com/N-Schaef/pdf-extract" } # Extract PDF text
 tantivy = "0.12.*" # Full text search
 futures = "0.3.*"
 tokio = {version = "0.2.*", features = ["full"] }

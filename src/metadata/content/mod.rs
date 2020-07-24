@@ -39,11 +39,12 @@ impl ContentExtractor {
             } else {
                 return Some(text);
             }
+        } else {
+            error!("Could not extract extension`{:#?}`", file);
         }
 
         None
     }
-
     /// Forces extraction of the body via OCR
     pub fn ocr(&self, file: &Path) -> Option<String> {
         if let Some(ext) = ContentExtractor::extract_extension(file) {
