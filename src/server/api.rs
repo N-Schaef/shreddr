@@ -1,3 +1,6 @@
+use rocket::Data;
+use rocket::http::ContentType;
+use rocket_multipart_form_data::{MultipartFormDataField,MultipartFormDataOptions,MultipartFormData};
 use crate::index::document_repository::{DocumentData, FilterOptions, SortOrder};
 use crate::index::DocId;
 use crate::metadata::tag::{TagConfig, TagId};
@@ -125,4 +128,36 @@ pub fn add_tag_to_document(
 
     index.update_doc_metadata(doc)?;
     Ok(())
+}
+
+#[post("/documents", data = "<data>")]
+pub fn upload_document(index: State<Arc<Index>>,content_type: &ContentType, data: Data) -> &'static str{
+    let options = MultipartFormDataOptions::with_multipart_form_data_fields(
+        vec! [
+            MultipartFormDataField::file("file"),
+        ]
+    );
+
+    let multipart_form_data = MultipartFormData::parse(content_type, data, options).unwrap();
+    let file = multipart_form_data.files.get("file");
+
+    if let Some(file_fields) = file {
+        let file_field = &file_fields[0]; // Because we only put one "file" field to the allowed_fields, the max length of this file_fields is 1.
+
+        let _content_type = &file_field.content_type;
+        let file_name = &file_field.file_name;
+        let path = &file_field.path;
+
+
+        let base_dir = index.get_tmp_dir();
+        let tmp_dir = tempfile::tempdir_in(base_dir).unwrap();
+        let tmp_file = tmp_dir.path().join(file_name.as_ref().unwrap());
+        debug!("Copying uploaded file from {:#?} to {:#?}",&path,&tmp_file);
+        std::fs::copy(path, &tmp_file).unwrap();
+
+
+        index.import_document(&tmp_file).unwrap();
+    }
+
+    "ok"
 }

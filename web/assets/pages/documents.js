@@ -214,6 +214,8 @@ function createDocumentCard(doc) {
       $("#filter-btn").html(createSearchTagButton());
       feather.replace();
 
+      bsCustomFileInput.init()
+
      window.ias = new InfiniteAjaxScroll('#documents',{
        item: '.card',
        next: nextHandler,
