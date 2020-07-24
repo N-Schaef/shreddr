@@ -20,8 +20,8 @@
         Add
       </button>
       <div class="dropdown-menu">
-        <form method="post" action="/api/documents" enctype="multipart/form-data" class="px-4 py-3">
-          <!--
+        <form enctype="multipart/form-data" class="px-4 py-3" id="uploadForm">
+
           <div class="form-file mb-2">
             <input type="file" name="file" class="form-file-input" id="customFile">
             <label class="form-file-label" for="customFile">
@@ -29,10 +29,14 @@
               <span class="form-file-button">Browse</span>
             </label>
           </div>
-          -->
-          <input type="file" id="myFile" name="file">
-          <button type="submit" class="btn btn-primary">Submit</button>
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+            <input type="button" class="btn btn-primary" value="Upload" id="uploadButton" />
+            <div id="status"></div>
+          </div>
+          
+
         </form>
+        
       </div>
 
       <div id="filter-btn">
