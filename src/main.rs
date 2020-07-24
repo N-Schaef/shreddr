@@ -68,7 +68,6 @@ fn main() -> Result<(), ShreddrError> {
         return Err(ShreddrError::DirectoryDoesNotExist("DATA".into()));
     }
 
-
     if !cfg.consume_dir.exists() {
         println!("CONSUME directory does not exist");
         return Err(ShreddrError::DirectoryDoesNotExist("CONSUME".into()));
@@ -96,7 +95,7 @@ fn main() -> Result<(), ShreddrError> {
         }
     };
 
-    if cfg.tesseract_languages.is_empty(){
+    if cfg.tesseract_languages.is_empty() {
         println!("Requires at least one tesseract language to function");
         return Err(ShreddrError::NoTesseractLanguagesError());
     }
@@ -134,7 +133,6 @@ fn main() -> Result<(), ShreddrError> {
             i.import_document(&file).unwrap();
         }
     });
-
 
     // Init logging file
     let log_file_path = cfg.data_dir.join("shreddr.log");

@@ -42,7 +42,7 @@ pub fn init_cli() -> Result<ShreddrConfig, CLIError> {
     load_config(&args)
 }
 
-/// Loads a configuration file if it exists, 
+/// Loads a configuration file if it exists,
 /// and optionally overrides options passed as command line arguments
 fn load_config(cli_arguments: &clap::ArgMatches) -> Result<ShreddrConfig, CLIError> {
     let mut cfg: ShreddrConfig = confy::load("shreddr")?;
@@ -57,7 +57,7 @@ fn load_config(cli_arguments: &clap::ArgMatches) -> Result<ShreddrConfig, CLIErr
         cfg.server = true;
     }
     if let Some(t) = cli_arguments.values_of("TESSERACT_LANG") {
-        cfg.tesseract_languages = t.map(|s|s.into()).collect();
+        cfg.tesseract_languages = t.map(|s| s.into()).collect();
     };
     Ok(cfg)
 }
@@ -66,8 +66,7 @@ fn load_config(cli_arguments: &clap::ArgMatches) -> Result<ShreddrConfig, CLIErr
 pub fn run_shell(index: Arc<super::index::Index>) {
     print!("{}", header());
     let mut shell = Shell::new(index);
-    
-    
+
     shell.new_command("get", "Retrieves a document", 1, |io, index, s| {
         let id = s[0].parse::<u64>();
         match id {

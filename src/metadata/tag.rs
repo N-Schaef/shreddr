@@ -4,7 +4,7 @@ use regex::{Regex, RegexBuilder};
 use std::collections::HashMap;
 use std::path::Path;
 use std::path::PathBuf;
-use whatlang::{detect};
+use whatlang::detect;
 
 //Error Handling
 use thiserror::Error;
@@ -196,17 +196,22 @@ impl Tagger {
         Ok(())
     }
 
-    fn infer_language(&self, doc: &mut DocumentData) -> Result<(), TaggingError>{
-        match detect(doc.body.as_ref().ok_or(TaggingError::EmptyBody(doc.id))?){
+    fn infer_language(&self, doc: &mut DocumentData) -> Result<(), TaggingError> {
+        match detect(doc.body.as_ref().ok_or(TaggingError::EmptyBody(doc.id))?) {
             None => {
-                info!("Could not infer language in document {}.",doc.id);
-            },
+                info!("Could not infer language in document {}.", doc.id);
+            }
             Some(info) => {
                 doc.language = Some(info.lang().code().into());
-                info!("Document {} is written in {} with confidence of {}",doc.id, info.lang().eng_name(), info.confidence() );
+                info!(
+                    "Document {} is written in {} with confidence of {}",
+                    doc.id,
+                    info.lang().eng_name(),
+                    info.confidence()
+                );
             }
         }
-         
+
         Ok(())
     }
 }
