@@ -1,10 +1,12 @@
-use rocket::Data;
-use rocket::http::ContentType;
-use rocket_multipart_form_data::{MultipartFormDataField,MultipartFormDataOptions,MultipartFormData};
 use crate::index::document_repository::{DocumentData, FilterOptions, SortOrder};
 use crate::index::DocId;
 use crate::metadata::tag::{TagConfig, TagId};
+use rocket::http::ContentType;
+use rocket::Data;
 use rocket::State;
+use rocket_multipart_form_data::{
+    MultipartFormData, MultipartFormDataField, MultipartFormDataOptions,
+};
 use std::sync::Arc;
 
 use crate::index::Index;
@@ -131,12 +133,14 @@ pub fn add_tag_to_document(
 }
 
 #[post("/documents", data = "<data>")]
-pub fn upload_document(index: State<Arc<Index>>,content_type: &ContentType, data: Data) -> &'static str{
-    let options = MultipartFormDataOptions::with_multipart_form_data_fields(
-        vec! [
-            MultipartFormDataField::file("file"),
-        ]
-    );
+pub fn upload_document(
+    index: State<Arc<Index>>,
+    content_type: &ContentType,
+    data: Data,
+) -> &'static str {
+    let options = MultipartFormDataOptions::with_multipart_form_data_fields(vec![
+        MultipartFormDataField::file("file"),
+    ]);
 
     let multipart_form_data = MultipartFormData::parse(content_type, data, options).unwrap();
     let file = multipart_form_data.files.get("file");
@@ -148,13 +152,14 @@ pub fn upload_document(index: State<Arc<Index>>,content_type: &ContentType, data
         let file_name = &file_field.file_name;
         let path = &file_field.path;
 
-
         let base_dir = index.get_tmp_dir();
         let tmp_dir = tempfile::tempdir_in(base_dir).unwrap();
         let tmp_file = tmp_dir.path().join(file_name.as_ref().unwrap());
-        debug!("Copying uploaded file from {:#?} to {:#?}",&path,&tmp_file);
+        debug!(
+            "Copying uploaded file from {:#?} to {:#?}",
+            &path, &tmp_file
+        );
         std::fs::copy(path, &tmp_file).unwrap();
-
 
         index.import_document(&tmp_file).unwrap();
     }
