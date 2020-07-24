@@ -40,7 +40,10 @@ impl ContentExtractor {
         return Some(text);
       }
     }
-
+    error!(
+      "Could not extract extension`{:#?}`",
+      file
+    );
     None
   }
 
