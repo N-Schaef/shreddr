@@ -116,6 +116,15 @@ pub fn delete_tag_from_document(
     Ok(())
 }
 
+#[delete("/documents/<docid>")]
+pub fn remove_document(
+    index: State<Arc<Index>>,
+    docid: DocId,
+) -> Result<(), Box<dyn std::error::Error>> {
+    index.remove_document(docid)?;
+    Ok(())
+}
+
 #[put("/documents/<docid>/tags/<tagid>")]
 pub fn add_tag_to_document(
     index: State<Arc<Index>>,

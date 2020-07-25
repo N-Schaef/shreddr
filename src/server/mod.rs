@@ -31,6 +31,7 @@ impl Server {
                     api::tag,
                     api::tags,
                     api::remove_tag,
+                    api::remove_document,
                     api::documents,
                     api::upload_document,
                     api::download_document,
