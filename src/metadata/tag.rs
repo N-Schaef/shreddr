@@ -73,6 +73,37 @@ impl Matcher for FullMatcher {
     }
 }
 
+///////////////////////////////////// Any Matcher ///////////////////////////////////////
+
+pub struct AnyMatcher {
+    regex: RegexMatcher,
+}
+
+impl AnyMatcher {
+    pub fn new(term: &str, case_insensitive: bool) -> Result<AnyMatcher, TaggingError> {
+        let terms = "(".to_owned()
+            + &term
+                .split(',')
+                .map(|s| s.trim())
+                .collect::<Vec<&str>>()
+                .join("|")
+            + ")";
+        Ok(AnyMatcher {
+            regex: RegexMatcher::new(
+                RegexBuilder::new(&terms)
+                    .case_insensitive(case_insensitive)
+                    .build()?,
+            ),
+        })
+    }
+}
+
+impl Matcher for AnyMatcher {
+    fn match_document(&self, doc: &DocumentData) -> Result<bool, TaggingError> {
+        self.regex.match_document(doc)
+    }
+}
+
 ///////////////////////////////////// Tagger ///////////////////////////////////////
 ///
 pub struct Tagger {
@@ -253,6 +284,10 @@ pub enum MatcherConfig {
         match_str: String,
         case_insensitive: bool,
     },
+    AnyMatcher {
+        match_str: String,
+        case_insensitive: bool,
+    },
     RegexMatcher {
         match_str: String,
     },
@@ -266,6 +301,10 @@ fn from_matcher_config(
             match_str,
             case_insensitive,
         } => Ok(Box::new(FullMatcher::new(match_str, *case_insensitive)?)),
+        MatcherConfig::AnyMatcher {
+            match_str,
+            case_insensitive,
+        } => Ok(Box::new(AnyMatcher::new(match_str, *case_insensitive)?)),
         MatcherConfig::RegexMatcher { match_str } => {
             Ok(Box::new(RegexMatcher::parse_string(match_str)?))
         }
