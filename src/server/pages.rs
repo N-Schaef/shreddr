@@ -222,11 +222,21 @@ pub fn tags<'r>() -> response::Result<'r> {
 
 #[get("/tags/<id>/edit")]
 pub fn edit_tag<'r>(index: State<Arc<Index>>, id: TagId) -> response::Result<'r> {
-    let values = match index.get_tag(id) {
-        Some(t) => tag_config_to_values(t),
-        None => vec![String::new(); 7],
-    };
-    get_content_page_with_template("edit_tag.html", &values)
+    match index.get_tag(id) {
+        Some(t) => edit_tag_from_config(&t),
+        None => {
+            let t = TagConfig {
+                id: 0,
+                color: None,
+                name: "".into(),
+                matcher: MatcherConfig::FullMatcher {
+                    match_str: "".into(),
+                    case_insensitive: false,
+                },
+            };
+            edit_tag_from_config(&t)
+        }
+    }
 }
 
 #[post(
@@ -247,6 +257,10 @@ pub fn create_or_update_tag(
         }),
         2 => Some(MatcherConfig::RegexMatcher {
             match_str: form.regex_match_string,
+        }),
+        3 => Some(MatcherConfig::AnyMatcher {
+            match_str: form.any_matcher_match_str,
+            case_insensitive: form.any_matcher_case_insensitive,
         }),
         x => {
             error!("Got unknown matcher type `{}`", x);
@@ -270,35 +284,50 @@ pub struct TagForm {
     matcher_type: u64,
     full_matcher_match_str: String,
     full_matcher_case_insensitive: bool,
+    any_matcher_match_str: String,
+    any_matcher_case_insensitive: bool,
     regex_match_string: String,
 }
 
-fn tag_config_to_values(tag: TagConfig) -> Vec<String> {
-    let mut vec = vec![];
-    vec.push(tag.name);
-    vec.push(tag.color.unwrap());
-    match tag.matcher {
+fn edit_tag_from_config<'r>(tag: &TagConfig) -> response::Result<'r> {
+    let mut map: HashMap<&'static str, &str> = HashMap::new();
+    map.insert("name", &tag.name);
+    map.insert("color", tag.color.as_deref().unwrap_or("default string"));
+    // Default values
+    map.insert("full_match_str", "");
+    map.insert("regex_str", "");
+    map.insert("any_match_str", "");
+    map.insert("any_checked", "");
+    map.insert("checked", "");
+    match &tag.matcher {
         MatcherConfig::FullMatcher {
             match_str,
             case_insensitive,
         } => {
-            vec.push("1".to_string());
-            vec.push(match_str);
-            if case_insensitive {
-                vec.push("checked".into())
-            } else {
-                vec.push("".into())
+            map.insert("type", "1");
+            map.insert("full_match_str", &match_str);
+
+            if *case_insensitive {
+                map.insert("checked", "checked");
             }
-            vec.push("".to_string()); //Regex Matcher
         }
         MatcherConfig::RegexMatcher { match_str } => {
-            vec.push("2".to_string());
-            vec.push("".to_string()); //FullMatcher
-            vec.push("".to_string()); //FullMatcher
-            vec.push(match_str);
+            map.insert("type", "2");
+            map.insert("regex_str", &match_str);
+        }
+        MatcherConfig::AnyMatcher {
+            match_str,
+            case_insensitive,
+        } => {
+            map.insert("type", "3");
+            map.insert("any_match_str", &match_str);
+
+            if *case_insensitive {
+                map.insert("any_checked", "checked");
+            }
         }
     };
-    vec
+    get_content_page_with_named_template("edit_tag.html", &map)
 }
 
 //////////////////////////////////////
