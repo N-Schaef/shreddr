@@ -11,7 +11,7 @@ That being said, Shreddr tries to be a solution for simple management of daily h
 It also tries to have minimal external dependencies.
 The only external packages which are currently required are Tesseract, Imagemagick, and Unpaper for OCR-ing documents.
 
-![Shreddr Web-Interface](shreddr.jpg?raw=true "Shreddr web interface")
+![Shreddr Web-Interface](https://raw.githubusercontent.com/N-Schaef/shreddr/master/shreddr.jpg "Shreddr web interface")
 
 ## Features 
 Shreddr currently supports these features:
