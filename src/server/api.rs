@@ -146,12 +146,12 @@ pub fn upload_document(
     index: State<Arc<Index>>,
     content_type: &ContentType,
     data: Data,
-) -> &'static str {
+) -> Result<(), Box<dyn std::error::Error>> {
     let options = MultipartFormDataOptions::with_multipart_form_data_fields(vec![
         MultipartFormDataField::file("file"),
     ]);
 
-    let multipart_form_data = MultipartFormData::parse(content_type, data, options).unwrap();
+    let multipart_form_data = MultipartFormData::parse(content_type, data, options)?;
     let file = multipart_form_data.files.get("file");
 
     if let Some(file_fields) = file {
@@ -162,16 +162,16 @@ pub fn upload_document(
         let path = &file_field.path;
 
         let base_dir = index.get_tmp_dir();
-        let tmp_dir = tempfile::tempdir_in(base_dir).unwrap();
+        let tmp_dir = tempfile::tempdir_in(base_dir)?;
         let tmp_file = tmp_dir.path().join(file_name.as_ref().unwrap());
         debug!(
             "Copying uploaded file from {:#?} to {:#?}",
             &path, &tmp_file
         );
-        std::fs::copy(path, &tmp_file).unwrap();
+        std::fs::copy(path, &tmp_file)?;
 
-        index.import_document(&tmp_file).unwrap();
+        index.import_document(&tmp_file)?;
     }
 
-    "ok"
+    Ok(())
 }
