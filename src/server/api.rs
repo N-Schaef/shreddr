@@ -1,3 +1,6 @@
+use crate::index::{JobType,Job};
+use std::sync::mpsc::Sender;
+use std::sync::Mutex;
 use crate::index::document_repository::{DocumentData, FilterOptions, SortOrder};
 use crate::index::DocId;
 use crate::metadata::tag::{TagConfig, TagId};
@@ -11,6 +14,24 @@ use std::sync::Arc;
 
 use crate::index::Index;
 use rocket_contrib::json::Json;
+
+//////////////////////////////////////////////
+//////////        Status   ////////////////
+//////////////////////////////////////////////
+
+#[get("/job")]
+pub fn job_status(index: State<Arc<Index>>) -> Json<Option<Job>> {
+    match index.get_current_job(){
+        Err(e) => {error!("Could not get job `{}`",e); Json(None)},
+        Ok(job) => {
+            match job {
+                Some(j) =>Json(Some(j)),
+                None => Json(None)
+            }
+        }
+    }
+    
+}
 
 //////////////////////////////////////////////
 //////////        Tags        ////////////////
@@ -92,15 +113,16 @@ pub fn reimport_document(
 
 #[get("/documents/<id>/reimport?<ocr>")]
 pub fn reimport_document_ocr(
-    index: State<Arc<Index>>,
+    send: State<Mutex<Sender<JobType>>>,
     id: DocId,
     ocr: bool,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    if ocr {
-        index.reprocess_document_force_ocr(id)?;
-    } else {
-        index.reprocess_document(id)?;
-    }
+    let guard = send.lock().unwrap();
+    guard.send(JobType::ReprocessFile{
+        id,
+        force_ocr: ocr,
+    })?;
+
     Ok(())
 }
 
@@ -144,6 +166,7 @@ pub fn add_tag_to_document(
 #[post("/documents", data = "<data>")]
 pub fn upload_document(
     index: State<Arc<Index>>,
+    send: State<Mutex<Sender<JobType>>>,
     content_type: &ContentType,
     data: Data,
 ) -> Result<(), Box<dyn std::error::Error>> {
@@ -170,7 +193,11 @@ pub fn upload_document(
         );
         std::fs::copy(path, &tmp_file)?;
 
-        index.import_document(&tmp_file)?;
+        let guard = send.lock().unwrap();
+        guard.send(JobType::ImportFile{
+            path: tmp_file
+        })?;
+
     }
 
     Ok(())

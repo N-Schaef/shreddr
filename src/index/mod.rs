@@ -25,6 +25,25 @@ pub struct Index {
     data_dir: PathBuf,
     thumbnails_dir: PathBuf,
     tmp_dir: PathBuf,
+    current_job: Arc<RwLock<Option<Job>>>,
+}
+
+// Interface
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Job {
+    job: JobType,
+    progress: i32,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub enum JobType {
+    ImportFile{
+        path: PathBuf,
+    },
+    ReprocessFile{
+        id: DocId,
+        force_ocr: bool
+    },
 }
 
 //Error Handling
@@ -78,11 +97,54 @@ impl Index {
             thumbnails_dir,
             data_dir: data_dir.into(),
             tmp_dir,
+            current_job: Arc::new(RwLock::new(None)),
         })
     }
 
     pub fn get_tmp_dir(&self) -> &Path {
         &self.tmp_dir
+    }
+
+    pub fn get_current_job(&self)-> Result<Option<Job>, IndexError>{
+        let clone = (*self.current_job)
+        .read()
+        .map_err(|_| IndexError::LockError("current_job".into()))?
+        .as_ref().cloned();
+        Ok(clone)
+    }
+
+    pub fn handle_job(&self, job_type: JobType) -> Result<Job, IndexError> {
+        let job = Job{
+            job: job_type,
+            progress: 0,
+        };
+
+        (*self.current_job)
+            .write()
+            .map_err(|_| IndexError::LockError("current_job".into()))?
+            .replace(job.clone());
+
+        match &job.job{
+            JobType::ImportFile{
+                path,
+            } => {
+                self.import_document(path)?;
+            },
+            JobType::ReprocessFile{
+                id,
+                force_ocr
+            } => {
+                if *force_ocr {
+                    self.reprocess_document_force_ocr(*id)?
+                }else{
+                    self.reprocess_document(*id)?;
+                }
+            }
+        };
+        Ok((*self.current_job)
+        .write()
+        .map_err(|_| IndexError::LockError("current_job".into()))?
+        .take().unwrap())
     }
 
     /// Returns the next ID

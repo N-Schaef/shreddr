@@ -16,6 +16,8 @@ function removeTagFilter(tagId) {
   location.reload();
 }
 
+
+
 function createSearchTagButton(){
   var div = $("<div></div>");
   var dropdownButton = $("<button class=\"btn btn-sm btn-outline-secondary dropdown-toggle mr-1\" type=\"button\" id=\"addTagButton\" data-toggle=\"dropdown\"><span data-feather=\"tag\"></span></button>");
@@ -257,3 +259,21 @@ function createDocumentCard(doc) {
 
 
 })()
+
+window.setInterval(function(){
+  $.get("/api/job").done(function (data) {
+    let alert = $("#job_alert");
+    if (data == null){
+      if(alert.is(":visible")){
+        alert.removeClass("alert-primary");
+        alert.addClass("alert-success");
+        alert.text("Finished jobs. Refresh for new content.");
+      }
+    }else{
+        alert.removeClass("alert-success");
+        alert.addClass("alert-primary");
+        alert.text("Processing document...");
+        alert.show();
+    }
+  });
+}, 5000);

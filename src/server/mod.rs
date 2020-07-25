@@ -2,16 +2,21 @@ mod api;
 mod assets;
 mod pages;
 
+use std::sync::Mutex;
 use rocket_contrib::serve::StaticFiles;
 use std::path::Path;
 use std::sync::Arc;
+use std::sync::mpsc::Sender;
+use crate::index::JobType;
+
 
 pub struct Server {}
 
 impl Server {
-    pub fn start(data_dir: &Path, index: Arc<super::index::Index>) {
+    pub fn start(data_dir: &Path, index: Arc<super::index::Index>, job_queue: Mutex<Sender<JobType>>) {
         rocket::ignite()
             .manage(index)
+            .manage(job_queue)
             .mount(
                 "/",
                 routes![
@@ -28,6 +33,7 @@ impl Server {
             .mount(
                 "/api",
                 routes![
+                    api::job_status,
                     api::tag,
                     api::tags,
                     api::remove_tag,
