@@ -24,6 +24,7 @@ pub struct Index {
     extractor: Arc<RwLock<ContentExtractor>>,
     data_dir: PathBuf,
     thumbnails_dir: PathBuf,
+    tmp_dir: PathBuf,
 }
 
 //Error Handling
@@ -76,7 +77,12 @@ impl Index {
             extractor,
             thumbnails_dir,
             data_dir: data_dir.into(),
+            tmp_dir,
         })
+    }
+
+    pub fn get_tmp_dir(&self) -> &Path {
+        &self.tmp_dir
     }
 
     /// Returns the next ID

@@ -15,6 +15,30 @@
         <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
       </div>
       -->
+
+      <button type="button" class="btn btn-sm btn-success dropdown-toggle mr-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Add
+      </button>
+      <div class="dropdown-menu">
+        <form enctype="multipart/form-data" class="px-4 py-3" id="uploadForm">
+
+          <div class="form-file mb-2">
+            <input type="file" name="file" class="form-file-input" id="customFile">
+            <label class="form-file-label" for="customFile">
+              <span class="form-file-text">Choose file...</span>
+              <span class="form-file-button">Browse</span>
+            </label>
+          </div>
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+            <input type="button" class="btn btn-primary" value="Upload" id="uploadButton" />
+            <div id="status"></div>
+          </div>
+          
+
+        </form>
+        
+      </div>
+
       <div id="filter-btn">
 
       </div>
@@ -42,5 +66,6 @@
 
   <script src="https://unpkg.com/@webcreate/infinite-ajax-scroll/dist/infinite-ajax-scroll.min.js"></script>
   <script src="/assets/pages/documents.js"></script>
+  <script src="/assets/dist/js/bs-custom-file-input.min.js"></script>
 
 </main>

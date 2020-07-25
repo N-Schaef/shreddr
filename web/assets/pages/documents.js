@@ -214,6 +214,8 @@ function createDocumentCard(doc) {
       $("#filter-btn").html(createSearchTagButton());
       feather.replace();
 
+      bsCustomFileInput.init()
+
      window.ias = new InfiniteAjaxScroll('#documents',{
        item: '.card',
        next: nextHandler,
@@ -221,6 +223,37 @@ function createDocumentCard(doc) {
 
     });
 
+
+    $('#uploadButton').on('click', function () {
+      $.ajax({
+        // Your server script to process the upload
+        url: '/api/documents',
+        type: 'POST',
+    
+        // Form data
+        data: new FormData($('#uploadForm')[0]),
+    
+        // Tell jQuery not to process data or worry about content-type
+        // You *must* include these options!
+        cache: false,
+        contentType: false,
+        processData: false,
+    
+        // Custom XMLHttpRequest
+        xhr: function () {
+          var myXhr = $.ajaxSettings.xhr();
+          if (myXhr.upload) {
+            $('#status').text("Uploading/Indexing...");
+            // For handling the progress of the upload
+          }
+          return myXhr;
+        }
+      }).done(function(){
+        $('#status').text("Finished!");
+      }).fail(function(){
+        $('#status').text("Could not upload!");
+      });
+    });
 
 
 })()

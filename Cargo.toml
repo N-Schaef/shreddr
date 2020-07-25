@@ -34,6 +34,8 @@ rocket = "0.4.*"
 rust-embed="5.5.*"
 rocket_contrib = "0.4.*"
 string_template = "0.2.*"
+rocket-multipart-form-data = "0.9.*"
+tempfile = "3.1.*"
 # Meta Data extraction
 commonregex = "0.2.*"
 diligent-date-parser  = { git = "https://github.com/rust-syndication/diligent-date-parser" }
