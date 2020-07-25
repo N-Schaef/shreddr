@@ -21,7 +21,12 @@ use crate::metadata::tag::{MatcherConfig, TagConfig, TagId};
 fn get_content_page<'r>(page_name: &str) -> response::Result<'r> {
     //Header
     let mut document = match Pages::get("header.html") {
-        Some(h) => h.into_owned(),
+        Some(h) => {
+            let mut content = h.into_owned();
+            let template = Template::new(&std::str::from_utf8_mut(&mut content).unwrap());
+            let v = vec![clap::crate_version!()];
+            template.render_positional(&v).into_bytes()
+        } ,
         None => return Err(Status::NotFound),
     };
 
@@ -46,7 +51,12 @@ fn get_content_page<'r>(page_name: &str) -> response::Result<'r> {
 fn get_content_page_with_template<'r>(page_name: &str, values: &[String]) -> response::Result<'r> {
     //Header
     let mut document = match Pages::get("header.html") {
-        Some(h) => h.into_owned(),
+        Some(h) => {
+            let mut content = h.into_owned();
+            let template = Template::new(&std::str::from_utf8_mut(&mut content).unwrap());
+            let v = vec![clap::crate_version!()];
+            template.render_positional(&v).into_bytes()
+        } ,
         None => return Err(Status::NotFound),
     };
 
@@ -79,7 +89,12 @@ fn get_content_page_with_named_template<'r>(
 ) -> response::Result<'r> {
     //Header
     let mut document = match Pages::get("header.html") {
-        Some(h) => h.into_owned(),
+        Some(h) => {
+            let mut content = h.into_owned();
+            let template = Template::new(&std::str::from_utf8_mut(&mut content).unwrap());
+            let v = vec![clap::crate_version!()];
+            template.render_positional(&v).into_bytes()
+        } ,
         None => return Err(Status::NotFound),
     };
 
