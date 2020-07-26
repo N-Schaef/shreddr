@@ -117,11 +117,11 @@ function createDocumentCard(doc) {
           <a href="/documents/${doc.id}/download" title="Download document" class="btn btn-primary download-doc"
             style="border-radius: 0 !important;">${feather.icons['download'].toSvg()}</a>
           <button type="button" title="Reprocess document" class="btn btn-secondary reimport-doc"
-            style="border-radius: 0 !important;">${feather.icons['refresh-cw'].toSvg()}</i></button>
+            style="border-radius: 0 !important;">${feather.icons['refresh-cw'].toSvg()}</button>
           <a href="/documents/${doc.id}" title="Edit document metadata" class="btn btn-secondary edit-doc"
-            style="border-radius: 0 !important;">${feather.icons['edit'].toSvg()}</i></a>
+            style="border-radius: 0 !important;">${feather.icons['edit'].toSvg()}</a>
           <button type="button" title="Remove document" class="btn btn-danger remove-doc"
-            style="border-radius: 0 !important;">${feather.icons['trash-2'].toSvg()}</i></button>
+            style="border-radius: 0 !important;">${feather.icons['trash-2'].toSvg()}</button>
         </div>
 
         <div class="card-footer text-muted">
