@@ -265,11 +265,6 @@ impl Index {
 
     /// Reprocesses/Reimports a document
     pub fn reprocess_document(&self, id: DocId) -> Result<(), IndexError> {
-        let mut doc = self
-            .doc_repo
-            .write()
-            .map_err(|_| IndexError::LockError("document repository".into()))?
-            .get_document(id)?;
         let doc_path = (*self.file_repo)
             .read()
             .map_err(|_| IndexError::LockError("file repository".into()))?
@@ -284,6 +279,13 @@ impl Index {
         let mut thumbnail_file = self.thumbnails_dir.join("tmp");
         thumbnail_file.set_file_name(format!("{}.jpg", id.to_string()));
         ContentExtractor::render_thumbnail(&doc_path, &thumbnail_file);
+
+        let mut doc = self
+            .doc_repo
+            .write()
+            .map_err(|_| IndexError::LockError("document repository".into()))?
+            .get_document(id)?;
+
         //reset inferred data
         doc.tags = vec![];
         doc.inferred_date = None;
