@@ -5,7 +5,10 @@ extern crate notify;
 use notify::DebouncedEvent::Create;
 use notify::Watcher;
 
-use std::sync::mpsc::{channel, Sender};
+use crate::index::JobType;
+
+use std::sync::mpsc::{channel};
+use crossbeam_channel::Sender;
 use std::time::Duration;
 
 pub struct PDFWatcher {
@@ -35,7 +38,7 @@ impl PDFWatcher {
 
     pub async fn watch(
         &self,
-        sender: Sender<PathBuf>,
+        sender: Sender<JobType>,
     ) -> Result<(), Box<dyn std::error::Error + Send>> {
         self.init_dir(&sender);
         // Create a channel to receive the events.
@@ -58,7 +61,7 @@ impl PDFWatcher {
                     Create(f) => {
                         if PDFWatcher::match_file(&f) {
                             info!("PDF-file created in watched dir: {:?}", f);
-                            sender.send(f).unwrap();
+                            sender.send(JobType::ImportFile{path:f,copy:true}).unwrap();
                         } else {
                             debug!("Ignored file: {:?}", f)
                         }
@@ -73,11 +76,11 @@ impl PDFWatcher {
         }
     }
 
-    fn init_dir(&self, sender: &Sender<PathBuf>) {
+    fn init_dir(&self, sender: &Sender<JobType>) {
         let paths = std::fs::read_dir(&self.dir).unwrap();
         for path in paths {
             let p = path.unwrap().path();
-            sender.send(p).unwrap();
+            sender.send(JobType::ImportFile{path:p,copy:true}).unwrap();
         }
     }
 }

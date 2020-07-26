@@ -25,6 +25,35 @@ pub struct Index {
     data_dir: PathBuf,
     thumbnails_dir: PathBuf,
     tmp_dir: PathBuf,
+    current_job: Arc<RwLock<Option<Job>>>,
+}
+
+// Interface
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Job {
+    pub job: JobType,
+    pub progress: i32,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub enum JobType {
+    ImportFile{
+        path: PathBuf,
+        copy: bool
+    },
+    ReprocessFile{
+        id: DocId,
+        force_ocr: bool
+    },
+}
+
+impl std::fmt::Display for  JobType {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            JobType::ImportFile{path, copy: _} => write!(f, "Currently importing document {:#?}",path.file_name().unwrap()),
+            JobType::ReprocessFile{id,force_ocr: _} =>  write!(f,"Currently reprocessing document '{:#?}'",id),
+        }
+    }
 }
 
 //Error Handling
@@ -78,11 +107,55 @@ impl Index {
             thumbnails_dir,
             data_dir: data_dir.into(),
             tmp_dir,
+            current_job: Arc::new(RwLock::new(None)),
         })
     }
 
     pub fn get_tmp_dir(&self) -> &Path {
         &self.tmp_dir
+    }
+
+    pub fn get_current_job(&self)-> Result<Option<Job>, IndexError>{
+        let clone = (*self.current_job)
+        .read()
+        .map_err(|_| IndexError::LockError("current_job".into()))?
+        .as_ref().cloned();
+        Ok(clone)
+    }
+
+    pub fn handle_job(&self, job_type: JobType) -> Result<Job, IndexError> {
+        let job = Job{
+            job: job_type,
+            progress: 0,
+        };
+
+        (*self.current_job)
+            .write()
+            .map_err(|_| IndexError::LockError("current_job".into()))?
+            .replace(job.clone());
+
+        match &job.job{
+            JobType::ImportFile{
+                path,
+                copy,
+            } => {
+                self.import_document(path,*copy)?;
+            },
+            JobType::ReprocessFile{
+                id,
+                force_ocr
+            } => {
+                if *force_ocr {
+                    self.reprocess_document_force_ocr(*id)?
+                }else{
+                    self.reprocess_document(*id)?;
+                }
+            }
+        };
+        Ok((*self.current_job)
+        .write()
+        .map_err(|_| IndexError::LockError("current_job".into()))?
+        .take().unwrap())
     }
 
     /// Returns the next ID
@@ -117,7 +190,7 @@ impl Index {
     /// Imports a new document
     /// This function computes the hash value of each document and skips the file, if it is already contained in the repo
     /// To reimport/reprocess a document use the `reprocess_document` function
-    pub fn import_document(&self, file: &Path) -> Result<DocId, IndexError> {
+    pub fn import_document(&self, file: &Path, copy: bool) -> Result<DocId, IndexError> {
         let hash = FileExtractor::get_file_hash(file)?;
         if let Ok(Some(found_id)) = self
             .doc_repo
@@ -179,6 +252,9 @@ impl Index {
             .map_err(|_| IndexError::LockError("document repository".into()))?
             .add_document(&doc_data)?;
 
+        if !copy {
+            std::fs::remove_file(file)?;
+        }    
         Ok(id)
     }
 

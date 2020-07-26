@@ -119,7 +119,7 @@ pub fn run_shell(index: Arc<super::index::Index>) {
             writeln!(io, "Document at path {:#?} does not exist.", p)?;
             return Ok(());
         }
-        match index.import_document(&p) {
+        match index.import_document(&p, true) {
             Ok(id) => writeln!(io, "Imported document {}", id)?,
             Err(e) => writeln!(io, "Error during reprocess: {}", e)?,
         }

@@ -1,3 +1,6 @@
+use crate::index::{JobType};
+use crossbeam_channel::Sender;
+use std::sync::Mutex;
 use crate::index::document_repository::{DocumentData, FilterOptions, SortOrder};
 use crate::index::DocId;
 use crate::metadata::tag::{TagConfig, TagId};
@@ -11,6 +14,40 @@ use std::sync::Arc;
 
 use crate::index::Index;
 use rocket_contrib::json::Json;
+
+//////////////////////////////////////////////
+//////////        Status   ////////////////
+//////////////////////////////////////////////
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub enum JobStatus {
+    Idle,
+    Busy {
+        current: String,
+        progress: i32,
+        queue: usize,
+    },
+}
+
+#[get("/job")]
+pub fn job_status(index: State<Arc<Index>>, send: State<Mutex<Sender<JobType>>>) -> Json<JobStatus> {
+    let guard = send.lock().unwrap();
+    let queue = guard.len();
+    match index.get_current_job(){
+        Err(e) => {error!("Could not get job `{}`",e); Json(JobStatus::Idle)},
+        Ok(job) => {
+            match job {
+                Some(j) =>Json(JobStatus::Busy{
+                    current: j.job.to_string(),
+                    progress: j.progress,
+                    queue,
+                }),
+                None => Json(JobStatus::Idle)
+            }
+        }
+    }
+    
+}
 
 //////////////////////////////////////////////
 //////////        Tags        ////////////////
@@ -92,15 +129,16 @@ pub fn reimport_document(
 
 #[get("/documents/<id>/reimport?<ocr>")]
 pub fn reimport_document_ocr(
-    index: State<Arc<Index>>,
+    send: State<Mutex<Sender<JobType>>>,
     id: DocId,
     ocr: bool,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    if ocr {
-        index.reprocess_document_force_ocr(id)?;
-    } else {
-        index.reprocess_document(id)?;
-    }
+    let guard = send.lock().unwrap();
+    guard.send(JobType::ReprocessFile{
+        id,
+        force_ocr: ocr,
+    })?;
+
     Ok(())
 }
 
@@ -144,6 +182,7 @@ pub fn add_tag_to_document(
 #[post("/documents", data = "<data>")]
 pub fn upload_document(
     index: State<Arc<Index>>,
+    send: State<Mutex<Sender<JobType>>>,
     content_type: &ContentType,
     data: Data,
 ) -> Result<(), Box<dyn std::error::Error>> {
@@ -162,15 +201,19 @@ pub fn upload_document(
         let path = &file_field.path;
 
         let base_dir = index.get_tmp_dir();
-        let tmp_dir = tempfile::tempdir_in(base_dir)?;
-        let tmp_file = tmp_dir.path().join(file_name.as_ref().unwrap());
+        let tmp_file = base_dir.join(file_name.as_ref().unwrap());
         debug!(
             "Copying uploaded file from {:#?} to {:#?}",
             &path, &tmp_file
         );
         std::fs::copy(path, &tmp_file)?;
 
-        index.import_document(&tmp_file)?;
+        let guard = send.lock().unwrap();
+        guard.send(JobType::ImportFile{
+            path: tmp_file,
+            copy: false,
+        })?;
+
     }
 
     Ok(())

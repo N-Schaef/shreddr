@@ -1,7 +1,7 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
+use std::sync::Mutex;
 use std::path::PathBuf;
-use std::sync::mpsc::channel;
 use std::sync::{Arc, RwLock};
 
 //Logging
@@ -31,6 +31,7 @@ mod watch;
 
 use index::document_repository::local_repository::LocalDocumentRepository;
 use index::file_repository::local_repository::LocalFileRepository;
+use index::JobType;
 
 //Error Handling
 use thiserror::Error;
@@ -117,20 +118,21 @@ fn main() -> Result<(), ShreddrError> {
     );
 
     //Start watcher thread
-    let (doc_sender, doc_retriever) = channel::<PathBuf>();
+    let (doc_sender, doc_retriever) = crossbeam_channel::unbounded::<JobType>();
     let rt = tokio::runtime::Runtime::new().unwrap();
     let consume_dir = cfg.consume_dir.clone();
+    let watch_sender = doc_sender.clone();
     let _w = rt.spawn(async move {
         let watch = watch::PDFWatcher::new(&consume_dir);
-        watch.watch(doc_sender).await
+        watch.watch(watch_sender).await
     });
 
     //Start indexer thread
     let i = index.clone();
     let _p = rt.spawn(async move {
         loop {
-            let file = doc_retriever.recv().unwrap();
-            i.import_document(&file).unwrap();
+            let job = doc_retriever.recv().unwrap();
+            i.handle_job(job).unwrap();
         }
     });
 
@@ -176,7 +178,7 @@ fn main() -> Result<(), ShreddrError> {
             Err(e) => println!("Could not initialize logger {}", e),
         };
         //Start Server
-        server::Server::start(&cfg.data_dir, index);
+        server::Server::start(&cfg.data_dir, index, Mutex::new(doc_sender));
     } else {
         match WriteLogger::init(LevelFilter::Debug, Config::default(), log_file) {
             Ok(_) => {}
