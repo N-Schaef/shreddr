@@ -7,7 +7,8 @@ use notify::Watcher;
 
 use crate::index::JobType;
 
-use std::sync::mpsc::{channel, Sender};
+use std::sync::mpsc::{channel};
+use crossbeam_channel::Sender;
 use std::time::Duration;
 
 pub struct PDFWatcher {
@@ -60,7 +61,7 @@ impl PDFWatcher {
                     Create(f) => {
                         if PDFWatcher::match_file(&f) {
                             info!("PDF-file created in watched dir: {:?}", f);
-                            sender.send(JobType::ImportFile{path:f}).unwrap();
+                            sender.send(JobType::ImportFile{path:f,copy:true}).unwrap();
                         } else {
                             debug!("Ignored file: {:?}", f)
                         }
@@ -79,7 +80,7 @@ impl PDFWatcher {
         let paths = std::fs::read_dir(&self.dir).unwrap();
         for path in paths {
             let p = path.unwrap().path();
-            sender.send(JobType::ImportFile{path:p}).unwrap();
+            sender.send(JobType::ImportFile{path:p,copy:true}).unwrap();
         }
     }
 }

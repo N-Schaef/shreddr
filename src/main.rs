@@ -119,7 +119,7 @@ fn main() -> Result<(), ShreddrError> {
     );
 
     //Start watcher thread
-    let (doc_sender, doc_retriever) = channel::<JobType>();
+    let (doc_sender, doc_retriever) = crossbeam_channel::unbounded::<JobType>();
     let rt = tokio::runtime::Runtime::new().unwrap();
     let consume_dir = cfg.consume_dir.clone();
     let watch_sender = doc_sender.clone();

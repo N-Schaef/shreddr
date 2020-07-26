@@ -151,8 +151,7 @@ function createDocumentCard(doc) {
       url: "/api/documents/" + doc.id + "/reimport",
       type: 'GET',
       success: function (result) {
-        location.reload();
-        //TODO show banner with reload button
+        updateStatusWindow();
       }
     });
   }.bind(doc)
@@ -245,13 +244,14 @@ function createDocumentCard(doc) {
         xhr: function () {
           var myXhr = $.ajaxSettings.xhr();
           if (myXhr.upload) {
-            $('#status').text("Uploading/Indexing...");
+            $('#status').text("Uploading...");
+            updateStatusWindow();
             // For handling the progress of the upload
           }
           return myXhr;
         }
       }).done(function(){
-        $('#status').text("Finished!");
+        $('#status').text("Uploaded!");
       }).fail(function(){
         $('#status').text("Could not upload!");
       });
@@ -260,20 +260,26 @@ function createDocumentCard(doc) {
 
 })()
 
-window.setInterval(function(){
+function updateStatusWindow(){
   $.get("/api/job").done(function (data) {
     let alert = $("#job_alert");
-    if (data == null){
+    if (data == "Idle"){
       if(alert.is(":visible")){
         alert.removeClass("alert-primary");
         alert.addClass("alert-success");
-        alert.text("Finished jobs. Refresh for new content.");
+        alert.find("#alertText").text("Finished jobs. Refresh for new content.");
       }
     }else{
+        var text = "Processing " + (data.Busy.queue+1) + " documents. "
+        text += data.Busy.current;
+        alert.find("#alertText").text(text);
         alert.removeClass("alert-success");
         alert.addClass("alert-primary");
-        alert.text("Processing document...");
         alert.show();
     }
   });
+}
+
+window.setInterval(function(){
+  updateStatusWindow();
 }, 5000);

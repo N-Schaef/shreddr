@@ -1,5 +1,5 @@
-use crate::index::{JobType,Job};
-use std::sync::mpsc::Sender;
+use crate::index::{JobType};
+use crossbeam_channel::Sender;
 use std::sync::Mutex;
 use crate::index::document_repository::{DocumentData, FilterOptions, SortOrder};
 use crate::index::DocId;
@@ -19,14 +19,30 @@ use rocket_contrib::json::Json;
 //////////        Status   ////////////////
 //////////////////////////////////////////////
 
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub enum JobStatus {
+    Idle,
+    Busy {
+        current: String,
+        progress: i32,
+        queue: usize,
+    },
+}
+
 #[get("/job")]
-pub fn job_status(index: State<Arc<Index>>) -> Json<Option<Job>> {
+pub fn job_status(index: State<Arc<Index>>, send: State<Mutex<Sender<JobType>>>) -> Json<JobStatus> {
+    let guard = send.lock().unwrap();
+    let queue = guard.len();
     match index.get_current_job(){
-        Err(e) => {error!("Could not get job `{}`",e); Json(None)},
+        Err(e) => {error!("Could not get job `{}`",e); Json(JobStatus::Idle)},
         Ok(job) => {
             match job {
-                Some(j) =>Json(Some(j)),
-                None => Json(None)
+                Some(j) =>Json(JobStatus::Busy{
+                    current: j.job.to_string(),
+                    progress: j.progress,
+                    queue,
+                }),
+                None => Json(JobStatus::Idle)
             }
         }
     }
@@ -185,8 +201,7 @@ pub fn upload_document(
         let path = &file_field.path;
 
         let base_dir = index.get_tmp_dir();
-        let tmp_dir = tempfile::tempdir_in(base_dir)?;
-        let tmp_file = tmp_dir.path().join(file_name.as_ref().unwrap());
+        let tmp_file = base_dir.join(file_name.as_ref().unwrap());
         debug!(
             "Copying uploaded file from {:#?} to {:#?}",
             &path, &tmp_file
@@ -195,7 +210,8 @@ pub fn upload_document(
 
         let guard = send.lock().unwrap();
         guard.send(JobType::ImportFile{
-            path: tmp_file
+            path: tmp_file,
+            copy: false,
         })?;
 
     }

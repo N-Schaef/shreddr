@@ -31,19 +31,29 @@ pub struct Index {
 // Interface
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Job {
-    job: JobType,
-    progress: i32,
+    pub job: JobType,
+    pub progress: i32,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum JobType {
     ImportFile{
         path: PathBuf,
+        copy: bool
     },
     ReprocessFile{
         id: DocId,
         force_ocr: bool
     },
+}
+
+impl std::fmt::Display for  JobType {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            JobType::ImportFile{path, copy: _} => write!(f, "Currently importing document {:#?}",path.file_name().unwrap()),
+            JobType::ReprocessFile{id,force_ocr: _} =>  write!(f,"Currently reprocessing document '{:#?}'",id),
+        }
+    }
 }
 
 //Error Handling
@@ -127,8 +137,9 @@ impl Index {
         match &job.job{
             JobType::ImportFile{
                 path,
+                copy,
             } => {
-                self.import_document(path)?;
+                self.import_document(path,*copy)?;
             },
             JobType::ReprocessFile{
                 id,
@@ -179,7 +190,7 @@ impl Index {
     /// Imports a new document
     /// This function computes the hash value of each document and skips the file, if it is already contained in the repo
     /// To reimport/reprocess a document use the `reprocess_document` function
-    pub fn import_document(&self, file: &Path) -> Result<DocId, IndexError> {
+    pub fn import_document(&self, file: &Path, copy: bool) -> Result<DocId, IndexError> {
         let hash = FileExtractor::get_file_hash(file)?;
         if let Ok(Some(found_id)) = self
             .doc_repo
@@ -241,6 +252,9 @@ impl Index {
             .map_err(|_| IndexError::LockError("document repository".into()))?
             .add_document(&doc_data)?;
 
+        if !copy {
+            std::fs::remove_file(file)?;
+        }    
         Ok(id)
     }
 

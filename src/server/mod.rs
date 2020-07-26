@@ -6,7 +6,7 @@ use std::sync::Mutex;
 use rocket_contrib::serve::StaticFiles;
 use std::path::Path;
 use std::sync::Arc;
-use std::sync::mpsc::Sender;
+use crossbeam_channel::Sender;
 use crate::index::JobType;
 
 
