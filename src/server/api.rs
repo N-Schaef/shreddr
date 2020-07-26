@@ -1,9 +1,8 @@
-use crate::index::{JobType};
-use crossbeam_channel::Sender;
-use std::sync::Mutex;
 use crate::index::document_repository::{DocumentData, FilterOptions, SortOrder};
 use crate::index::DocId;
+use crate::index::JobType;
 use crate::metadata::tag::{TagConfig, TagId};
+use crossbeam_channel::Sender;
 use rocket::http::ContentType;
 use rocket::Data;
 use rocket::State;
@@ -11,6 +10,7 @@ use rocket_multipart_form_data::{
     MultipartFormData, MultipartFormDataField, MultipartFormDataOptions,
 };
 use std::sync::Arc;
+use std::sync::Mutex;
 
 use crate::index::Index;
 use rocket_contrib::json::Json;
@@ -30,23 +30,26 @@ pub enum JobStatus {
 }
 
 #[get("/job")]
-pub fn job_status(index: State<Arc<Index>>, send: State<Mutex<Sender<JobType>>>) -> Json<JobStatus> {
+pub fn job_status(
+    index: State<Arc<Index>>,
+    send: State<Mutex<Sender<JobType>>>,
+) -> Json<JobStatus> {
     let guard = send.lock().unwrap();
     let queue = guard.len();
-    match index.get_current_job(){
-        Err(e) => {error!("Could not get job `{}`",e); Json(JobStatus::Idle)},
-        Ok(job) => {
-            match job {
-                Some(j) =>Json(JobStatus::Busy{
-                    current: j.job.to_string(),
-                    progress: j.progress,
-                    queue,
-                }),
-                None => Json(JobStatus::Idle)
-            }
+    match index.get_current_job() {
+        Err(e) => {
+            error!("Could not get job `{}`", e);
+            Json(JobStatus::Idle)
         }
+        Ok(job) => match job {
+            Some(j) => Json(JobStatus::Busy {
+                current: j.job.to_string(),
+                progress: j.progress,
+                queue,
+            }),
+            None => Json(JobStatus::Idle),
+        },
     }
-    
 }
 
 //////////////////////////////////////////////
@@ -134,10 +137,7 @@ pub fn reimport_document_ocr(
     ocr: bool,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let guard = send.lock().unwrap();
-    guard.send(JobType::ReprocessFile{
-        id,
-        force_ocr: ocr,
-    })?;
+    guard.send(JobType::ReprocessFile { id, force_ocr: ocr })?;
 
     Ok(())
 }
@@ -209,11 +209,10 @@ pub fn upload_document(
         std::fs::copy(path, &tmp_file)?;
 
         let guard = send.lock().unwrap();
-        guard.send(JobType::ImportFile{
+        guard.send(JobType::ImportFile {
             path: tmp_file,
             copy: false,
         })?;
-
     }
 
     Ok(())

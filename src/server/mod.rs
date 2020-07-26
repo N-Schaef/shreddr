@@ -2,18 +2,21 @@ mod api;
 mod assets;
 mod pages;
 
-use std::sync::Mutex;
+use crate::index::JobType;
+use crossbeam_channel::Sender;
 use rocket_contrib::serve::StaticFiles;
 use std::path::Path;
 use std::sync::Arc;
-use crossbeam_channel::Sender;
-use crate::index::JobType;
-
+use std::sync::Mutex;
 
 pub struct Server {}
 
 impl Server {
-    pub fn start(data_dir: &Path, index: Arc<super::index::Index>, job_queue: Mutex<Sender<JobType>>) {
+    pub fn start(
+        data_dir: &Path,
+        index: Arc<super::index::Index>,
+        job_queue: Mutex<Sender<JobType>>,
+    ) {
         rocket::ignite()
             .manage(index)
             .manage(job_queue)

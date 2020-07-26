@@ -37,21 +37,21 @@ pub struct Job {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum JobType {
-    ImportFile{
-        path: PathBuf,
-        copy: bool
-    },
-    ReprocessFile{
-        id: DocId,
-        force_ocr: bool
-    },
+    ImportFile { path: PathBuf, copy: bool },
+    ReprocessFile { id: DocId, force_ocr: bool },
 }
 
-impl std::fmt::Display for  JobType {
+impl std::fmt::Display for JobType {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
-            JobType::ImportFile{path, copy: _} => write!(f, "Currently importing document {:#?}",path.file_name().unwrap()),
-            JobType::ReprocessFile{id,force_ocr: _} =>  write!(f,"Currently reprocessing document '{:#?}'",id),
+            JobType::ImportFile { path, copy: _ } => write!(
+                f,
+                "Currently importing document {:#?}",
+                path.file_name().unwrap()
+            ),
+            JobType::ReprocessFile { id, force_ocr: _ } => {
+                write!(f, "Currently reprocessing document '{:#?}'", id)
+            }
         }
     }
 }
@@ -115,16 +115,17 @@ impl Index {
         &self.tmp_dir
     }
 
-    pub fn get_current_job(&self)-> Result<Option<Job>, IndexError>{
+    pub fn get_current_job(&self) -> Result<Option<Job>, IndexError> {
         let clone = (*self.current_job)
-        .read()
-        .map_err(|_| IndexError::LockError("current_job".into()))?
-        .as_ref().cloned();
+            .read()
+            .map_err(|_| IndexError::LockError("current_job".into()))?
+            .as_ref()
+            .cloned();
         Ok(clone)
     }
 
     pub fn handle_job(&self, job_type: JobType) -> Result<Job, IndexError> {
-        let job = Job{
+        let job = Job {
             job: job_type,
             progress: 0,
         };
@@ -134,28 +135,23 @@ impl Index {
             .map_err(|_| IndexError::LockError("current_job".into()))?
             .replace(job.clone());
 
-        match &job.job{
-            JobType::ImportFile{
-                path,
-                copy,
-            } => {
-                self.import_document(path,*copy)?;
-            },
-            JobType::ReprocessFile{
-                id,
-                force_ocr
-            } => {
+        match &job.job {
+            JobType::ImportFile { path, copy } => {
+                self.import_document(path, *copy)?;
+            }
+            JobType::ReprocessFile { id, force_ocr } => {
                 if *force_ocr {
                     self.reprocess_document_force_ocr(*id)?
-                }else{
+                } else {
                     self.reprocess_document(*id)?;
                 }
             }
         };
         Ok((*self.current_job)
-        .write()
-        .map_err(|_| IndexError::LockError("current_job".into()))?
-        .take().unwrap())
+            .write()
+            .map_err(|_| IndexError::LockError("current_job".into()))?
+            .take()
+            .unwrap())
     }
 
     /// Returns the next ID
@@ -254,7 +250,7 @@ impl Index {
 
         if !copy {
             std::fs::remove_file(file)?;
-        }    
+        }
         Ok(id)
     }
 

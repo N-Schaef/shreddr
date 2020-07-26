@@ -1,7 +1,7 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
-use std::sync::Mutex;
 use std::path::PathBuf;
+use std::sync::Mutex;
 use std::sync::{Arc, RwLock};
 
 //Logging

@@ -26,7 +26,7 @@ fn get_content_page<'r>(page_name: &str) -> response::Result<'r> {
             let template = Template::new(&std::str::from_utf8_mut(&mut content).unwrap());
             let v = vec![clap::crate_version!()];
             template.render_positional(&v).into_bytes()
-        } ,
+        }
         None => return Err(Status::NotFound),
     };
 
@@ -48,7 +48,6 @@ fn get_content_page<'r>(page_name: &str) -> response::Result<'r> {
         .ok()
 }
 
-
 fn get_content_page_with_named_template<'r>(
     page_name: &str,
     values: &HashMap<&str, &str>,
@@ -60,7 +59,7 @@ fn get_content_page_with_named_template<'r>(
             let template = Template::new(&std::str::from_utf8_mut(&mut content).unwrap());
             let v = vec![clap::crate_version!()];
             template.render_positional(&v).into_bytes()
-        } ,
+        }
         None => return Err(Status::NotFound),
     };
 
