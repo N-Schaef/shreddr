@@ -2,7 +2,6 @@
 
 use std::sync::Mutex;
 use std::path::PathBuf;
-use std::sync::mpsc::channel;
 use std::sync::{Arc, RwLock};
 
 //Logging
