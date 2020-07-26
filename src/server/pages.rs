@@ -48,40 +48,6 @@ fn get_content_page<'r>(page_name: &str) -> response::Result<'r> {
         .ok()
 }
 
-fn get_content_page_with_template<'r>(page_name: &str, values: &[String]) -> response::Result<'r> {
-    //Header
-    let mut document = match Pages::get("header.html") {
-        Some(h) => {
-            let mut content = h.into_owned();
-            let template = Template::new(&std::str::from_utf8_mut(&mut content).unwrap());
-            let v = vec![clap::crate_version!()];
-            template.render_positional(&v).into_bytes()
-        } ,
-        None => return Err(Status::NotFound),
-    };
-
-    //Content
-    match Pages::get(page_name) {
-        Some(h) => {
-            let mut content = h.into_owned();
-            let template = Template::new(&std::str::from_utf8_mut(&mut content).unwrap());
-            let v: Vec<&str> = values.iter().map(|x| &**x).collect();
-            document.append(&mut template.render_positional(&v).into_bytes());
-        }
-        None => return Err(Status::NotFound),
-    };
-
-    //Footer
-    match Pages::get("footer.html") {
-        Some(h) => document.append(&mut h.into_owned()),
-        None => return Err(Status::NotFound),
-    };
-
-    response::Response::build()
-        .header(ContentType::HTML)
-        .sized_body(Cursor::new(document))
-        .ok()
-}
 
 fn get_content_page_with_named_template<'r>(
     page_name: &str,
