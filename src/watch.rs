@@ -29,10 +29,7 @@ impl PDFWatcher {
     pub fn match_file(file: &Path) -> bool {
         match file.extension() {
             None => false,
-            Some(os_str) => match os_str.to_str() {
-                Some("pdf") => true,
-                _ => false,
-            },
+            Some(os_str) => matches!(os_str.to_str(), Some("pdf")),
         }
     }
 
