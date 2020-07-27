@@ -178,7 +178,7 @@ fn main() -> Result<(), ShreddrError> {
             Err(e) => println!("Could not initialize logger {}", e),
         };
         //Start Server
-        server::Server::start(&cfg.data_dir, index, Mutex::new(doc_sender));
+        server::Server::start(cfg, index, Mutex::new(doc_sender));
     } else {
         match WriteLogger::init(LevelFilter::Debug, Config::default(), log_file) {
             Ok(_) => {}

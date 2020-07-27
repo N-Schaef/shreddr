@@ -8,7 +8,7 @@ use shrust::{Shell, ShellIO};
 use std::io::prelude::*;
 
 /// All available Shreddr configuration values
-#[derive(Default, Debug, Serialize, Deserialize)]
+#[derive(Default, Debug, Serialize, Deserialize, Clone)]
 pub struct ShreddrConfig {
     pub data_dir: PathBuf,
     pub consume_dir: PathBuf,
@@ -18,6 +18,8 @@ pub struct ShreddrConfig {
     /// The order of languages is used as priority for tesseract.
     #[serde(default)]
     pub tesseract_languages: Vec<String>,
+    #[serde(default)]
+    pub max_upload_size: u64,
 }
 
 //Error Handling
@@ -59,6 +61,11 @@ fn load_config(cli_arguments: &clap::ArgMatches) -> Result<ShreddrConfig, CLIErr
     if let Some(t) = cli_arguments.values_of("TESSERACT_LANG") {
         cfg.tesseract_languages = t.map(|s| s.into()).collect();
     };
+
+    if cfg.max_upload_size == 0 {
+        cfg.max_upload_size = 20 * 1024 * 1024;
+    }
+
     Ok(cfg)
 }
 

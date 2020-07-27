@@ -183,11 +183,12 @@ pub fn add_tag_to_document(
 pub fn upload_document(
     index: State<Arc<Index>>,
     send: State<Mutex<Sender<JobType>>>,
+    cfg: State<crate::cli::ShreddrConfig>,
     content_type: &ContentType,
     data: Data,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let options = MultipartFormDataOptions::with_multipart_form_data_fields(vec![
-        MultipartFormDataField::file("file"),
+        MultipartFormDataField::file("file").size_limit(cfg.max_upload_size),
     ]);
 
     let multipart_form_data = MultipartFormData::parse(content_type, data, options)?;

@@ -5,7 +5,7 @@ mod pages;
 use crate::index::JobType;
 use crossbeam_channel::Sender;
 use rocket_contrib::serve::StaticFiles;
-use std::path::Path;
+
 use std::sync::Arc;
 use std::sync::Mutex;
 
@@ -13,13 +13,14 @@ pub struct Server {}
 
 impl Server {
     pub fn start(
-        data_dir: &Path,
+        cfg: crate::cli::ShreddrConfig,
         index: Arc<super::index::Index>,
         job_queue: Mutex<Sender<JobType>>,
     ) {
         rocket::ignite()
             .manage(index)
             .manage(job_queue)
+            .manage(cfg.clone())
             .mount(
                 "/",
                 routes![
@@ -52,7 +53,7 @@ impl Server {
             )
             .mount(
                 "/thumbnails",
-                StaticFiles::from(data_dir.join("thumbnails")),
+                StaticFiles::from(cfg.data_dir.join("thumbnails")),
             )
             .launch();
     }
