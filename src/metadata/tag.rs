@@ -221,8 +221,8 @@ impl Tagger {
             doc.extracted.doc_date =
                 diligent_date_parser::parse_date(dates[0]).map(|d| d.with_timezone(&chrono::Utc));
             match &doc.extracted.doc_date {
-                Some(d) => info!("Inferred date {} for document {}", &d, doc.id),
-                None => info!("Could not inferr date fro document {}", doc.id),
+                Some(d) => info!("Extracted date {} for document {}", &d, doc.id),
+                None => info!("Could not extract date for document {}", doc.id),
             }
         }
 
