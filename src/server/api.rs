@@ -1,14 +1,12 @@
-use crate::index::document_repository::{DocumentData, FilterOptions, SortOrder};
-use crate::index::DocId;
+
+
 use crate::index::JobType;
 use crate::metadata::tag::{TagConfig, TagId};
 use crossbeam_channel::Sender;
-use rocket::http::ContentType;
-use rocket::Data;
+
+
 use rocket::State;
-use rocket_multipart_form_data::{
-    MultipartFormData, MultipartFormDataField, MultipartFormDataOptions,
-};
+
 use std::sync::Arc;
 use std::sync::Mutex;
 
