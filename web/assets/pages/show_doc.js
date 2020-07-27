@@ -127,6 +127,7 @@ function initExtracted(extracted){
       const row = `<tr><td><a href="${link}">${link}</a></td></tr>`;
       $('#urlTable > tbody:last-child').append(row);
     });
+    $('#metaHeader').show();
     $('#URLS-div').show();
   }
 
@@ -135,6 +136,7 @@ function initExtracted(extracted){
       const row = `<tr><td><a href="mailto:${email}">${email}</a></td></tr>`;
       $('#emailsTable > tbody:last-child').append(row);
     });
+    $('#metaHeader').show();
     $('#emails-div').show();
   }
 
@@ -143,6 +145,7 @@ function initExtracted(extracted){
       const row = `<tr><td><a href="tel:${phone}">${phone}</a></td></tr>`;
       $('#phoneTable > tbody:last-child').append(row);
     });
+    $('#metaHeader').show();
     $('#Phones-div').show();
   }
 
@@ -151,6 +154,7 @@ function initExtracted(extracted){
       const row = `<tr><td>${iban}</td></tr>`;
       $('#ibanTable > tbody:last-child').append(row);
     });
+    $('#metaHeader').show();
     $('#iban-div').show();
   }
 }
