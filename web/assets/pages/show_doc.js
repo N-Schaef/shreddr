@@ -113,7 +113,7 @@ function createAddButton(docId, tagMap) {
     item.on("click", function () {
       $.ajax({
         url: '/documents/' + docId + '/tags/' + value.id,
-        type: 'PUT',
+        type: 'POST',
         success: function (result) {
           location.reload();
         }
