@@ -226,14 +226,20 @@ impl Tagger {
             }
         }
 
+        //IBAN
+        doc.extracted.iban = parsed.ibans.iter().map(|s| s.to_string()).collect();
+
         //Telephone numbers
         doc.extracted.phone = parsed
-            .phones_with_exts
+            .phones
             .iter()
             .map(|s| s.to_string())
+            .filter(|t| !doc.extracted.iban.iter().any(|i| i.contains(t)))
             .collect();
+
         //E-Mail
         doc.extracted.email = parsed.emails.iter().map(|s| s.to_string()).collect();
+
         //Links
         doc.extracted.link = parsed
             .links
@@ -241,8 +247,6 @@ impl Tagger {
             .map(|s| s.to_string())
             .filter(|s| !doc.extracted.email.contains(s))
             .collect();
-        //IBAN
-        doc.extracted.iban = parsed.ibans.iter().map(|s| s.to_string()).collect();
         Ok(())
     }
 
