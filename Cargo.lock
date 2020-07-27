@@ -2481,7 +2481,6 @@ dependencies = [
  "serde",
  "serde_derive",
  "serde_json",
- "serde_yaml",
  "sha2 0.9.1",
  "shrust",
  "simplelog",
