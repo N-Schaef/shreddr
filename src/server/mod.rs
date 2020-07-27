@@ -1,7 +1,7 @@
 mod api;
 mod assets;
-mod pages;
 mod documents;
+mod pages;
 
 use crate::index::JobType;
 use crossbeam_channel::Sender;
@@ -47,19 +47,13 @@ impl Server {
                     documents::document_delete_tag,
                     documents::document_add_tag,
                     documents::document_patch,
-
-                   // documents::document_edit,
+                    // documents::document_edit,
                     //documents::document,
                 ],
             )
             .mount(
                 "/api",
-                routes![
-                    api::job_status,
-                    api::tag,
-                    api::tags,
-                    api::remove_tag,
-                ],
+                routes![api::job_status, api::tag, api::tags, api::remove_tag,],
             )
             .mount(
                 "/thumbnails",

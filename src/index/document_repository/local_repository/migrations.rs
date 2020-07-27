@@ -20,7 +20,7 @@ pub enum MigrationError {
 
 pub fn migrate(file: &Path) -> Result<(), MigrationError> {
     debug!("Checking migrations");
-    if !file.exists(){
+    if !file.exists() {
         return Ok(());
     }
     let version_object: VersionTest = confy::load_path(file).unwrap_or_default();

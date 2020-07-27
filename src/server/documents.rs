@@ -1,21 +1,23 @@
-use rocket_multipart_form_data::{MultipartFormData,MultipartFormDataField,MultipartFormDataOptions};
-use rocket::Data;
-use rocket::http::ContentType;
-use crate::JobType;
-use super::pages::{get_content_page,get_content_page_with_named_template};
-use crate::index::{Index,DocId};
-use crate::index::document_repository::{DocumentData,SortOrder,FilterOptions};
+use super::pages::{get_content_page, get_content_page_with_named_template};
+use crate::index::document_repository::{DocumentData, FilterOptions, SortOrder};
+use crate::index::{DocId, Index};
 use crate::metadata::tag::TagId;
+use crate::JobType;
+use rocket::http::ContentType;
+use rocket::Data;
+use rocket_multipart_form_data::{
+    MultipartFormData, MultipartFormDataField, MultipartFormDataOptions,
+};
 
-use std::sync::Arc;
-use chrono::serde::{ts_seconds_option};
-use std::collections::HashMap;
+use chrono::serde::ts_seconds_option;
 use crossbeam_channel::Sender;
+use std::collections::HashMap;
+use std::sync::Arc;
 use std::sync::Mutex;
 
-use rocket::{response};
-use rocket_contrib::json::Json;
+use rocket::response;
 use rocket::State;
+use rocket_contrib::json::Json;
 
 //////////////////////////////////////////////
 //////////        INDEX (/)   ////////////////
@@ -32,7 +34,6 @@ pub fn index_get<'r>() -> response::Result<'r> {
 pub fn index_get_json_fail() -> response::status::BadRequest<&'static str> {
     response::status::BadRequest(Some("Missing parameter(s): offset, count"))
 }
-
 
 /// GET a list of (filtered) documents as JSON document
 #[get("/json?<offset>&<count>&<order>&<tag>&<query>", format = "json")]
@@ -108,7 +109,6 @@ pub fn upload(
     Ok(())
 }
 
-
 //////////////////////////////////////////////
 //////////        DOCUMENT (/<id>)   /////////
 //////////////////////////////////////////////
@@ -168,7 +168,7 @@ pub fn document_remove(
     Ok(())
 }
 
-/// GET the document file 
+/// GET the document file
 #[get("/<id>/download")]
 pub fn document_download(
     index: State<Arc<Index>>,
@@ -178,7 +178,6 @@ pub fn document_download(
     Ok(rocket::response::NamedFile::open(&path)?)
 }
 
-
 /// PUT which starts the reimport of the file
 #[put("/<id>/reimport?<ocr>")]
 pub fn document_reimport(
@@ -187,7 +186,10 @@ pub fn document_reimport(
     ocr: Option<bool>,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let guard = send.lock().unwrap();
-    guard.send(JobType::ReprocessFile { id, force_ocr: ocr.unwrap_or_default() })?;
+    guard.send(JobType::ReprocessFile {
+        id,
+        force_ocr: ocr.unwrap_or_default(),
+    })?;
     Ok(())
 }
 
@@ -217,59 +219,59 @@ pub struct PatchExtractedData {
 }
 
 impl From<DocumentData> for PatchDocumentData {
-  fn from(doc: DocumentData) -> Self { 
-    PatchDocumentData{
-      language: doc.language,
-      title: Some(doc.title),
-      tags: Some(doc.tags),
-      extracted: Some(PatchExtractedData{
-        phone: Some(doc.extracted.phone),
-        email: Some(doc.extracted.email),
-        link: Some(doc.extracted.link),
-        iban: Some(doc.extracted.iban),
-        doc_date: doc.extracted.doc_date,
-      })
+    fn from(doc: DocumentData) -> Self {
+        PatchDocumentData {
+            language: doc.language,
+            title: Some(doc.title),
+            tags: Some(doc.tags),
+            extracted: Some(PatchExtractedData {
+                phone: Some(doc.extracted.phone),
+                email: Some(doc.extracted.email),
+                link: Some(doc.extracted.link),
+                iban: Some(doc.extracted.iban),
+                doc_date: doc.extracted.doc_date,
+            }),
+        }
     }
-  }
 }
 
 impl DocumentData {
-  pub fn patch(&mut self, patch: PatchDocumentData) {
-    if let Some(title) = patch.title{
-      self.title = title;
-    }
+    pub fn patch(&mut self, patch: PatchDocumentData) {
+        if let Some(title) = patch.title {
+            self.title = title;
+        }
 
-    if let Some(language) = patch.language{
-      self.language = Some(language);
-    }
+        if let Some(language) = patch.language {
+            self.language = Some(language);
+        }
 
-    if let Some(tags) = patch.tags{
-      self.tags = tags;
-    }
+        if let Some(tags) = patch.tags {
+            self.tags = tags;
+        }
 
-    if let Some(extracted) = patch.extracted{
-      let my_extracted = &mut self.extracted;
-      if let Some(phone) = extracted.phone{
-        my_extracted.phone = phone;
-      }
-      if let Some(email) = extracted.email{
-        my_extracted.email = email;
-      }
-      if let Some(link) = extracted.link{
-        my_extracted.link = link;
-      }
-      if let Some(iban) = extracted.iban{
-        my_extracted.iban = iban;
-      }
-      if let Some(doc_date) = extracted.doc_date{
-        my_extracted.doc_date = Some(doc_date);
-      }
+        if let Some(extracted) = patch.extracted {
+            let my_extracted = &mut self.extracted;
+            if let Some(phone) = extracted.phone {
+                my_extracted.phone = phone;
+            }
+            if let Some(email) = extracted.email {
+                my_extracted.email = email;
+            }
+            if let Some(link) = extracted.link {
+                my_extracted.link = link;
+            }
+            if let Some(iban) = extracted.iban {
+                my_extracted.iban = iban;
+            }
+            if let Some(doc_date) = extracted.doc_date {
+                my_extracted.doc_date = Some(doc_date);
+            }
+        }
     }
-  }
 }
 
 /// PATCH the document data
-#[patch("/<id>", format = "json", data="<patch>")]
+#[patch("/<id>", format = "json", data = "<patch>")]
 pub fn document_patch(
     index: State<Arc<Index>>,
     id: DocId,
@@ -295,7 +297,6 @@ pub fn document_delete_tag(
     index.update_doc_metadata(doc)?;
     Ok(())
 }
-
 
 #[post("/<id>/tags/<tagid>")]
 pub fn document_add_tag(
