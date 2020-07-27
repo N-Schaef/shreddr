@@ -1,6 +1,7 @@
 mod api;
 mod assets;
 mod pages;
+mod documents;
 
 use crate::index::JobType;
 use crossbeam_channel::Sender;
@@ -25,13 +26,30 @@ impl Server {
                 "/",
                 routes![
                     pages::index,
-                    pages::documents,
-                    pages::document,
-                    pages::document_edit,
                     pages::tags,
                     pages::edit_tag,
                     pages::create_or_update_tag,
                     pages::assets
+                ],
+            )
+            .mount(
+                "/documents",
+                routes![
+                    documents::index_get,
+                    documents::index_get_json_fail,
+                    documents::index_get_json,
+                    documents::upload,
+                    documents::document,
+                    documents::document_json,
+                    documents::document_download,
+                    documents::document_remove,
+                    documents::document_reimport,
+                    documents::document_delete_tag,
+                    documents::document_add_tag,
+                    documents::document_patch,
+
+                   // documents::document_edit,
+                    //documents::document,
                 ],
             )
             .mount(
@@ -41,15 +59,6 @@ impl Server {
                     api::tag,
                     api::tags,
                     api::remove_tag,
-                    api::remove_document,
-                    api::documents,
-                    api::document,
-                    api::upload_document,
-                    api::download_document,
-                    api::reimport_document,
-                    api::reimport_document_ocr,
-                    api::add_tag_to_document,
-                    api::delete_tag_from_document
                 ],
             )
             .mount(

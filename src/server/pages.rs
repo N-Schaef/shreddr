@@ -18,7 +18,7 @@ use crate::metadata::tag::{MatcherConfig, TagConfig, TagId};
 //////////        Helpers   ////////////////
 //////////////////////////////////////////////
 
-fn get_content_page<'r>(page_name: &str) -> response::Result<'r> {
+pub fn get_content_page<'r>(page_name: &str) -> response::Result<'r> {
     //Header
     let mut document = match Pages::get("header.html") {
         Some(h) => {
@@ -48,7 +48,7 @@ fn get_content_page<'r>(page_name: &str) -> response::Result<'r> {
         .ok()
 }
 
-fn get_content_page_with_named_template<'r>(
+pub fn get_content_page_with_named_template<'r>(
     page_name: &str,
     values: &HashMap<&str, &str>,
 ) -> response::Result<'r> {
@@ -100,99 +100,9 @@ pub fn index() -> Redirect {
     map.insert("tags",taglen.as_str());
     get_content_page_with_named_template("index.html",&map)
     */
-    Redirect::to(uri!(documents))
+    Redirect::to(uri!(super::documents::index_get))
 }
 
-//////////////////////////////////////////////
-//////////        Documents   ////////////////
-//////////////////////////////////////////////
-
-#[get("/documents")]
-pub fn documents<'r>() -> response::Result<'r> {
-    get_content_page("documents.html")
-}
-
-#[get("/documents/<id>")]
-pub fn document<'r>(index: State<Arc<Index>>, id: crate::index::DocId) -> response::Result<'r> {
-    let doc = match index.get_document(id) {
-        Ok(d) => d,
-        Err(e) => {
-            error!("Could not retrieve document {}", e);
-            return Err(rocket::http::Status::new(404, "could not find document"));
-        }
-    };
-    let mut map = HashMap::new();
-    let extracted_obj = serde_json::to_string(&doc.extracted).unwrap();
-    map.insert("extracted", extracted_obj.as_str());
-    map.insert("title", doc.title.as_str());
-    map.insert("original_filename", doc.original_filename.as_str());
-    let doc_date = doc
-        .extracted
-        .doc_date
-        .map(|d| d.timestamp())
-        .unwrap_or(0)
-        .to_string();
-    map.insert("doc_date", doc_date.as_str());
-    let imported_date = doc.imported_date.timestamp().to_string();
-    map.insert("imported_date", imported_date.as_str());
-    map.insert("tags", "");
-    let id_str = id.to_string();
-    map.insert("id", id_str.as_str());
-    let lang = doc.language.unwrap_or_else(|| "-".into());
-    map.insert("lang", &lang);
-    let tags: Vec<String> = doc.tags.iter().map(|t| t.to_string()).collect();
-    let tags_str = format!("[{}]", tags.join(","));
-    map.insert("tags", &tags_str);
-    get_content_page_with_named_template("show_document.html", &map)
-}
-
-#[derive(FromForm, Debug)]
-pub struct DocForm {
-    title: Option<String>,
-    doc_date: Option<i64>,
-    lang: Option<String>,
-}
-
-#[post(
-    "/documents/<id>",
-    format = "application/x-www-form-urlencoded",
-    data = "<doc_data>"
-)]
-pub fn document_edit(
-    index: State<Arc<Index>>,
-    id: crate::index::DocId,
-    doc_data: Form<DocForm>,
-) -> Redirect {
-    let mut doc = match index.get_document(id) {
-        Ok(d) => d,
-        Err(e) => {
-            error!("Could not retrieve document {}", e);
-            return Redirect::to(uri!(document: id));
-        }
-    };
-
-    if let Some(title) = &doc_data.title {
-        doc.title = title.clone();
-    }
-
-    if let Some(lang) = &doc_data.lang {
-        if lang.is_empty() || lang == "-" {
-            doc.language = None;
-        } else {
-            doc.language = Some(lang.clone());
-        }
-    }
-
-    if let Some(doc_date) = &doc_data.doc_date {
-        doc.extracted.doc_date = Some(chrono::DateTime::<chrono::Utc>::from_utc(
-            chrono::NaiveDateTime::from_timestamp(*doc_date, 0),
-            chrono::Utc,
-        ));
-    }
-    index.update_doc_metadata(doc).unwrap();
-
-    Redirect::to(uri!(document: id))
-}
 
 //////////////////////////////////////////////
 //////////        Tags        ////////////////

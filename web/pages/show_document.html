@@ -4,23 +4,19 @@
 
 <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
   <div class="d-flex flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 id="title" class="h1 mr-2">{{title}}</h1>
+    <h1 id="doctitle" class="h1" contentEditable=true>{{title}}</h1>
+    <div class="text-muted mr-2"><span data-feather="edit"></span></div>
 
-    <form method="post">
-      <input type="text" class="form-control mr-2" style="display: none;" name="title" id="titleForm"
-        aria-describedby="tagHelp" value="{{title}}">
-    </form>
-    <button class="mr-2 btn btn-sm btn-secondary" id="edit-title-btn"><span data-feather="edit"></span></button>
     <div class="btn-group mr-2" role="group">
-      <a href="/api/documents/{{id}}/reimport" title="Reimport" class="btn btn-primary" id="reimport"><i
-          data-feather="refresh-cw"></i></a>
-      <a href="/api/documents/{{id}}/reimport?ocr=true" title="Reimport with forced OCR" class=" btn btn-primary"
-        id="force-ocr"><i data-feather="refresh-cw"></i> Force OCR</a>
+      <button title="Reimport" class="btn btn-primary" id="reimport"><i
+          data-feather="refresh-cw"></i></button>
+      <button title="Reimport with forced OCR" class=" btn btn-primary"
+        id="force-ocr"><i data-feather="refresh-cw"></i> Force OCR</button>
     </div>
   </div>
   <div class="row">
     <div class="col-lg-3">
-      <a href="/api/documents/{{id}}/download">
+      <a href="/documents/{{id}}/download">
         <img class="img-thumbnail rounded float-right" src="/thumbnails/{{id}}.jpg" rel="nofollow" alt="Card image cap">
       </a>
     </div>
@@ -37,13 +33,12 @@
         <div class="w100 d-flex mb-2">
           <h3 class="h3 mr-2" id="docDate"></h3>
           <button class="mr-2 btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown"
-            id="edit-docdate-btn"><span data-feather="edit"></span></button>
+            id="edit-docdate-btn"><span data-feather="calendar"></span></button>
           <div class="dropdown-menu">
-            <form class="px-4 py-3" method="post">
+            <form class="px-4 py-3">
               <div id="datepicker" class="mb-2"></div>
               <input type="text" class="form-control" name="doc_date" style="display: none;" id="docDateInput"
                 placeholder="0">
-              <button type="submit" class="btn btn-primary">Apply</button>
             </form>
           </div>
         </div>
@@ -57,12 +52,8 @@
       <div class="border-bottom">
         <h4 class="h4 text-muted">Language: </h4>
         <div class="w100 d-flex mb-2">
-          <h3 class="h3 mr-2" id="lang"> {{lang}}</h3>
-          <form method="post">
-            <input type="text" class="form-control mr-2" style="display: none;" name="lang" id="langForm"
-              aria-describedby="tagHelp" value="{{lang}}">
-          </form>
-          <button class="mr-2 btn btn-sm btn-secondary" id="edit-lang-btn"><span data-feather="edit"></span></button>
+          <h3 class="h3 mr-2" id="lang" contentEditable=true> {{lang}}</h3> 
+          <div class="text-muted"><span data-feather="edit"></span></div>
         </div>
       </div>
 
@@ -138,5 +129,6 @@
   <script>$("#docDate").text(displayDate({{doc_date}}));</script>
   <script>$("#imported").text(displayDateTime({{imported_date}}));</script>
   <script>createTagButtons({{id}}, {{tags}});</script>
+  <script>initButtons({{id}});</script>
   <script>initExtracted({{extracted}});</script>
 </main>

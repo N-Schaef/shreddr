@@ -365,7 +365,6 @@ impl Index {
     }
 
     /// Returns all documents in the given range without any filters
-    #[allow(dead_code)]
     pub fn get_documents(
         &self,
         offset: usize,
