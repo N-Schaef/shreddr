@@ -235,7 +235,12 @@ impl Tagger {
         //E-Mail
         doc.extracted.email = parsed.emails.iter().map(|s| s.to_string()).collect();
         //Links
-        doc.extracted.link = parsed.links.iter().map(|s| s.to_string()).collect();
+        doc.extracted.link = parsed
+            .links
+            .iter()
+            .map(|s| s.to_string())
+            .filter(|s| !doc.extracted.email.contains(s))
+            .collect();
         //IBAN
         doc.extracted.iban = parsed.ibans.iter().map(|s| s.to_string()).collect();
         Ok(())
