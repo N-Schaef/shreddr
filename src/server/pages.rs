@@ -122,6 +122,8 @@ pub fn document<'r>(index: State<Arc<Index>>, id: crate::index::DocId) -> respon
         }
     };
     let mut map = HashMap::new();
+    let extracted_obj = serde_json::to_string(&doc.extracted).unwrap();
+    map.insert("extracted", extracted_obj.as_str());
     map.insert("title", doc.title.as_str());
     map.insert("original_filename", doc.original_filename.as_str());
     let doc_date = doc
