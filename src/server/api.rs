@@ -112,6 +112,15 @@ pub fn documents(
     Ok(Json(docs))
 }
 
+#[get("/documents/<id>")]
+pub fn document(
+    index: State<Arc<Index>>,
+    id: DocId,
+) -> Result<Json<DocumentData>, Box<dyn std::error::Error>> {
+    let doc = index.get_document(id)?;
+    Ok(Json(doc))
+}
+
 #[get("/documents/<id>/download")]
 pub fn download_document(
     index: State<Arc<Index>>,

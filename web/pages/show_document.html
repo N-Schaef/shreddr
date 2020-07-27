@@ -35,13 +35,13 @@
       <div class="border-bottom">
         <h4 class="h4 text-muted">Document date: </h4>
         <div class="w100 d-flex">
-          <h3 class="h3 mr-2" id="inferred"></h3>
+          <h3 class="h3 mr-2" id="docDate"></h3>
           <button class="mr-2 btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown"
             id="edit-docdate-btn"><span data-feather="edit"></span></button>
           <div class="dropdown-menu">
             <form class="px-4 py-3" method="post">
               <div id="datepicker" class="mb-2"></div>
-              <input type="text" class="form-control" name="inferred_date" style="display: none;" id="docDateInput"
+              <input type="text" class="form-control" name="doc_date" style="display: none;" id="docDateInput"
                 placeholder="0">
               <button type="submit" class="btn btn-primary">Apply</button>
             </form>
@@ -79,7 +79,7 @@
   <script src="/assets/dist/js/bootstrap-datepicker.min.js"></script>
   <script src="/assets/pages/show_doc.js"></script>
 
-  <script>$("#inferred").text(displayDate({{inferred_date}}));</script>
+  <script>$("#docDate").text(displayDate({{doc_date}}));</script>
   <script>$("#imported").text(displayDateTime({{imported_date}}));</script>
   <script>createTagButtons({{id}}, {{tags}});</script>
 </main>

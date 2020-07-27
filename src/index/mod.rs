@@ -233,9 +233,9 @@ impl Index {
             tags: vec![],
             language: None,
             imported_date: chrono::Utc::now(),
-            inferred_date: None,
             file_size: FileExtractor::get_file_size(file)?,
             hash,
+            extracted: document_repository::ExtractedData::default(),
         };
         //Tag
         self.tagger
@@ -288,7 +288,7 @@ impl Index {
 
         //reset inferred data
         doc.tags = vec![];
-        doc.inferred_date = None;
+        doc.extracted = Default::default();
         doc.body = body;
         //Tag
         self.tagger
@@ -327,7 +327,7 @@ impl Index {
         ContentExtractor::render_thumbnail(&doc_path, &thumbnail_file);
         //reset inferred data
         doc.tags = vec![];
-        doc.inferred_date = None;
+        doc.extracted = Default::default();
         doc.body = body;
         //Tag
         self.tagger

@@ -206,24 +206,38 @@ impl Tagger {
             }
         }
         info!("Tagged document {} with tags {:?}", doc.id, ids);
-        self.infer_date(doc)?;
+        self.extract_meta(doc)?;
         self.infer_language(doc)?;
         Ok(())
     }
 
-    fn infer_date(&self, doc: &mut DocumentData) -> Result<(), TaggingError> {
+    fn extract_meta(&self, doc: &mut DocumentData) -> Result<(), TaggingError> {
         let parsed =
             commonregex::common_regex(doc.body.as_ref().ok_or(TaggingError::EmptyBody(doc.id))?);
+        //Dates
         let dates = parsed.dates;
         debug!("Extracted dates from document {}: {:?}", doc.id, dates);
         if !dates.is_empty() {
-            doc.inferred_date =
+            doc.extracted.doc_date =
                 diligent_date_parser::parse_date(dates[0]).map(|d| d.with_timezone(&chrono::Utc));
-            match &doc.inferred_date {
+            match &doc.extracted.doc_date {
                 Some(d) => info!("Inferred date {} for document {}", &d, doc.id),
                 None => info!("Could not inferr date fro document {}", doc.id),
             }
         }
+
+        //Telephone numbers
+        doc.extracted.phone = parsed
+            .phones_with_exts
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
+        //E-Mail
+        doc.extracted.email = parsed.emails.iter().map(|s| s.to_string()).collect();
+        //Links
+        doc.extracted.link = parsed.links.iter().map(|s| s.to_string()).collect();
+        //IBAN
+        doc.extracted.iban = parsed.ibans.iter().map(|s| s.to_string()).collect();
         Ok(())
     }
 

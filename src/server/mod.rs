@@ -43,6 +43,7 @@ impl Server {
                     api::remove_tag,
                     api::remove_document,
                     api::documents,
+                    api::document,
                     api::upload_document,
                     api::download_document,
                     api::reimport_document,
