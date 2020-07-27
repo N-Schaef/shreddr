@@ -175,10 +175,10 @@ function createDocumentCard(doc) {
   var date = new Date(0);
   date.setUTCSeconds(doc.imported_date)
   card.find(".created").text("Imported: " + date.toLocaleDateString() + " - " + date.toLocaleTimeString());
-  if (doc.inferred_date) {
+  if (doc.extracted.doc_date) {
     date = new Date(0);
-    date.setUTCSeconds(doc.inferred_date);
-    card.find(".inferred").text("Inferred: " + date.toLocaleDateString());
+    date.setUTCSeconds(doc.extracted.doc_date);
+    card.find(".inferred").text("Document: " + date.toLocaleDateString());
   }
   let cardDiv = $("<div class=\"col-11 col-sm-10 col-md-6 col-lg-4 col-xl-2 py-2 \"></div>")
   cardDiv.html(card);
