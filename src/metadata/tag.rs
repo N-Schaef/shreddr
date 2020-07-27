@@ -109,13 +109,15 @@ impl Matcher for AnyMatcher {
 pub struct Tagger {
     tags: HashMap<TagId, TagConfig>,
     tags_file: PathBuf,
+    extract_extended_metadata: bool,
 }
 
 impl Tagger {
-    pub fn new(data_dir: &Path) -> Result<Tagger, TaggingError> {
+    pub fn new(data_dir: &Path, extract_extended_metadata: bool) -> Result<Tagger, TaggingError> {
         let mut tagger = Tagger {
             tags: HashMap::new(),
             tags_file: data_dir.join("tags.toml"),
+            extract_extended_metadata,
         };
         tagger.load_config()?;
         Ok(tagger)
@@ -226,27 +228,30 @@ impl Tagger {
             }
         }
 
-        //IBAN
-        doc.extracted.iban = parsed.ibans.iter().map(|s| s.to_string()).collect();
+        if self.extract_extended_metadata {
+            //IBAN
+            doc.extracted.iban = parsed.ibans.iter().map(|s| s.to_string()).collect();
 
-        //Telephone numbers
-        doc.extracted.phone = parsed
-            .phones
-            .iter()
-            .map(|s| s.to_string())
-            .filter(|t| !doc.extracted.iban.iter().any(|i| i.contains(t)))
-            .collect();
+            //Telephone numbers
+            doc.extracted.phone = parsed
+                .phones
+                .iter()
+                .map(|s| s.to_string())
+                .filter(|t| !doc.extracted.iban.iter().any(|i| i.contains(t)))
+                .collect();
 
-        //E-Mail
-        doc.extracted.email = parsed.emails.iter().map(|s| s.to_string()).collect();
+            //E-Mail
+            doc.extracted.email = parsed.emails.iter().map(|s| s.to_string()).collect();
 
-        //Links
-        doc.extracted.link = parsed
-            .links
-            .iter()
-            .map(|s| s.to_string())
-            .filter(|s| !doc.extracted.email.contains(s))
-            .collect();
+            //Links
+            doc.extracted.link = parsed
+                .links
+                .iter()
+                .map(|s| s.to_string())
+                .filter(|s| !doc.extracted.email.contains(s))
+                .collect();
+        }
+
         Ok(())
     }
 

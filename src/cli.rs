@@ -20,6 +20,12 @@ pub struct ShreddrConfig {
     pub tesseract_languages: Vec<String>,
     #[serde(default)]
     pub max_upload_size: u64,
+    #[serde(default = "default_true")]
+    pub extract_extended_metadata: bool,
+}
+
+fn default_true() -> bool {
+    true
 }
 
 //Error Handling

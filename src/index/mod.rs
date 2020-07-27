@@ -84,19 +84,21 @@ impl Index {
     /// Creates a new index with the given repositories and languages.
     /// It uses the data_directory to store temporary data and thumbnails
     pub fn new(
-        data_dir: &Path,
-        tesseract_languages: &[String],
+        cfg: &crate::cli::ShreddrConfig,
         file_repo: Arc<RwLock<dyn FileRepository + Send + Sync>>,
         doc_repo: Arc<RwLock<dyn DocumentRepository + Send + Sync>>,
     ) -> Result<Index, IndexError> {
-        let tmp_dir = data_dir.join("tmp");
+        let tmp_dir = cfg.data_dir.join("tmp");
         std::fs::create_dir_all(&tmp_dir)?;
-        let thumbnails_dir = data_dir.join("thumbnails");
+        let thumbnails_dir = cfg.data_dir.join("thumbnails");
         std::fs::create_dir_all(&thumbnails_dir)?;
-        let tagger = Arc::new(RwLock::new(Tagger::new(data_dir)?));
+        let tagger = Arc::new(RwLock::new(Tagger::new(
+            &cfg.data_dir,
+            cfg.extract_extended_metadata,
+        )?));
         let extractor = Arc::new(RwLock::new(ContentExtractor::new(
             &tmp_dir,
-            tesseract_languages,
+            &cfg.tesseract_languages,
         )));
 
         Ok(Index {
@@ -105,7 +107,7 @@ impl Index {
             tagger,
             extractor,
             thumbnails_dir,
-            data_dir: data_dir.into(),
+            data_dir: cfg.data_dir.clone(),
             tmp_dir,
             current_job: Arc::new(RwLock::new(None)),
         })
