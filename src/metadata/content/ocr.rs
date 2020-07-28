@@ -38,6 +38,7 @@ where
                 i.to_str()
                     .ok_or_else(|| OCRError::ImageError(format!("{:#?}", i)))?,
             );
+            lt.set_fallback_source_resolution(300);
             let page_text = lt.get_utf8_text()?;
             text.push_str(&page_text);
         }
