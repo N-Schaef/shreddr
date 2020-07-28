@@ -105,7 +105,7 @@ function nextHandler(pageIndex){
 function createDocumentCard(doc) {
   const template = `
   <div class="card shadow-sm h-100" id="doc-${doc.id}">
-        <div class="card-header">
+        <div class="card-header" style="padding: .5rem;">
         <a href="/documents/${doc.id}" class="text-dark" style="text-decoration: none;"><h5 class="card-title">${doc.title}</h5></a>
         </div>
         <img class="card-img-bottom" src="/thumbnails/${doc.id}.jpg" rel="nofollow" alt="Document thumbnail">
@@ -113,18 +113,18 @@ function createDocumentCard(doc) {
           <p class="card-text"></p>
         </div>
 
-        <div class="btn-group docbuttons" style="display: none;">
-          <a href="/documents/${doc.id}/download" title="Download document" class="btn btn-primary download-doc"
+        <div class="btn-group docbuttons w-100" style="display: none;">
+          <a href="/documents/${doc.id}/download" title="Download document" class="btn btn-primary w-100 download-doc"
             style="border-radius: 0 !important;">${feather.icons['download'].toSvg()}</a>
-          <button type="button" title="Reprocess document" class="btn btn-secondary reimport-doc"
+          <button type="button" title="Reprocess document" class="btn btn-secondary w-100 reimport-doc"
             style="border-radius: 0 !important;">${feather.icons['refresh-cw'].toSvg()}</button>
-          <a href="/documents/${doc.id}" title="Edit document metadata" class="btn btn-secondary edit-doc"
+          <a href="/documents/${doc.id}" title="Edit document metadata" class="btn btn-secondary w-100 edit-doc"
             style="border-radius: 0 !important;">${feather.icons['edit'].toSvg()}</a>
-          <button type="button" title="Remove document" class="btn btn-danger remove-doc"
+          <button type="button" title="Remove document" class="btn btn-danger w-100 remove-doc"
             style="border-radius: 0 !important;">${feather.icons['trash-2'].toSvg()}</button>
         </div>
 
-        <div class="card-footer text-muted">
+        <div class="card-footer text-muted" style="padding: .5rem;">
           <div class="created">Imported Yesterday</div>
           <div class="inferred"></div>
         </div>
@@ -214,8 +214,6 @@ function createDocumentCard(doc) {
 
       $("#filter-btn").html(createSearchTagButton());
       feather.replace();
-
-      bsCustomFileInput.init()
 
      window.ias = new InfiniteAjaxScroll('#documents',{
        item: '.card',
