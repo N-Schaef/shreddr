@@ -104,8 +104,7 @@ fn main() -> Result<(), ShreddrError> {
     // Init backend
     let index = Arc::new(
         match index::Index::new(
-            &cfg.data_dir,
-            &cfg.tesseract_languages,
+            &cfg,
             Arc::new(RwLock::new(file_repo)),
             Arc::new(RwLock::new(doc_repo)),
         ) {

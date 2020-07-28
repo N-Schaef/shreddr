@@ -4,6 +4,20 @@ use chrono::serde::{ts_seconds, ts_seconds_option};
 
 pub mod local_repository;
 
+#[derive(Debug, Serialize, Deserialize, Clone, Default)]
+pub struct ExtractedData {
+    #[serde(default)]
+    pub phone: Vec<String>,
+    #[serde(default)]
+    pub email: Vec<String>,
+    #[serde(default)]
+    pub link: Vec<String>,
+    #[serde(default)]
+    pub iban: Vec<String>,
+    #[serde(with = "ts_seconds_option")]
+    pub doc_date: Option<chrono::DateTime<chrono::Utc>>,
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct DocumentData {
     pub id: super::DocId,
@@ -14,11 +28,11 @@ pub struct DocumentData {
     pub tags: Vec<TagId>,
     #[serde(with = "ts_seconds")]
     pub imported_date: chrono::DateTime<chrono::Utc>,
-    #[serde(with = "ts_seconds_option")]
-    pub inferred_date: Option<chrono::DateTime<chrono::Utc>>,
-    pub language: Option<String>,
     pub hash: String,
     pub file_size: u64,
+    pub language: Option<String>,
+    // Extracted metadata
+    pub extracted: ExtractedData,
 }
 
 //Error Handling

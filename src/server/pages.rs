@@ -122,14 +122,17 @@ pub fn document<'r>(index: State<Arc<Index>>, id: crate::index::DocId) -> respon
         }
     };
     let mut map = HashMap::new();
+    let extracted_obj = serde_json::to_string(&doc.extracted).unwrap();
+    map.insert("extracted", extracted_obj.as_str());
     map.insert("title", doc.title.as_str());
     map.insert("original_filename", doc.original_filename.as_str());
-    let inferred_date = doc
-        .inferred_date
+    let doc_date = doc
+        .extracted
+        .doc_date
         .map(|d| d.timestamp())
         .unwrap_or(0)
         .to_string();
-    map.insert("inferred_date", inferred_date.as_str());
+    map.insert("doc_date", doc_date.as_str());
     let imported_date = doc.imported_date.timestamp().to_string();
     map.insert("imported_date", imported_date.as_str());
     map.insert("tags", "");
@@ -146,7 +149,7 @@ pub fn document<'r>(index: State<Arc<Index>>, id: crate::index::DocId) -> respon
 #[derive(FromForm, Debug)]
 pub struct DocForm {
     title: Option<String>,
-    inferred_date: Option<i64>,
+    doc_date: Option<i64>,
     lang: Option<String>,
 }
 
@@ -180,9 +183,9 @@ pub fn document_edit(
         }
     }
 
-    if let Some(inferred_date) = &doc_data.inferred_date {
-        doc.inferred_date = Some(chrono::DateTime::<chrono::Utc>::from_utc(
-            chrono::NaiveDateTime::from_timestamp(*inferred_date, 0),
+    if let Some(doc_date) = &doc_data.doc_date {
+        doc.extracted.doc_date = Some(chrono::DateTime::<chrono::Utc>::from_utc(
+            chrono::NaiveDateTime::from_timestamp(*doc_date, 0),
             chrono::Utc,
         ));
     }

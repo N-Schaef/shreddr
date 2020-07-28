@@ -28,20 +28,20 @@
 
       <div class="border-bottom">
         <h4 class="h4 text-muted">Original filename: </h4>
-        <h3 class="h3 " id="original_filename">{{original_filename}}</h3>
+        <h3 class="h3 mb-2" id="original_filename">{{original_filename}}</h3>
       </div>
 
 
       <div class="border-bottom">
         <h4 class="h4 text-muted">Document date: </h4>
-        <div class="w100 d-flex">
-          <h3 class="h3 mr-2" id="inferred"></h3>
+        <div class="w100 d-flex mb-2">
+          <h3 class="h3 mr-2" id="docDate"></h3>
           <button class="mr-2 btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown"
             id="edit-docdate-btn"><span data-feather="edit"></span></button>
           <div class="dropdown-menu">
             <form class="px-4 py-3" method="post">
               <div id="datepicker" class="mb-2"></div>
-              <input type="text" class="form-control" name="inferred_date" style="display: none;" id="docDateInput"
+              <input type="text" class="form-control" name="doc_date" style="display: none;" id="docDateInput"
                 placeholder="0">
               <button type="submit" class="btn btn-primary">Apply</button>
             </form>
@@ -51,12 +51,12 @@
 
       <div class="border-bottom">
         <h4 class="h4 text-muted">Imported date: </h4>
-        <h3 class="h3 " id="imported"></h3>
+        <h3 class="h3 mb-2" id="imported"></h3>
       </div>
 
       <div class="border-bottom">
         <h4 class="h4 text-muted">Language: </h4>
-        <div class="w100 d-flex">
+        <div class="w100 d-flex mb-2">
           <h3 class="h3 mr-2" id="lang"> {{lang}}</h3>
           <form method="post">
             <input type="text" class="form-control mr-2" style="display: none;" name="lang" id="langForm"
@@ -66,20 +66,77 @@
         </div>
       </div>
 
-      <div>
+      <div class="border-bottom">
         <h4 class="h4 text-muted">Tags: </h4>
-        <div id="tags">
+        <div id="tags" class="mb-2">
 
         </div>
       </div>
 
+
     </div>
 
+    
+<h4 class="h4 text-muted mt-4" id="metaHeader" style="display: none;" data-toggle="tooltip" title="Additional information the system extracted from the document. This data may not be correct and should be double checked.">Extracted information: </h4>
+<div class="d-flex flex-row flex-wrap">
+  <div id="URLS-div" style="display: none;" class="border-bottom mr-2 mb-2">
+    <div id="URLS">
+      <table class="table table-bordered" id="urlTable">
+        <thead>
+          <tr>
+            <th scope="col">URLs</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+    <div id="emails-div" style="display: none;" class="border-bottom mr-2 mb-2">
+      <div id="emails">
+        <table class="table table-bordered" id="emailsTable">
+          <thead>
+            <tr>
+              <th scope="col">E-Mail Addresses</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="Phones-div" style="display: none;" class="border-bottom mr-2 mb-2">
+      <div id="Phones">
+        <table class="table table-bordered" id="phoneTable">
+          <thead>
+            <tr>
+              <th scope="col">Telephone Numbers</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="iban-div" style="display: none;" class="border-bottom mr-2">
+      <div id="iban">
+        <table class="table table-bordered" id="ibanTable">
+          <thead>
+            <tr>
+              <th scope="col">IBAN Numbers</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
   </div>
   <script src="/assets/dist/js/bootstrap-datepicker.min.js"></script>
   <script src="/assets/pages/show_doc.js"></script>
 
-  <script>$("#inferred").text(displayDate({{inferred_date}}));</script>
+  <script>$("#docDate").text(displayDate({{doc_date}}));</script>
   <script>$("#imported").text(displayDateTime({{imported_date}}));</script>
   <script>createTagButtons({{id}}, {{tags}});</script>
+  <script>initExtracted({{extracted}});</script>
 </main>

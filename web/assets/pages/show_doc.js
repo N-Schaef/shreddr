@@ -117,3 +117,44 @@ $('#datepicker').on('changeDate', function() {
       $('#datepicker').datepicker('getUTCDate').getTime()/1000
   );
 });
+
+function initExtracted(extracted){
+  if(extracted.link.length > 0){
+    extracted.link.forEach(function(link) {
+      if (!link.startsWith("http")) {
+        link = "http://"+link;
+      }
+      const row = `<tr><td><a href="${link}">${link}</a></td></tr>`;
+      $('#urlTable > tbody:last-child').append(row);
+    });
+    $('#metaHeader').show();
+    $('#URLS-div').show();
+  }
+
+  if(extracted.email.length > 0){
+    extracted.email.forEach(function(email) {
+      const row = `<tr><td><a href="mailto:${email}">${email}</a></td></tr>`;
+      $('#emailsTable > tbody:last-child').append(row);
+    });
+    $('#metaHeader').show();
+    $('#emails-div').show();
+  }
+
+  if(extracted.phone.length > 0){
+    extracted.phone.forEach(function(phone) {
+      const row = `<tr><td><a href="tel:${phone}">${phone}</a></td></tr>`;
+      $('#phoneTable > tbody:last-child').append(row);
+    });
+    $('#metaHeader').show();
+    $('#Phones-div').show();
+  }
+
+  if(extracted.iban.length > 0){
+    extracted.iban.forEach(function(iban) {
+      const row = `<tr><td>${iban}</td></tr>`;
+      $('#ibanTable > tbody:last-child').append(row);
+    });
+    $('#metaHeader').show();
+    $('#iban-div').show();
+  }
+}

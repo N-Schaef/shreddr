@@ -12,6 +12,8 @@ use tantivy::{Index, IndexReader, IndexWriter, ReloadPolicy};
 
 use super::{DocumentData, DocumentRepository, DocumentRepositoryError, FilterOptions, SortOrder};
 
+mod migrations;
+
 pub struct LocalDocumentRepository {
     index_writer: IndexWriter,
     index_reader: IndexReader,
@@ -41,6 +43,14 @@ pub enum IndexerError {
     NotImplementedError(),
     #[error("could not load/write document file")]
     ConfigError(#[from] confy::ConfyError),
+    #[error("could not migrate repo")]
+    MigrationError(#[from] migrations::MigrationError),
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+struct Documents {
+    version: usize,
+    docs: Vec<DocumentData>,
 }
 
 impl LocalDocumentRepository {
@@ -58,11 +68,15 @@ impl LocalDocumentRepository {
             .writer(5000000)
             .map_err(|e| IndexerError::TantivyException(format!("{:?}", e)))?;
 
+        let doc_file = index_dir.join("docs.yaml");
+
+        migrations::migrate(&doc_file)?;
+
         Ok(LocalDocumentRepository {
             schema,
             index_reader: reader,
             index_writer: writer,
-            doc_file: index_dir.join("docs.yaml"),
+            doc_file,
         })
     }
 
@@ -120,9 +134,9 @@ impl LocalDocumentRepository {
 
         debug!("Adding document {} to index", doc_data.id);
         self.index_writer.add_document(doc);
-        let mut cfg: Vec<DocumentData> = confy::load_path(&self.doc_file)?;
-        cfg.retain(|d| d.id != doc_data.id);
-        cfg.push(doc_data.clone());
+        let mut cfg: Documents = confy::load_path(&self.doc_file)?;
+        cfg.docs.retain(|d| d.id != doc_data.id);
+        cfg.docs.push(doc_data.clone());
         confy::store_path(&self.doc_file, cfg)?;
         self.index_writer
             .commit()
@@ -140,16 +154,16 @@ impl LocalDocumentRepository {
         self.index_writer
             .delete_term(tantivy::Term::from_field_u64(id, doc_id));
 
-        let mut cfg: Vec<DocumentData> = confy::load_path(&self.doc_file)?;
-        cfg.retain(|d| d.id != doc_id);
+        let mut cfg: Documents = confy::load_path(&self.doc_file)?;
+        cfg.docs.retain(|d| d.id != doc_id);
         confy::store_path(&self.doc_file, cfg)?;
         Ok(())
     }
 
     /// Retrieves a document from the repository
     fn _get_document(&self, id: DocId) -> Result<DocumentData, IndexerError> {
-        let cfg: Vec<DocumentData> = confy::load_path(&self.doc_file)?;
-        for doc in &cfg {
+        let cfg: Documents = confy::load_path(&self.doc_file)?;
+        for doc in &cfg.docs {
             if doc.id == id {
                 return Ok(doc.clone());
             }
@@ -171,8 +185,8 @@ impl LocalDocumentRepository {
         offset: usize,
         count: usize,
     ) -> Result<Vec<DocumentData>, IndexerError> {
-        let cfg: Vec<DocumentData> = confy::load_path(&self.doc_file)?;
-        let slice = &cfg[offset..std::cmp::min(offset + count, cfg.len())];
+        let cfg: Documents = confy::load_path(&self.doc_file)?;
+        let slice = &cfg.docs[offset..std::cmp::min(offset + count, cfg.docs.len())];
         Ok(slice.to_vec())
     }
 
@@ -183,7 +197,7 @@ impl LocalDocumentRepository {
         count: usize,
         filter: FilterOptions,
     ) -> Result<Vec<DocumentData>, IndexerError> {
-        let mut cfg: Vec<DocumentData> = confy::load_path(&self.doc_file)?;
+        let mut cfg: Documents = confy::load_path(&self.doc_file)?;
         let mut sorted = false;
         if let Some(query) = &filter.query {
             if !query.is_empty() {
@@ -194,13 +208,13 @@ impl LocalDocumentRepository {
                         max = *v
                     }
                 }
-                cfg.retain(|d| {
+                cfg.docs.retain(|d| {
                     query_result
                         .get(&d.id)
                         .map(|score| score > &(max * 0.1))
                         .unwrap_or(false)
                 });
-                cfg.sort_unstable_by(|a, b| {
+                cfg.docs.sort_unstable_by(|a, b| {
                     query_result
                         .get(&a.id)
                         .unwrap()
@@ -212,24 +226,26 @@ impl LocalDocumentRepository {
             }
         }
         if !filter.tags.is_empty() {
-            cfg.retain(|d| filter.tags.intersect(d.tags.clone()).len() >= filter.tags.len())
+            cfg.docs
+                .retain(|d| filter.tags.intersect(d.tags.clone()).len() >= filter.tags.len())
         }
         match filter.sort {
-            SortOrder::ImportedDate => cfg.sort_unstable_by(|a, b| {
+            SortOrder::ImportedDate => cfg.docs.sort_unstable_by(|a, b| {
                 a.imported_date
                     .partial_cmp(&b.imported_date)
                     .unwrap()
                     .reverse()
             }),
-            SortOrder::InferredDate => cfg.sort_unstable_by(|a, b| {
-                a.inferred_date
-                    .partial_cmp(&b.inferred_date)
+            SortOrder::InferredDate => cfg.docs.sort_unstable_by(|a, b| {
+                a.extracted
+                    .doc_date
+                    .partial_cmp(&b.extracted.doc_date)
                     .unwrap_or(std::cmp::Ordering::Less)
                     .reverse()
             }),
             SortOrder::NoOrder => {
                 if !sorted {
-                    cfg.sort_unstable_by(|a, b| {
+                    cfg.docs.sort_unstable_by(|a, b| {
                         a.imported_date
                             .partial_cmp(&b.imported_date)
                             .unwrap()
@@ -238,16 +254,16 @@ impl LocalDocumentRepository {
                 }
             }
         }
-        let slice =
-            &cfg[std::cmp::min(offset, cfg.len())..std::cmp::min(offset + count, cfg.len())];
+        let slice = &cfg.docs
+            [std::cmp::min(offset, cfg.docs.len())..std::cmp::min(offset + count, cfg.docs.len())];
         Ok(slice.to_vec())
     }
 
     fn _update_metadata(&mut self, doc: &DocumentData) -> Result<(), IndexerError> {
         //Update metadata array
-        let mut cfg: Vec<DocumentData> = confy::load_path(&self.doc_file)?;
-        cfg.retain(|d| d.id != doc.id);
-        cfg.push(doc.clone());
+        let mut cfg: Documents = confy::load_path(&self.doc_file)?;
+        cfg.docs.retain(|d| d.id != doc.id);
+        cfg.docs.push(doc.clone());
         confy::store_path(&self.doc_file, cfg)?;
 
         Ok(())
@@ -288,8 +304,8 @@ impl LocalDocumentRepository {
     }
 
     fn _contains_hash(&self, hash: &str) -> Result<Option<DocId>, IndexerError> {
-        let cfg: Vec<DocumentData> = confy::load_path(&self.doc_file)?;
-        match cfg.iter().find(|&d| d.hash == hash) {
+        let cfg: Documents = confy::load_path(&self.doc_file)?;
+        match cfg.docs.iter().find(|&d| d.hash == hash) {
             Some(d) => Ok(Some(d.id)),
             None => Ok(None),
         }
