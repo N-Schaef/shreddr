@@ -142,7 +142,7 @@ function createAddButton(docId, tagMap) {
 }
 
 function createTagButtons(docId, tags) {
-  $.get("/api/tags")
+  $.get("/tags/json")
     .done(function (data) {
       let tagMap = new Map()
       data.forEach(function (tag) {

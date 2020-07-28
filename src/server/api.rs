@@ -1,10 +1,5 @@
-
-
 use crate::index::JobType;
-use crate::metadata::tag::{TagConfig, TagId};
 use crossbeam_channel::Sender;
-
-
 use rocket::State;
 
 use std::sync::Arc;
@@ -48,29 +43,4 @@ pub fn job_status(
             None => Json(JobStatus::Idle),
         },
     }
-}
-
-//////////////////////////////////////////////
-//////////        Tags        ////////////////
-//////////////////////////////////////////////
-
-#[get("/tags/<id>")]
-pub fn tag(index: State<Arc<Index>>, id: TagId) -> Option<Json<TagConfig>> {
-    let tag = (*index).get_tag(id);
-    match tag {
-        None => None,
-        Some(t) => Some(Json(t)),
-    }
-}
-
-#[delete("/tags/<id>")]
-pub fn remove_tag(index: State<Arc<Index>>, id: TagId) -> Result<(), crate::index::IndexError> {
-    (*index).remove_tag(id)?;
-    Ok(())
-}
-
-#[get("/tags")]
-pub fn tags(index: State<Arc<Index>>) -> Json<Vec<TagConfig>> {
-    let tags = (*index).get_tags();
-    Json(tags)
 }

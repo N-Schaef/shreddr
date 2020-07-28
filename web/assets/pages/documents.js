@@ -200,7 +200,7 @@ function createDocumentCard(doc) {
 
   var tags = JSON.parse(sessionStorage.getItem("filterTags")) || [];
   tagMap = new Map()
-  $.get("/api/tags")
+  $.get("/tags/json")
     .done(function (data) {
       data.forEach(function (tag) {
         tagMap.set(tag.id, tag);
@@ -230,7 +230,7 @@ function createDocumentCard(doc) {
         form_data.append("file", fileList[i]);
         $.ajax({
           // Your server script to process the upload
-          url: '/api/documents',
+          url: '/documents',
           type: 'POST',
       
           // Form data

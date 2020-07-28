@@ -2,6 +2,7 @@ mod api;
 mod assets;
 mod documents;
 mod pages;
+mod tags;
 
 use crate::index::JobType;
 use crossbeam_channel::Sender;
@@ -22,16 +23,7 @@ impl Server {
             .manage(index)
             .manage(job_queue)
             .manage(cfg.clone())
-            .mount(
-                "/",
-                routes![
-                    pages::index,
-                    pages::tags,
-                    pages::edit_tag,
-                    pages::create_or_update_tag,
-                    pages::assets
-                ],
-            )
+            .mount("/", routes![pages::index, pages::assets])
             .mount(
                 "/documents",
                 routes![
@@ -52,9 +44,17 @@ impl Server {
                 ],
             )
             .mount(
-                "/api",
-                routes![api::job_status, api::tag, api::tags, api::remove_tag,],
+                "/tags",
+                routes![
+                    tags::tag_json,
+                    tags::tags_json,
+                    tags::remove_tag,
+                    tags::tags,
+                    tags::edit_tag,
+                    tags::create_or_update_tag,
+                ],
             )
+            .mount("/api", routes![api::job_status,])
             .mount(
                 "/thumbnails",
                 StaticFiles::from(cfg.data_dir.join("thumbnails")),

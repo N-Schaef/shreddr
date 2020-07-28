@@ -2,7 +2,7 @@
 (function () {
   'use strict'
 
-  $.get("/api/tags")
+  $.get("/tags/json")
   .done(function( data ) {
     $.each(data, function () {
       if(this.deactivated) {return;}
@@ -14,7 +14,7 @@
       newTag.find(".edit-tag").attr("href","/tags/"+this.id+"/edit");
       newTag.find(".remove-tag").on('click', function(){
         $.ajax({
-          url: '/api/tags/'+this.id,
+          url: '/tags/'+this.id,
           type: 'DELETE',
           success: function(result) {
             location.reload();
