@@ -261,7 +261,7 @@ impl Tagger {
                 info!("Could not infer language in document {}.", doc.id);
             }
             Some(info) => {
-                doc.language = Some(info.lang().code().into());
+                doc.language = Some(info.lang().eng_name().into());
                 info!(
                     "Document {} is written in {} with confidence of {}",
                     doc.id,
