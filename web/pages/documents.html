@@ -16,54 +16,50 @@
       </div>
       -->
 
-      <button type="button" class="btn btn-sm btn-success dropdown-toggle mr-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <button type="button" class="btn btn-sm btn-success dropdown-toggle mr-1" data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">
         Add
       </button>
       <div class="dropdown-menu">
-        <form enctype="multipart/form-data" class="px-4 py-3" id="uploadForm">
-
-          <div class="form-file mb-2">
-            <input type="file" name="file" class="form-file-input" id="customFile">
-            <label class="form-file-label" for="customFile">
-              <span class="form-file-text">Choose file...</span>
-              <span class="form-file-button">Browse</span>
-            </label>
+        <form enctype="multipart/form-data" class="px-4 py-3 custom-form" id="uploadForm">
+          <div class="custom-file mb-2">
+            <input type="file" class="custom-file-input" multiple id="customFile">
+            <label class="custom-file-label" for="customFile">Choose files...</label>
           </div>
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
             <input type="button" class="btn btn-primary" value="Upload" id="uploadButton" />
             <div id="status"></div>
           </div>
-          
-
         </form>
-        
       </div>
 
       <div id="filter-btn">
 
       </div>
-      <div class="dropdown show">
-        <a class="btn btn-sm btn-outline-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <span data-feather="arrow-down"></span> Sort By
-        </a>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-          <a class="dropdown-item" href="?order=0">Imported Date</a>
-          <a class="dropdown-item" href="?order=1">Document Date</a>
-        </div>
+
+      <div>
+      <button class="btn btn-sm btn-outline-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span data-feather="arrow-down"></span> Sort By
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+        <a class="dropdown-item" href="?order=0">Imported Date</a>
+        <a class="dropdown-item" href="?order=1">Document Date</a>
       </div>
+    </div>
+
     </div>
   </div>
 
   <div class="alert alert-primary" role="alert" id="job_alert" style="display: none;">
-    <div id="alertText" ></div> 
+    <div id="alertText"></div>
   </div>
 
   <div class="container"></div>
 
-    <div class="row justify-content-center" id="documents">
+  <div class="row justify-content-center" id="documents">
 
-    </div>
+  </div>
 
   </div>
 
@@ -71,5 +67,9 @@
   <script src="https://unpkg.com/@webcreate/infinite-ajax-scroll/dist/infinite-ajax-scroll.min.js"></script>
   <script src="/assets/pages/documents.js"></script>
   <script src="/assets/dist/js/bs-custom-file-input.min.js"></script>
-
+  <script>
+    $(function () {
+      bsCustomFileInput.init();
+    });
+  </script>
 </main>

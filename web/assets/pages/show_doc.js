@@ -86,12 +86,12 @@ function createTagButton(docId, tagMap, tagId, clickFunc) {
   if (!tag) {
     return "";
   }
-  var btn = $("<a href=\"/tags/" + tagId + "/edit\" type=\"button\" class=\"btn  btn-sm tag-btn mb-2\"></a>");
+  var btn = $("<a href=\"/tags/"+tagId+"/edit\" type=\"button\" class=\"btn btn-secondary btn-sm tag-btn mb-2\" style=\"border-color: transparent;\"></a>");
   btn.text(tag.name);
   btn.css("background-color", tag.color);
   btn.addClass("tag-" + tag.id);
   btn.on("click", clickFunc);
-  var removebtn = $("<button type=\"button\" class=\"btn  btn-sm tag-btn mb-2\"><span data-feather=\"x\"></span></button>");
+  var removebtn = $("<button type=\"button\" class=\"btn btn-sm btn-secondary tag-btn mb-2\" style=\"border-color: transparent;\"><span data-feather=\"x\"></span></button>");
   removebtn.css("background-color", tag.color);
   removebtn.on("click", function () {
     $.ajax({
