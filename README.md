@@ -40,8 +40,6 @@ The following is a non-exhaustive list (in no particular order) of features I cu
  - Improve code quality (documentation, tests, ...)
  - Optional PostgreSQL backend for storage of metadata and FTS to improve performance
  - Improved interface
- - Extraction of additional meta-data
- - Manual selection from a list of potential inferred metadata
  - Dashboard with statistics about recently added documents/tags
  - Validate API input
  - Standardize REST API
