@@ -86,7 +86,7 @@ function createTagButton(docId, tagMap, tagId, clickFunc) {
   if (!tag) {
     return "";
   }
-  var btn = $("<a href=\"/tags/"+tagId+"/edit\" type=\"button\" class=\"btn btn-secondary btn-sm tag-btn mb-2\" style=\"border-color: transparent;\"></a>");
+  var btn = $("<a href=\"/tags/"+tagId+"\" type=\"button\" class=\"btn btn-secondary btn-sm tag-btn mb-2\" style=\"border-color: transparent;\"></a>");
   btn.text(tag.name);
   btn.css("background-color", tag.color);
   btn.addClass("tag-" + tag.id);

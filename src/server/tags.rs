@@ -13,29 +13,34 @@ use std::collections::HashMap;
 
 use crate::metadata::tag::MatcherConfig;
 
+/// GET a specific tag as JSON config
 #[get("/<id>/json")]
 pub fn tag_json(index: State<Arc<Index>>, id: TagId) -> Json<Option<TagConfig>> {
     Json((*index).get_tag(id))
 }
 
+/// DELETE a specific tag
 #[delete("/<id>")]
 pub fn remove_tag(index: State<Arc<Index>>, id: TagId) -> Result<(), crate::index::IndexError> {
     (*index).remove_tag(id)?;
     Ok(())
 }
 
+/// GET all tags as JSON config
 #[get("/json")]
 pub fn tags_json(index: State<Arc<Index>>) -> Json<Vec<TagConfig>> {
     let tags = (*index).get_tags();
     Json(tags)
 }
 
+/// GET the tags page
 #[get("/")]
 pub fn tags<'r>() -> response::Result<'r> {
     get_content_page("tags.html")
 }
 
-#[get("/<id>/edit")]
+/// GET all tags as JSON config
+#[get("/<id>")]
 pub fn edit_tag<'r>(index: State<Arc<Index>>, id: TagId) -> response::Result<'r> {
     match index.get_tag(id) {
         Some(t) => edit_tag_from_config(&t),
@@ -55,7 +60,7 @@ pub fn edit_tag<'r>(index: State<Arc<Index>>, id: TagId) -> response::Result<'r>
 }
 
 #[post(
-    "/<id>/edit",
+    "/<id>",
     format = "application/x-www-form-urlencoded",
     data = "<tag_form>"
 )]
