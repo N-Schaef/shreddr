@@ -1,6 +1,6 @@
 [package]
 name = "shreddr"
-version = "0.1.4-dev"
+version = "0.1.4"
 authors = ["Nico Schäfer <nschaefer@cs.uni-kl.de>"]
 edition = "2018"
 
