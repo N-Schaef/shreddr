@@ -88,7 +88,7 @@ function nextHandler(pageIndex){
 
   paramObj.tag = tags.join();
 
-  return fetch("/api/documents?"+$.param(paramObj))
+  return fetch("/documents/json?"+$.param(paramObj))
   .then(response => response.json())
   .then((data) => {
     let frag = document.createDocumentFragment();
@@ -148,8 +148,8 @@ function createDocumentCard(doc) {
 
   card.find(".reimport-doc").on('click', function () {
     $.ajax({
-      url: "/api/documents/" + doc.id + "/reimport",
-      type: 'GET',
+      url: "/documents/" + doc.id + "/reimport",
+      type: 'PUT',
       success: function (result) {
         updateStatusWindow();
       }
@@ -159,7 +159,7 @@ function createDocumentCard(doc) {
 
   card.find(".remove-doc").on('click', function () {
     $.ajax({
-      url: "/api/documents/" + doc.id,
+      url: "/documents/" + doc.id,
       type: 'DELETE',
       success: function (result) {
         location.reload();
@@ -200,7 +200,7 @@ function createDocumentCard(doc) {
 
   var tags = JSON.parse(sessionStorage.getItem("filterTags")) || [];
   tagMap = new Map()
-  $.get("/api/tags")
+  $.get("/tags/json")
     .done(function (data) {
       data.forEach(function (tag) {
         tagMap.set(tag.id, tag);
@@ -230,7 +230,7 @@ function createDocumentCard(doc) {
         form_data.append("file", fileList[i]);
         $.ajax({
           // Your server script to process the upload
-          url: '/api/documents',
+          url: '/documents',
           type: 'POST',
       
           // Form data

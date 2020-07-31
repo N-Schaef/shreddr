@@ -1,6 +1,8 @@
 mod api;
 mod assets;
+mod documents;
 mod pages;
+mod tags;
 
 use crate::index::JobType;
 use crossbeam_channel::Sender;
@@ -21,37 +23,38 @@ impl Server {
             .manage(index)
             .manage(job_queue)
             .manage(cfg.clone())
+            .mount("/", routes![pages::index, pages::assets])
             .mount(
-                "/",
+                "/documents",
                 routes![
-                    pages::index,
-                    pages::documents,
-                    pages::document,
-                    pages::document_edit,
-                    pages::tags,
-                    pages::edit_tag,
-                    pages::create_or_update_tag,
-                    pages::assets
+                    documents::index_get,
+                    documents::index_get_json_fail,
+                    documents::index_get_json,
+                    documents::upload,
+                    documents::document,
+                    documents::document_json,
+                    documents::document_download,
+                    documents::document_remove,
+                    documents::document_reimport,
+                    documents::document_delete_tag,
+                    documents::document_add_tag,
+                    documents::document_patch,
+                    // documents::document_edit,
+                    //documents::document,
                 ],
             )
             .mount(
-                "/api",
+                "/tags",
                 routes![
-                    api::job_status,
-                    api::tag,
-                    api::tags,
-                    api::remove_tag,
-                    api::remove_document,
-                    api::documents,
-                    api::document,
-                    api::upload_document,
-                    api::download_document,
-                    api::reimport_document,
-                    api::reimport_document_ocr,
-                    api::add_tag_to_document,
-                    api::delete_tag_from_document
+                    tags::tag_json,
+                    tags::tags_json,
+                    tags::remove_tag,
+                    tags::tags,
+                    tags::edit_tag,
+                    tags::create_or_update_tag,
                 ],
             )
+            .mount("/api", routes![api::job_status,])
             .mount(
                 "/thumbnails",
                 StaticFiles::from(cfg.data_dir.join("thumbnails")),
