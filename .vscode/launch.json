@@ -19,7 +19,7 @@
                     "kind": "bin"
                 }
             },
-            "args": ["-c","/tmp/consume","-d","/tmp/data","-s","-t","eng"],
+            "args": ["-c","/home/nico/tmp/consume","-d","/home/nico/tmp/data","-s","-t","deu","-t","eng"],
             "cwd": "${workspaceFolder}"
         },
         {
