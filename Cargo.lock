@@ -2456,7 +2456,7 @@ checksum = "7fdf1b9db47230893d76faad238fd6097fd6d6a9245cd7a4d90dbd639536bbd2"
 
 [[package]]
 name = "shreddr"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "array_tool",
  "async-log",
@@ -3074,9 +3074,9 @@ checksum = "cccddf32554fecc6acb585f82a32a72e28b48f8c4c1883ddfeeeaa96f7d8e519"
 
 [[package]]
 name = "whatlang"
-version = "0.9.0"
+version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bc0289c1d1548414a5645e6583e118e9c569c579ec2a0c32417cc3dbf7a89075"
+checksum = "f76a55a614a468e61d3645f1e65a64b54f69055084eb27be2b531c798b3534cb"
 dependencies = [
  "hashbrown 0.7.2",
 ]
