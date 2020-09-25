@@ -221,9 +221,9 @@ checksum = "3441f0f7b02788e948e47f457ca01f1d7e6d92c693bc132c22b087d3141c03ff"
 
 [[package]]
 name = "bindgen"
-version = "0.52.0"
+version = "0.54.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f1c85344eb535a31b62f0af37be84441ba9e7f0f4111eb0530f43d15e513fe57"
+checksum = "66c0bb6167449588ff70803f4127f0684f9063097eca5016f37eb52b92c2cf36"
 dependencies = [
  "bitflags",
  "cexpr",
@@ -362,9 +362,9 @@ checksum = "5927edd8345aef08578bcbb4aea7314f340d80c7f4931f99fbeb40b99d8f5060"
 
 [[package]]
 name = "cexpr"
-version = "0.3.6"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fce5b5fb86b0c57c20c834c1b412fd09c77c8a59b9473f86272709e78874cd1d"
+checksum = "f4aedb84272dbe89af497cf81375129abda4fc0a9e7c5d317498c15cc30c0d27"
 dependencies = [
  "nom",
 ]
@@ -389,9 +389,9 @@ dependencies = [
 
 [[package]]
 name = "clang-sys"
-version = "0.28.1"
+version = "0.29.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "81de550971c976f176130da4b2978d3b524eaa0fd9ac31f3ceb5ae1231fb4853"
+checksum = "fe6837df1d5cba2397b835c8530f51723267e16abbf83892e9e5af4f0e5dd10a"
 dependencies = [
  "glob",
  "libc",
@@ -711,7 +711,8 @@ dependencies = [
 [[package]]
 name = "diligent-date-parser"
 version = "0.1.2"
-source = "git+https://github.com/rust-syndication/diligent-date-parser#6ec88238def6aeb8b8b0addca3f319ed5ed761e0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e37ea528f01b8bfca1f71bcd06a8e6c898bf8fdfbf24dd9dbc7fb49338ed6d84"
 dependencies = [
  "chrono",
 ]
@@ -1352,9 +1353,9 @@ dependencies = [
 
 [[package]]
 name = "leptonica-sys"
-version = "0.3.1"
+version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "899758ddf1e6d9474eb0cbb9a5d0ab79dce10e9fbc36763be67ac567165633e4"
+checksum = "430af13cc8caf50651e4d936e5172b94ba2a3e730aac6793d1bce209e89250fa"
 dependencies = [
  "bindgen",
  "vcpkg",
@@ -1640,12 +1641,12 @@ dependencies = [
 
 [[package]]
 name = "nom"
-version = "4.2.3"
+version = "5.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2ad2a91a8e869eeb30b9cb3119ae87773a8f4ae617f41b1eb9c154b2905f7bd6"
+checksum = "ffb4262d26ed83a1c0a33a38fe2bb15797329c85770da05e6b828ddb782627af"
 dependencies = [
  "memchr",
- "version_check 0.1.5",
+ "version_check 0.9.2",
 ]
 
 [[package]]
@@ -2772,9 +2773,9 @@ dependencies = [
 
 [[package]]
 name = "tesseract-sys"
-version = "0.5.2"
+version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "36adf7aaa2921ff49e8e23ac900251679a2a58bdff430b673d7d4dd0c3a4e940"
+checksum = "224e53ddd9b5eabd06d7932504db1525ae67c9e48ee15d6c4419439167ed10e3"
 dependencies = [
  "bindgen",
  "leptonica-sys",

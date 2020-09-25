@@ -39,7 +39,7 @@ tempfile = "3.1.*"
 crossbeam-channel = "0.4.*"
 # Meta Data extraction
 commonregex = "0.2.*"
-diligent-date-parser  = { git = "https://github.com/rust-syndication/diligent-date-parser" }
+diligent-date-parser  = "0.1.2"
 array_tool = "1.0.*"
 whatlang = "0.10.0"
 
