@@ -460,7 +460,6 @@ version = "4.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b8e5ef862b2df927249f4e2bdc29c1bd13a33105f900884b0c32acdf32aff584"
 dependencies = [
- "bytes",
  "memchr",
 ]
 
@@ -861,13 +860,13 @@ dependencies = [
 
 [[package]]
 name = "fail"
-version = "0.3.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f63eec71a3013ee912a0ecb339ff0c5fa5ed9660df04bfefa10c250b885d018c"
+checksum = "3be3c61c59fdc91f5dbc3ea31ee8623122ce80057058be560654c5d410d181a6"
 dependencies = [
  "lazy_static",
  "log 0.4.11",
- "rand 0.6.5",
+ "rand 0.7.3",
 ]
 
 [[package]]
@@ -955,15 +954,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f41b048a94555da0f42f1d632e2e19510084fb8e303b0daa2816e733fb3644a0"
 dependencies = [
  "libc",
-]
-
-[[package]]
-name = "fst"
-version = "0.3.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "927fb434ff9f0115b215dc0efd2e4fbdd7448522a92a1aa37c77d6a2f8f1ebd6"
-dependencies = [
- "byteorder",
 ]
 
 [[package]]
@@ -1283,15 +1273,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "itertools"
-version = "0.8.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f56a2d0bc861f9165be4eb3442afd3c236d8a98afd426f65d92324ae1091a484"
-dependencies = [
- "either",
-]
-
-[[package]]
 name = "itoa"
 version = "0.3.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1354,12 +1335,9 @@ dependencies = [
 
 [[package]]
 name = "levenshtein_automata"
-version = "0.1.1"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "73a004f877f468548d8d0ac4977456a249d8fabbdb8416c36db163dfc8f2e8ca"
-dependencies = [
- "fst",
-]
+checksum = "f44db4199cdb049b494a92d105acbfa43c25b3925e33803923ba9580b7bc9e1a"
 
 [[package]]
 name = "libc"
@@ -2623,12 +2601,12 @@ dependencies = [
 
 [[package]]
 name = "tantivy"
-version = "0.12.0"
+version = "0.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "02e1d2fbfa82ab829208e5f03f4d2c177b8a126252ab4f80ed232e1064770efb"
+checksum = "1e0004182d90bd3da64a867acc9a7323671c425a12663452b7b7a3be73230a5c"
 dependencies = [
  "atomicwrites",
- "base64 0.11.0",
+ "base64 0.12.3",
  "bitpacking",
  "byteorder",
  "census",
@@ -2642,7 +2620,6 @@ dependencies = [
  "fs2",
  "futures",
  "htmlescape",
- "itertools",
  "levenshtein_automata",
  "log 0.4.11",
  "memmap",
@@ -2656,7 +2633,6 @@ dependencies = [
  "regex",
  "rust-stemmers",
  "serde",
- "serde_derive",
  "serde_json",
  "smallvec",
  "snap",
@@ -2670,21 +2646,20 @@ dependencies = [
 
 [[package]]
 name = "tantivy-fst"
-version = "0.2.1"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "38878efb477cf2efb7d9112b12b230c27d32abdfec4bea5e66095733f2928610"
+checksum = "cb20cdc0d83e9184560bdde9cd60142dbb4af2e0f770e88fce45770495224205"
 dependencies = [
  "byteorder",
- "levenshtein_automata",
  "regex-syntax 0.4.2",
  "utf8-ranges",
 ]
 
 [[package]]
 name = "tantivy-query-grammar"
-version = "0.12.0"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "900f098da37d350b0e8f116791b9ee43e600704cb6b5cc83b7f826d1b119f21c"
+checksum = "5ea03b8224ca9ff4ccfc7dfab790527c8a9d8edbc53f4677bdf6ba0fd8000c75"
 dependencies = [
  "combine",
 ]
