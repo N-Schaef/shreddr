@@ -22,6 +22,21 @@ pub trait Matcher {
     fn match_document(&self, doc: &DocumentData) -> Result<bool, TaggingError>;
 }
 
+///////////////////////////////////// NoMatcher ///////////////////////////////////////
+/// Matcher matching no document
+pub struct NoMatcher {}
+
+impl NoMatcher {
+    pub fn new() -> NoMatcher {
+        NoMatcher {}
+    }
+}
+
+impl Matcher for NoMatcher {
+    fn match_document(&self, _: &DocumentData) -> Result<bool, TaggingError> {
+        Ok(false)
+    }
+}
 ///////////////////////////////////// Regex Matcher ///////////////////////////////////////
 pub struct RegexMatcher {
     regex: Regex,
@@ -319,6 +334,7 @@ pub enum MatcherConfig {
     RegexMatcher {
         match_str: String,
     },
+    NoMatcher,
 }
 
 fn from_matcher_config(
@@ -336,6 +352,7 @@ fn from_matcher_config(
         MatcherConfig::RegexMatcher { match_str } => {
             Ok(Box::new(RegexMatcher::parse_string(match_str)?))
         }
+        MatcherConfig::NoMatcher => Ok(Box::new(NoMatcher::new())),
     }
 }
 

@@ -82,6 +82,7 @@ pub fn create_or_update_tag(
             match_str: form.any_matcher_match_str,
             case_insensitive: form.any_matcher_case_insensitive,
         }),
+        4 => Some(MatcherConfig::NoMatcher),
         x => {
             error!("Got unknown matcher type `{}`", x);
             None
@@ -146,6 +147,7 @@ fn edit_tag_from_config<'r>(tag: &TagConfig) -> response::Result<'r> {
                 map.insert("any_checked", "checked");
             }
         }
+        MatcherConfig::NoMatcher => {}
     };
     get_content_page_with_named_template("edit_tag.html", &map)
 }

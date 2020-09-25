@@ -34,6 +34,7 @@ use index::file_repository::local_repository::LocalFileRepository;
 use index::JobType;
 
 //Error Handling
+extern crate thiserror;
 use thiserror::Error;
 #[derive(Error, Debug)]
 pub enum ShreddrError {
@@ -155,17 +156,11 @@ fn main() -> Result<(), ShreddrError> {
     if cfg.server {
         let mut loggers: Vec<Box<dyn SharedLogger>> = vec![];
         //Initialize terminal logging
-        match TermLogger::new(LevelFilter::Info, Config::default(), TerminalMode::Mixed) {
-            Some(t) => loggers.push(t),
-            None => {
-                println!("Started in non-interactive terminal, falling back to write logger");
-                loggers.push(WriteLogger::new(
-                    LevelFilter::Info,
-                    Config::default(),
-                    std::io::stdout(),
-                ));
-            }
-        };
+        loggers.push(TermLogger::new(
+            LevelFilter::Info,
+            Config::default(),
+            TerminalMode::Mixed,
+        ));
         //Initialize logfile logging
         loggers.push(WriteLogger::new(
             LevelFilter::Debug,

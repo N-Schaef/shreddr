@@ -37,7 +37,8 @@ where
             lt.set_image(
                 i.to_str()
                     .ok_or_else(|| OCRError::ImageError(format!("{:#?}", i)))?,
-            );
+            )
+            .map_err(|e| OCRError::TesseractError(format!("{}", e)))?;
             lt.set_fallback_source_resolution(300);
             let page_text = lt.get_utf8_text()?;
             text.push_str(&page_text);

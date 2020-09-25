@@ -12,6 +12,10 @@ $('#matcherType').on('change', function() {
     $( "#fullMatcher" ).hide();
     $( "#anyMatcher" ).show();
     $( "#Regex" ).hide();
+  }else if(this. value == "4"){
+    $( "#fullMatcher" ).hide();
+    $( "#anyMatcher" ).hide();
+    $( "#Regex" ).hide();
   }
 });
 
