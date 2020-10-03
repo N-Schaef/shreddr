@@ -10,7 +10,9 @@ use std::io::prelude::*;
 /// All available Shreddr configuration values
 #[derive(Default, Debug, Serialize, Deserialize, Clone)]
 pub struct ShreddrConfig {
+    #[serde(default)]
     pub data_dir: PathBuf,
+    #[serde(default)]
     pub consume_dir: PathBuf,
     #[serde(default)]
     pub server: bool,
@@ -44,6 +46,7 @@ pub fn init_cli() -> Result<ShreddrConfig, CLIError> {
         (author: clap::crate_authors!())
         (@arg DATA: -d --data_dir +takes_value "Sets the storage and config directory")
         (@arg CONSUME: -c --consume +takes_value "Sets the directory from which PDF files are consumed")
+        (@arg CONFIG: --config +takes_value "Sets the config file to use")
         (@arg TESSERACT_LANG: -t --tesseract_lang +takes_value +multiple "Which tesseract languages to use (ISO 639)")
         (@arg SERVER: -s --server "Starts the shreddr server")
     ).get_matches();
@@ -53,7 +56,16 @@ pub fn init_cli() -> Result<ShreddrConfig, CLIError> {
 /// Loads a configuration file if it exists,
 /// and optionally overrides options passed as command line arguments
 fn load_config(cli_arguments: &clap::ArgMatches) -> Result<ShreddrConfig, CLIError> {
-    let mut cfg: ShreddrConfig = confy::load("shreddr")?;
+    let mut cfg: ShreddrConfig;
+
+    //Load config file
+    if let Some(c) = cli_arguments.value_of("CONFIG") {
+        info!("Loading config from file '{}'", c);
+        cfg = confy::load_path(c)?;
+    } else {
+        cfg = confy::load("shreddr")?;
+    }
+
     //Check if CLI overwrites
     if let Some(d) = cli_arguments.value_of("DATA") {
         cfg.data_dir = d.into();

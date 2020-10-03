@@ -17,5 +17,5 @@ echo "apk add --no-cache $packages"
 apk add --no-cache $packages
 
 echo "Starting Shreddr"
-echo "/usr/local/bin/shreddr -s -d /data -c /consume $languages"
-exec /usr/local/bin/shreddr -s -d /data -c /consume $languages
+echo "/usr/local/bin/shreddr -s -d /data -c /consume $languages --config /shreddr.yml"
+exec /usr/local/bin/shreddr -s -d /data -c /consume $languages --config /shreddr.yml 
