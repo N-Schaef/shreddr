@@ -19,7 +19,7 @@
                     "kind": "bin"
                 }
             },
-            "args": ["-c","/home/nico/tmp/consume","-d","/home/nico/tmp/data","-s","-t","deu","-t","eng"],
+            "args": ["-c","/home/nico/tmp/consume","-d","/home/nico/tmp/data","-s","-t","deu","-t","eng", "--config","/home/nico/tmp/shreddr.yml"],
             "cwd": "${workspaceFolder}"
         },
         {
