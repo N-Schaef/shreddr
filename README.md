@@ -68,6 +68,15 @@ You can then access the server at `http://localhost:8000`.
 
 Keep in mind, Shreddr does not have any user management/security, so do not expose the port to the internet.
 
+### Configuration file
+The `shreddr.yaml.default` file in this repository contains all possible configuration values with their default values.
+A path to the config file can optionally be specified with the `--config path/to/file`.
+
+Per default the config file will be created in the following directories:
+```
+// Lin: /home/alice/.config/shreddr
+// Win: C:\Users\Alice\AppData\Roaming\Shreddr\config
+```
 
 ## Installing
 To install Shreddr you can either use the included `docker-compose.yml` or build it yourself using rust.

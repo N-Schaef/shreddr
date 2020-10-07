@@ -12,6 +12,9 @@ services:
     ports:
       - "8000:8000"
     volumes:
-        - ~/tmp/docker/data:/data
-        - ~/tmp/docker/consume:/consume
-        - ~/tmp/docker/shreddr.yml:/shreddr.yml
+      # Directory where all permanent data is stored
+      - ~/tmp/docker/data:/data
+      # Input directory from which documents are (non-destructively) imported from
+      - ~/tmp/docker/consume:/consume
+      # Config file 
+      - ~/tmp/docker/shreddr.yml:/shreddr.yml
