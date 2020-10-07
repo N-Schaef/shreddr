@@ -1,0 +1,19 @@
+# The directory where all of the (temporary) data is stored.
+data_dir: "/path/to/data/directory"
+
+# All pdfs from this directory will be (non destructively) imported into the system 
+consume_dir: "/path/to/consumption/directory"
+
+# Whether or not to run in server mode. Default is CLI only
+server: false
+
+# The languages to use for OCR of documents without embedded text.
+# The system will try all languages in the order they are specified
+tesseract_languages: []
+
+# The maximum size for documents uploaded via the webinterface (in Bytes)
+max_upload_size: 20971520
+
+# Whether extended metadata like phone-numbers, IBAN, e-mails, ... 
+# should be extracted from documents
+extract_extended_metadata: true
