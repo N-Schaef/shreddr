@@ -363,3 +363,135 @@ fn from_tag_config(cfg: &TagConfig) -> Result<Tag, TaggingError> {
         matcher: from_matcher_config(&cfg.matcher)?,
     })
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{AnyMatcher, FullMatcher, Matcher, NoMatcher, RegexMatcher};
+    use crate::index::document_repository::{DocumentData, ExtractedData};
+
+    fn get_document_with_text(text: &str) -> DocumentData {
+        DocumentData {
+            id: 0,
+            original_filename: String::new(),
+            title: String::new(),
+            body: Some(text.into()),
+            tags: vec![],
+            imported_date: chrono::Utc::now(),
+            hash: String::new(),
+            file_size: 0,
+            language: None,
+            extracted: ExtractedData::default(),
+        }
+    }
+
+    #[test]
+    fn nomatcher_test() {
+        let matcher = NoMatcher::new();
+        assert!(!matcher
+            .match_document(&get_document_with_text("Test"))
+            .unwrap());
+        assert!(!matcher.match_document(&get_document_with_text("")).unwrap());
+    }
+
+    #[test]
+    fn fullmatcher_test() {
+        let sensitive_matcher = FullMatcher::new("test", false).unwrap();
+        assert!(sensitive_matcher
+            .match_document(&get_document_with_text("test"))
+            .unwrap());
+        assert!(!sensitive_matcher
+            .match_document(&get_document_with_text("Test"))
+            .unwrap());
+        assert!(sensitive_matcher
+            .match_document(&get_document_with_text("string test"))
+            .unwrap());
+        assert!(sensitive_matcher
+            .match_document(&get_document_with_text("test string"))
+            .unwrap());
+
+        let insensitive_matcher = FullMatcher::new("test", true).unwrap();
+        assert!(insensitive_matcher
+            .match_document(&get_document_with_text("test"))
+            .unwrap());
+        assert!(insensitive_matcher
+            .match_document(&get_document_with_text("Test"))
+            .unwrap());
+        assert!(insensitive_matcher
+            .match_document(&get_document_with_text("string Test"))
+            .unwrap());
+        assert!(insensitive_matcher
+            .match_document(&get_document_with_text("Test string"))
+            .unwrap());
+
+        let multiword_tester = FullMatcher::new("test string", false).unwrap();
+        assert!(!multiword_tester
+            .match_document(&get_document_with_text("test"))
+            .unwrap());
+        assert!(!multiword_tester
+            .match_document(&get_document_with_text("Test"))
+            .unwrap());
+        assert!(!multiword_tester
+            .match_document(&get_document_with_text("string Test"))
+            .unwrap());
+        assert!(multiword_tester
+            .match_document(&get_document_with_text("test string"))
+            .unwrap());
+    }
+
+    #[test]
+    fn anymatcher_test() {
+        let sensitive_matcher = AnyMatcher::new("test1,test2", false).unwrap();
+        assert!(sensitive_matcher
+            .match_document(&get_document_with_text("test1"))
+            .unwrap());
+        assert!(sensitive_matcher
+            .match_document(&get_document_with_text("test2"))
+            .unwrap());
+        assert!(sensitive_matcher
+            .match_document(&get_document_with_text("test1 test2"))
+            .unwrap());
+        assert!(!sensitive_matcher
+            .match_document(&get_document_with_text("Test1"))
+            .unwrap());
+        assert!(!sensitive_matcher
+            .match_document(&get_document_with_text("Test2"))
+            .unwrap());
+        assert!(!sensitive_matcher
+            .match_document(&get_document_with_text("Test1 Test2"))
+            .unwrap());
+
+        let insensitive_matcher = AnyMatcher::new("test1,test2", true).unwrap();
+        assert!(insensitive_matcher
+            .match_document(&get_document_with_text("test1"))
+            .unwrap());
+        assert!(insensitive_matcher
+            .match_document(&get_document_with_text("test2"))
+            .unwrap());
+        assert!(insensitive_matcher
+            .match_document(&get_document_with_text("test1 test2"))
+            .unwrap());
+        assert!(insensitive_matcher
+            .match_document(&get_document_with_text("Test1"))
+            .unwrap());
+        assert!(insensitive_matcher
+            .match_document(&get_document_with_text("Test2"))
+            .unwrap());
+        assert!(insensitive_matcher
+            .match_document(&get_document_with_text("Test1 Test2"))
+            .unwrap());
+    }
+
+    #[test]
+    fn regexmatcher_test() {
+        let matcher = RegexMatcher::parse_string("\\d+").unwrap();
+        assert!(matcher
+            .match_document(&get_document_with_text("1234"))
+            .unwrap());
+        assert!(matcher
+            .match_document(&get_document_with_text("1"))
+            .unwrap());
+        assert!(!matcher
+            .match_document(&get_document_with_text("test"))
+            .unwrap());
+    }
+}
