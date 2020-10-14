@@ -2259,9 +2259,9 @@ dependencies = [
 
 [[package]]
 name = "rocket-multipart-form-data"
-version = "0.9.5"
+version = "0.9.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3976167506b5d00fbc4afb7aa3b16c0558b12d3e78261a4afce3a8ed8c47187a"
+checksum = "73d29a55443ad045eea2121f6047f25dc2f10eda1adc13ed0f00c12af182831f"
 dependencies = [
  "mime 0.3.16",
  "multipart",
