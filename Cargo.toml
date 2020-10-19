@@ -27,7 +27,7 @@ serde_json = "1.0"
 # CLI
 clap = "3.0.0-beta.2" #CLI arguments
 shrust = "0.0" # Interactive cli
-dialoguer = "0.6" # I/O
+dialoguer = "0.7" # I/O
 #indicatif = "0.15" #Progress bar
 #Server
 rocket = "0.4"
