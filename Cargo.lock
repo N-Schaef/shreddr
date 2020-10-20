@@ -716,9 +716,9 @@ dependencies = [
 
 [[package]]
 name = "dialoguer"
-version = "0.7.0"
+version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f4bcbaf013bc5747c9a872073c0ceb0bde6f8ac6fc90e2d24664b3e1d115bbc9"
+checksum = "70f807b2943dc90f9747497d9d65d7e92472149be0b88bf4ce1201b4ac979c26"
 dependencies = [
  "console",
  "lazy_static",
@@ -925,7 +925,7 @@ dependencies = [
  "proc-macro2 1.0.19",
  "quote 1.0.7",
  "syn 1.0.36",
- "synstructure 0.12.4",
+ "synstructure",
 ]
 
 [[package]]
@@ -2647,18 +2647,6 @@ dependencies = [
 
 [[package]]
 name = "synstructure"
-version = "0.10.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "02353edf96d6e4dc81aea2d8490a7e9db177bf8acb0e951c24940bf866cb313f"
-dependencies = [
- "proc-macro2 0.4.30",
- "quote 0.6.13",
- "syn 0.15.44",
- "unicode-xid 0.1.0",
-]
-
-[[package]]
-name = "synstructure"
 version = "0.12.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b834f2d66f734cb897113e34aaff2f1ab4719ca946f9a7358dba8f8064148701"
@@ -3180,24 +3168,9 @@ name = "zeroize"
 version = "0.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "45af6a010d13e4cf5b54c94ba5a2b2eba5596b9e46bf5875612d332a1f2b3f86"
-dependencies = [
- "zeroize_derive",
-]
 
 [[package]]
 name = "zeroize"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3cbac2ed2ba24cc90f5e06485ac8c7c1e5449fe8911aef4d8877218af021a5b8"
-
-[[package]]
-name = "zeroize_derive"
-version = "0.9.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "080616bd0e31f36095288bb0acdf1f78ef02c2fa15527d7e993f2a6c7591643e"
-dependencies = [
- "proc-macro2 0.4.30",
- "quote 0.6.13",
- "syn 0.15.44",
- "synstructure 0.10.2",
-]
