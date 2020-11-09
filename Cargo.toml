@@ -41,7 +41,7 @@ crossbeam-channel = "0.5"
 commonregex = "0.2"
 diligent-date-parser  = "0.1"
 array_tool = "1.0"
-whatlang = "0.10"
+whatlang = "0.11"
 
 [dependencies.confy]
 git = "https://github.com/rust-cli/confy"
