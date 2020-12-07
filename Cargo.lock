@@ -3135,9 +3135,9 @@ checksum = "cccddf32554fecc6acb585f82a32a72e28b48f8c4c1883ddfeeeaa96f7d8e519"
 
 [[package]]
 name = "whatlang"
-version = "0.11.0"
+version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "131db3277ed4a98acc23a14593dd8e6c048484de1035cb71c6aaa9c191a85253"
+checksum = "783066160df650d0cc2629fa4f616ef4fcf00817803789e92ca09a55eba6ff05"
 dependencies = [
  "hashbrown 0.7.2",
 ]
