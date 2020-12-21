@@ -9,7 +9,7 @@ edition = "2018"
 [dependencies]
 log = "0.4"
 async-log = "2.0"
-simplelog = "0.8" # Logging
+simplelog = "0.9" # Logging
 sha2 = "0.9"
 notify = "4.0" # Watch directories
 pdf-extract = { git = "https://github.com/N-Schaef/pdf-extract" } # Extract PDF text
