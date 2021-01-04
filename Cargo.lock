@@ -499,7 +499,7 @@ dependencies = [
 [[package]]
 name = "confy"
 version = "0.4.0"
-source = "git+https://github.com/rust-cli/confy#baf2b401c9b4e783599ac8c74a6a9829a27f0deb"
+source = "git+https://github.com/rust-cli/confy#8b0f9bec86ce4729ccb02a9b25217e4fafe00f0a"
 dependencies = [
  "directories",
  "serde",
@@ -3210,7 +3210,7 @@ version = "0.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39f0c922f1a334134dc2f7a8b67dc5d25f0735263feec974345ff706bcf20b0d"
 dependencies = [
- "linked-hash-map 0.5.3",
+ "linked-hash-map 0.3.0",
 ]
 
 [[package]]
