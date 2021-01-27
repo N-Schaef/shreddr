@@ -135,7 +135,7 @@ checksum = "ac39aabd463ad2b1fadb34c22f48e5d160fa60b7cd69a426362e71bde49ebb6d"
 dependencies = [
  "async-log-attributes",
  "backtrace",
- "log 0.4.13",
+ "log 0.4.14",
 ]
 
 [[package]]
@@ -233,7 +233,7 @@ dependencies = [
  "env_logger",
  "lazy_static",
  "lazycell",
- "log 0.4.13",
+ "log 0.4.14",
  "peeking_take_while",
  "proc-macro2 1.0.24",
  "quote 1.0.7",
@@ -698,6 +698,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "ctor"
+version = "0.1.16"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7fbaabec2c953050352311293be5c6aba8e141ba19d6811862b232d6fd020484"
+dependencies = [
+ "quote 1.0.7",
+ "syn 1.0.48",
+]
+
+[[package]]
 name = "devise"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -896,7 +906,7 @@ checksum = "44533bbbb3bb3c1fa17d9f2e4e38bbbaf8396ba82193c4cb1b6445d711445d36"
 dependencies = [
  "atty",
  "humantime",
- "log 0.4.13",
+ "log 0.4.14",
  "regex",
  "termcolor",
 ]
@@ -917,7 +927,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f63eec71a3013ee912a0ecb339ff0c5fa5ed9660df04bfefa10c250b885d018c"
 dependencies = [
  "lazy_static",
- "log 0.4.13",
+ "log 0.4.14",
  "rand 0.6.5",
 ]
 
@@ -1475,16 +1485,17 @@ version = "0.3.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e19e8d5c34a3e0e2223db8e060f9e8264aeeb5c5fc64a4ee9965c062211c024b"
 dependencies = [
- "log 0.4.13",
+ "log 0.4.14",
 ]
 
 [[package]]
 name = "log"
-version = "0.4.13"
+version = "0.4.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fcf3805d4480bb5b86070dcfeb9e2cb2ebc148adb753c5cca5f884d1d65a42b2"
+checksum = "51b9bbe6c47d51fc3e1a9b945965946b4c44142ab8792c50835a980d362c2710"
 dependencies = [
- "cfg-if 0.1.10",
+ "cfg-if 1.0.0",
+ "value-bag",
 ]
 
 [[package]]
@@ -1499,7 +1510,7 @@ dependencies = [
  "flate2",
  "itoa 0.3.4",
  "linked-hash-map 0.3.0",
- "log 0.4.13",
+ "log 0.4.14",
  "lzw",
  "pom 3.1.0",
  "rayon",
@@ -1595,7 +1606,7 @@ dependencies = [
  "iovec",
  "kernel32-sys",
  "libc",
- "log 0.4.13",
+ "log 0.4.14",
  "miow 0.2.1",
  "net2",
  "slab",
@@ -1609,7 +1620,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f33bc887064ef1fd66020c9adfc45bb9f33d75a42096c81e7c56c65b75dd1a8b"
 dependencies = [
  "libc",
- "log 0.4.13",
+ "log 0.4.14",
  "miow 0.3.6",
  "ntapi",
  "winapi 0.3.9",
@@ -1622,7 +1633,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "52403fe290012ce777c4626790c8951324a2b9e3316b3143779c72b029742f19"
 dependencies = [
  "lazycell",
- "log 0.4.13",
+ "log 0.4.14",
  "mio 0.6.22",
  "slab",
 ]
@@ -1657,7 +1668,7 @@ checksum = "8209c33c951f07387a8497841122fc6f712165e3f9bda3e6be4645b58188f676"
 dependencies = [
  "buf_redux",
  "httparse",
- "log 0.4.13",
+ "log 0.4.14",
  "mime 0.3.16",
  "mime_guess",
  "quick-error",
@@ -2342,7 +2353,7 @@ checksum = "4fc7e5d6aaa32ace6893ae8a1875688ca7b07d6c2428ae88e704c3623c8866e9"
 dependencies = [
  "atty",
  "base64 0.12.3",
- "log 0.4.13",
+ "log 0.4.14",
  "memchr",
  "num_cpus",
  "pear",
@@ -2387,7 +2398,7 @@ version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9465babd59cfb360669b60431db510f3dc3268d51ccd69fc9264e626681e596a"
 dependencies = [
- "log 0.4.13",
+ "log 0.4.14",
  "notify",
  "rocket",
  "serde",
@@ -2594,7 +2605,7 @@ dependencies = [
  "futures",
  "glob",
  "leptess",
- "log 0.4.13",
+ "log 0.4.14",
  "notify",
  "pdf-extract",
  "regex",
@@ -2642,7 +2653,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4bc0ffd69814a9b251d43afcabf96dad1b29f5028378056257be9e3fecc9f720"
 dependencies = [
  "chrono",
- "log 0.4.13",
+ "log 0.4.14",
  "termcolor",
 ]
 
@@ -2778,7 +2789,7 @@ dependencies = [
  "htmlescape",
  "itertools",
  "levenshtein_automata",
- "log 0.4.13",
+ "log 0.4.14",
  "memmap",
  "murmurhash32",
  "notify",
@@ -3124,6 +3135,15 @@ checksum = "9fde2f6a4bea1d6e007c4ad38c6839fa71cbb63b6dbf5b595aa38dc9b1093c11"
 dependencies = [
  "rand 0.7.3",
  "serde",
+]
+
+[[package]]
+name = "value-bag"
+version = "1.0.0-alpha.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6b676010e055c99033117c2343b33a40a30b91fecd6c49055ac9cd2d6c305ab1"
+dependencies = [
+ "ctor",
 ]
 
 [[package]]
