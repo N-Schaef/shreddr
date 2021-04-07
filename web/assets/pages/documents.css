@@ -25,4 +25,16 @@
      inside the card */
   min-width: 170px;
 }
+
+.doc-image {
+  padding: 1em;
+  height: 100%;
+  object-fit: contain;
+}
+
+.doc-title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: large;
 }
