@@ -113,7 +113,7 @@ function createTagButton(docId, tagMap, tagId, clickFunc) {
 function createAddButton(docId, tagMap) {
   var div = $("<div></div>");
   var dropdownButton = $("<button class=\"btn btn-sm btn-success dropdown-toggle\" type=\"button\" id=\"addTagButton\" data-toggle=\"dropdown\"><span data-feather=\"plus\"></span></button>");
-  var items = $("<div class=\"dropdown-menu\" aria-labelledby=\"addTagButton\"></div>");
+  var items = $("<div class=\"dropdown-menu tag-add-menu\" aria-labelledby=\"addTagButton\"></div>");
   var filter = $("<input class=\"form-control\" id=\"filterTags\" type=\"text\" placeholder=\"Search..\">");
   filter.on("keyup", function () {
     var value = $(this).val().toLowerCase();

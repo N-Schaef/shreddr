@@ -16,13 +16,12 @@ function removeTagFilter(tagId) {
   location.reload();
 }
 
-
-
 function createSearchTagButton(){
   var div = $("<div></div>");
   var dropdownButton = $("<button class=\"btn btn-sm btn-outline-secondary dropdown-toggle mr-1\" type=\"button\" id=\"addTagButton\" data-toggle=\"dropdown\"><span data-feather=\"tag\"></span></button>");
-  var items = $("<div class=\"dropdown-menu\" aria-labelledby=\"addTagButton\"></div>");
-  var filter = $("<input class=\"form-control\" id=\"filterTags\" type=\"text\" placeholder=\"Search..\">");
+  var items = $("<div class=\"tag-filter-menu dropdown-menu\" aria-labelledby=\"addTagButton\"></div>");
+  var filter = $("<input class=\"form-control\" id=\"filterTags\" type=\"text\" placeholder=\"Search...\">");
+
   filter.on("keyup", function() {
     var value = $(this).val().toLowerCase();
     $(".dropdown-menu button").filter(function() {

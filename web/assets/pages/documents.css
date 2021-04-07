@@ -1,5 +1,16 @@
 .tag-btn {
   margin-right: .3em;
+}
+
+.tag-filter-menu {
+  padding: .5rem .5rem;
+}
+
+.tag-filter-menu .dropdown-item {
+  margin: .5rem auto;
+  border-radius: 3px;
+}
+
 .docbutton-container {
   position: relative;
 }
