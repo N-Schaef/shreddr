@@ -301,9 +301,7 @@ impl LocalDocumentRepository {
                 )
                 .ok_or(IndexerError::DocumentNotFound(doc_address))?
                 .u64_value()
-                .ok_or(IndexerError::TantivyException(
-                    "ID is not of type u64".into(),
-                ))?;
+                .ok_or_else(|| IndexerError::TantivyException("ID is not of type u64".into()))?;
             set.insert(id, score);
         }
         debug!("Got FTS results: {:#?}", set);

@@ -1,19 +1,16 @@
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 mod pdf;
 
 /// Extracts text (and other content) from files
 pub struct ContentExtractor {
-    tmp_dir: PathBuf,
     tesseract_languages: Vec<String>,
 }
 
 impl ContentExtractor {
     /// Initializes a new ContentExtractor with an temporary directory, in which it will create a OCR subdirectory if required, and the configured tesseract languages.
-    pub fn new(tmp_dir: &Path, tesseract_languages: &[String]) -> ContentExtractor {
-        let ocr_dir = tmp_dir.join("ocr");
+    pub fn new(tesseract_languages: &[String]) -> ContentExtractor {
         ContentExtractor {
-            tmp_dir: ocr_dir,
             tesseract_languages: tesseract_languages.into(),
         }
     }

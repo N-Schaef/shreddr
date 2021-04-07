@@ -169,20 +169,22 @@ fn main() -> Result<(), ShreddrError> {
 
     //Start server or CLI
     if cfg.server {
-        let mut loggers: Vec<Box<dyn SharedLogger>> = vec![];
-        //Initialize terminal logging
-        loggers.push(TermLogger::new(
-            LevelFilter::Info,
-            Config::default(),
-            TerminalMode::Mixed,
-            ColorChoice::Auto,
-        ));
-        //Initialize logfile logging
-        loggers.push(WriteLogger::new(
-            LevelFilter::Debug,
-            Config::default(),
-            log_file,
-        ));
+        let loggers: Vec<Box<dyn SharedLogger>> = vec![
+            TermLogger::new(
+                //Initialize terminal logging
+                LevelFilter::Info,
+                Config::default(),
+                TerminalMode::Mixed,
+                ColorChoice::Auto,
+            ),
+            WriteLogger::new(
+                //Initialize logfile logging
+                LevelFilter::Debug,
+                Config::default(),
+                log_file,
+            ),
+        ];
+
         match CombinedLogger::init(loggers) {
             Ok(_) => {}
             Err(e) => println!("Could not initialize logger {}", e),
