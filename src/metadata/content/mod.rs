@@ -1,6 +1,5 @@
 use std::path::{Path, PathBuf};
 
-mod ocr;
 mod pdf;
 
 /// Extracts text (and other content) from files
@@ -23,28 +22,32 @@ impl ContentExtractor {
     /// If the file does not contain any text, the text is extracted by OCR.
     pub fn extract_body(&self, file: &Path) -> Option<String> {
         if let Some(ext) = ContentExtractor::extract_extension(file) {
-            let text = match ext.as_ref() {
-                "pdf" => pdf::extractor::extract_body(file),
-                _ => {
-                    error!(
-                        "Trying to extract text from unsupported file format `{:#?}`",
-                        file
-                    );
-                    return None;
-                }
-            };
-            if text.is_empty() {
+            let text = self._extract_body(file, &ext);
+            if text.is_none() || text.as_ref().unwrap().is_empty() {
                 info!("Could not extract text => OCR");
                 return self._ocr(file, &ext);
             } else {
-                return Some(text);
+                return text;
             }
         } else {
             error!("Could not extract extension`{:#?}`", file);
         }
-
         None
     }
+
+    fn _extract_body(&self, file: &Path, extension: &str) -> Option<String> {
+        match extension {
+            "pdf" => Some(pdf::extractor::extract_body(file)),
+            _ => {
+                error!(
+                    "Trying to extract text from unsupported file format `{:#?}`",
+                    file
+                );
+                None
+            }
+        }
+    }
+
     /// Forces extraction of the body via OCR
     pub fn ocr(&self, file: &Path) -> Option<String> {
         if let Some(ext) = ContentExtractor::extract_extension(file) {
@@ -55,37 +58,22 @@ impl ContentExtractor {
     }
 
     fn _ocr(&self, file: &Path, extension: &str) -> Option<String> {
-        //Create temp dir
-        if std::fs::create_dir_all(&self.tmp_dir).is_err() {
-            error!("Could not create directory `{:#?}`", self.tmp_dir);
-            return None;
-        }
-
-        // Create OCR files
-        let files = match extension {
-            "pdf" => pdf::renderer::render_pages_for_ocr(file, &self.tmp_dir),
+        // OCR file
+        let _res = match extension {
+            "pdf" => pdf::renderer::ocr_file(file, &self.tesseract_languages),
             _ => {
                 error!("OCR not supported for file `{:#?}`", file);
                 return None;
             }
         };
 
-        // OCR files
-        let text = match ocr::ocr_files(&files, &self.tesseract_languages) {
-            Err(e) => {
-                error!("Could not OCR the files: `{}`", e);
-                None
-            }
-            Ok(t) => Some(t),
-        };
+        let text = self._extract_body(file, extension).unwrap_or_default();
 
-        //Remove temp dir
-        if std::fs::remove_dir_all(&self.tmp_dir).is_err() {
-            error!("Could not create directory `{:#?}`", self.tmp_dir);
+        if text.is_empty() {
+            error!("OCR attempt did not yield text.");
             return None;
         }
-
-        text
+        Some(text)
     }
 
     /// Renders a thumbnail of the image

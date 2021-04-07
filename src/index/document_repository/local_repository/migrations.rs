@@ -1,7 +1,7 @@
 use crate::index::document_repository::ExtractedData;
 use crate::metadata::tag::TagId;
 use chrono::serde::{ts_seconds, ts_seconds_option};
-use std::path::Path;
+use std::{fs, io, path::Path};
 
 #[derive(Debug, Serialize, Deserialize, Clone, Default)]
 struct VersionTest {
@@ -16,17 +16,19 @@ pub enum MigrationError {
     VersionError(usize),
     #[error("could not load/write document file")]
     ConfigError(#[from] confy::ConfyError),
+    #[error("could not read/delete file")]
+    IOError(#[from] io::Error),
 }
 
-pub fn migrate(file: &Path) -> Result<(), MigrationError> {
+pub fn migrate(file: &Path, index_dir: &Path) -> Result<bool, MigrationError> {
     debug!("Checking migrations");
     if !file.exists() {
-        return Ok(());
+        return Ok(false);
     }
     let version_object: VersionTest = confy::load_path(file).unwrap_or_default();
     let version = version_object.version;
 
-    if version > 1 {
+    if version > 2 {
         return Err(MigrationError::VersionError(version));
     }
 
@@ -37,7 +39,34 @@ pub fn migrate(file: &Path) -> Result<(), MigrationError> {
         confy::store_path(file, v1)?;
     }
 
-    Ok(())
+    if version == 1 {
+        warn!("Index needs to be recalculated. This may take a while");
+        info!("Deleting old index");
+        for entry in fs::read_dir(index_dir)? {
+            let path = entry?.path();
+            let ext = path.extension().unwrap_or_default();
+            if ext.eq_ignore_ascii_case("fast")
+                || ext.eq_ignore_ascii_case("fieldnorm")
+                || ext.eq_ignore_ascii_case("idx")
+                || ext.eq_ignore_ascii_case("lock")
+                || ext.eq_ignore_ascii_case("pos")
+                || ext.eq_ignore_ascii_case("posidx")
+                || ext.eq_ignore_ascii_case("store")
+                || ext.eq_ignore_ascii_case("term")
+            {
+                fs::remove_file(&path)?;
+            }
+            if path.file_name().unwrap_or_default() == "meta.json" {
+                fs::remove_file(&path)?;
+            }
+        }
+        let mut v2: RepoV1 = confy::load_path(file)?;
+        v2.version = 2;
+        confy::store_path(file, v2)?;
+        return Ok(true);
+    }
+
+    Ok(false)
 }
 
 //////////////////////////////////////////////
