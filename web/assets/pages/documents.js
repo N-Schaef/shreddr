@@ -35,6 +35,7 @@ function createSearchTagButton(){
     var item = $("<button class=\"dropdown-item\" type=\"button\"></button>");
     item.text(value.name);
     item.css("background-color", value.color);
+    item.css("color", isDark(value.color) ? "var(--light)" : "var(--dark)")
     item.on("click", function(){
       filterByTag(key)
     }.bind(key));
@@ -53,6 +54,7 @@ function createTagButton(tagId, clickFunc) {
   }
   btn.text(tag.name);
   btn.css("background-color", tag.color);
+  btn.css("color", isDark(tag.color) ? "var(--light)" : "var(--dark)")
   btn.addClass("tag-" + tag.id);
   btn.on("click", clickFunc);
   return btn;

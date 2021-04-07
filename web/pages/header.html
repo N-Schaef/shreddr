@@ -37,6 +37,32 @@
   <link href="/assets/pages/dashboard.css" rel="stylesheet">
 </head>
 
+<!-- Tag Card Template -->
+<template class="tag">
+  <div class="card mb-3 mr-2" style="display: none">
+    <h5 class="card-header"></h5>
+    <div class="btn-group w-100" style="border-radius: 0 !important;">
+      <a href="/tag/[i]" class="btn btn-secondary edit-tag w-100" style="border-radius: 0 !important;"><i data-feather="edit"></i></a>
+      <button type="button" class="btn btn-danger remove-tag w-100" style="border-radius: 0 !important;"><i data-feather="trash-2"></i></button>
+    </div>
+  </div>
+</template>
+<!-- End Template -->
+
+<script>
+function isDark(hex) {
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  let rgb = result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : { r: 255, g: 255, b: 255};
+
+  let brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
+  return brightness < 160;
+}
+</script>
+
 <body>
 
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"
