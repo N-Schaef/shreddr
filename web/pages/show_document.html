@@ -4,29 +4,29 @@
 
 <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
   <div class="d-flex flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 id="doctitle" class="h1" contentEditable=true>{{title}}</h1>
-    <div class="text-muted mr-2"><span data-feather="edit"></span></div>
+    <h1 id="doctitle" class="h1 mr-2" contentEditable=true>{{title}}</h1>
+    <h1 class="text-muted mr-2 editable-indicator"><span data-feather="edit"></span></h1>
 
     <div class="btn-group mr-2" role="group">
       <button title="Reimport" class="btn btn-primary" id="reimport"><i
           data-feather="refresh-cw"></i></button>
       <button title="Reimport with forced OCR" class=" btn btn-primary"
-        id="force-ocr"><i data-feather="refresh-cw"></i> Force OCR</button>
+        id="force-ocr"><i data-feather="refresh-cw"></i><span class="btn-text">Force OCR</span></button>
     </div>
   </div>
+
   <div class="row">
-    <div class="col-lg-3">
+    <div class="col-12 col-lg-3">
       <a href="/documents/{{id}}/download">
-        <img class="img-thumbnail rounded float-right" src="/thumbnails/{{id}}.jpg" rel="nofollow" alt="Card image cap">
+        <img class="img-thumbnail rounded mx-auto d-block" src="/thumbnails/{{id}}.jpg" rel="nofollow" alt="Card image cap">
       </a>
     </div>
-    <div class="col-lg-3">
 
+    <div class="col-12 col-lg-4">
       <div class="border-bottom">
         <h4 class="h4 text-muted">Original filename: </h4>
-        <h3 class="h3 mb-2" id="original_filename">{{original_filename}}</h3>
+        <div class="h3 mb-2" id="original_filename">{{original_filename}}</div>
       </div>
-
 
       <div class="border-bottom">
         <h4 class="h4 text-muted">Document date: </h4>
@@ -51,25 +51,21 @@
 
       <div class="border-bottom">
         <h4 class="h4 text-muted">Language: </h4>
-        <div class="w100 d-flex mb-2">
+        <div class="w100 d-flex">
           <h3 class="h3 mr-2" id="lang" contentEditable=true> {{lang}}</h3> 
-          <div class="text-muted"><span data-feather="edit"></span></div>
+          <h3 class="text-muted editable-indicator"><span data-feather="edit"></span></h3>
         </div>
       </div>
 
       <div class="border-bottom">
         <h4 class="h4 text-muted">Tags: </h4>
-        <div id="tags" class="mb-2">
-
-        </div>
+        <div id="tags" class="mb-2"></div>
       </div>
-
-
     </div>
-
   </div>
+
   <div class="row">
-<div class="col-lg-9">
+    <div class="col-lg-9">
       <h4 class="h4 text-muted mt-4" id="metaHeader" style="display: none;" data-toggle="tooltip"
         title="Additional information the system extracted from the document. This data may not be correct and should be double checked.">
         Extracted information: </h4>
@@ -127,8 +123,8 @@
         </div>
       </div>
     </div>
-
   </div>
+
   <script src="/assets/dist/js/bootstrap-datepicker.min.js"></script>
   <script src="/assets/pages/show_doc.js"></script>
 
