@@ -41,25 +41,23 @@
     <small id="tagHelp" class="form-text text-muted">Type matcher to use</small>
   </div>
 
-
   <!--- Full Matcher -->
   <div id="fullMatcher">
-  <div class="mb-3">
-    <label for="fullMatcherMatchStr" class="form-label">Match String</label>
-    <input type="text" class="form-control"  value="{{full_match_str}}" name="full_matcher_match_str" id="fullMatcherMatchStr" aria-describedby="fullMatcherMatchStr-Help">
-    <small id="fullMatcherMatchStr-Help" class="form-text text-muted">The string to match</small>
-  </div>
+    <div class="mb-3">
+      <label for="fullMatcherMatchStr" class="form-label">Match String</label>
+      <input type="text" class="form-control"  value="{{full_match_str}}" name="full_matcher_match_str" id="fullMatcherMatchStr" aria-describedby="fullMatcherMatchStr-Help">
+      <small id="fullMatcherMatchStr-Help" class="form-text text-muted">The string to match</small>
+    </div>
 
-  <div class="mb-3">
-    <div class="custom-control custom-checkbox">
-      <input class="custom-control-input" name="full_matcher_case_insensitive" type="checkbox" id="fullMatcherCaseInsensitive" {{checked}}>
-      <label class="custom-control-label" for="fullMatcherCaseInsensitive">
-        Case insensitive
-      </label>
+    <div class="mb-3">
+      <div class="custom-control custom-checkbox">
+        <input class="custom-control-input" name="full_matcher_case_insensitive" type="checkbox" id="fullMatcherCaseInsensitive" {{checked}}>
+        <label class="custom-control-label" for="fullMatcherCaseInsensitive">
+          Case insensitive
+        </label>
+      </div>
     </div>
   </div>
-  </div>
-
   
   <!--- Any Matcher -->
   <div id="anyMatcher" style="display:none;">
@@ -77,18 +75,16 @@
         </label>
       </div>
     </div>
-    </div>
+  </div>
 
   <!--- Regex Matcher -->
-
-    <div id="Regex" style="display:none;">
-      <div class="mb-3">
-        <label for="regexMatchStr" class="form-label " >Regular Expression</label>
-        <input type="text" class="form-control" value="{{regex_str}}" name="regex_match_string" id="regexMatchStr" aria-describedby="regexMatchStr-Help">
-        <small id="regexMatchStr-Help" class="form-text text-muted">A regular expression that has to match for the tag to be applied</small>
-      </div>
-    
-      </div>
+  <div id="Regex" style="display:none;">
+    <div class="mb-3">
+      <label for="regexMatchStr" class="form-label " >Regular Expression</label>
+      <input type="text" class="form-control" value="{{regex_str}}" name="regex_match_string" id="regexMatchStr" aria-describedby="regexMatchStr-Help">
+      <small id="regexMatchStr-Help" class="form-text text-muted">A regular expression that has to match for the tag to be applied</small>
+    </div>  
+  </div>
 
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
