@@ -1,3 +1,17 @@
 .tag-btn {
   margin-right: .3em;
+.docbutton-container {
+  position: relative;
+}
+
+.docbuttons {
+  position: absolute;
+  bottom: 0;
+}
+
+.doc-card {
+  /* Make sure document buttons always fit
+     inside the card */
+  min-width: 170px;
+}
 }

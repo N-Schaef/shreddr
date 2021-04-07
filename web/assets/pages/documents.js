@@ -104,32 +104,34 @@ function nextHandler(pageIndex){
 
 function createDocumentCard(doc) {
   const template = `
-  <div class="card shadow-sm h-100" id="doc-${doc.id}">
-        <div class="card-header" style="padding: .5rem;">
-        <a href="/documents/${doc.id}" class="text-dark" style="text-decoration: none;"><h5 class="card-title">${doc.title}</h5></a>
-        </div>
-        <img class="card-img-bottom" src="/thumbnails/${doc.id}.jpg" rel="nofollow" alt="Document thumbnail">
-        <div class="card-body">
-          <p class="card-text"></p>
-        </div>
+  <div class="doc-card card shadow-sm h-100" id="doc-${doc.id}">
+    <div class="card-header" style="padding: .5rem;">
+      <a href="/documents/${doc.id}" class="text-dark" style="text-decoration: none;">
+        <div class="doc-title">${doc.title}</div>
+      </a>
+    </div>
 
-        <div class="btn-group docbuttons w-100" style="display: none;">
-          <a href="/documents/${doc.id}/download" title="Download document" class="btn btn-primary w-100 download-doc"
-            style="border-radius: 0 !important;">${feather.icons['download'].toSvg()}</a>
-          <button type="button" title="Reprocess document" class="btn btn-secondary w-100 reimport-doc"
-            style="border-radius: 0 !important;">${feather.icons['refresh-cw'].toSvg()}</button>
-          <a href="/documents/${doc.id}" title="Edit document metadata" class="btn btn-secondary w-100 edit-doc"
-            style="border-radius: 0 !important;">${feather.icons['edit'].toSvg()}</a>
-          <button type="button" title="Remove document" class="btn btn-danger w-100 remove-doc"
-            style="border-radius: 0 !important;">${feather.icons['trash-2'].toSvg()}</button>
-        </div>
+    <img class="card-img-bottom doc-image" src="/thumbnails/${doc.id}.jpg" rel="nofollow" alt="Document thumbnail">
 
-        <div class="card-footer text-muted" style="padding: .5rem;">
-          <div class="created">Imported Yesterday</div>
-          <div class="inferred"></div>
-        </div>
-
+    <div class="docbutton-container">
+      <div class="btn-group docbuttons w-100" style="display: none;">
+        <a href="/documents/${doc.id}/download" title="Download document" class="btn btn-primary w-100 download-doc"
+          style="border-radius: 0 !important;">${feather.icons['download'].toSvg()}</a>
+        <button type="button" title="Reprocess document" class="btn btn-secondary w-100 reimport-doc"
+          style="border-radius: 0 !important;">${feather.icons['refresh-cw'].toSvg()}</button>
+        <a href="/documents/${doc.id}" title="Edit document metadata" class="btn btn-secondary w-100 edit-doc"
+          style="border-radius: 0 !important;">${feather.icons['edit'].toSvg()}</a>
+        <button type="button" title="Remove document" class="btn btn-danger w-100 remove-doc"
+          style="border-radius: 0 !important;">${feather.icons['trash-2'].toSvg()}</button>
       </div>
+    </div>
+
+    <div class="card-footer text-muted" style="padding: .5rem;">
+      <div class="created">Imported Yesterday</div>
+      <div class="inferred"></div>
+    </div>
+
+  </div>
   `
 
   
@@ -180,7 +182,7 @@ function createDocumentCard(doc) {
     date.setUTCSeconds(doc.extracted.doc_date);
     card.find(".inferred").text("Document: " + date.toLocaleDateString());
   }
-  let cardDiv = $("<div class=\"col-11 col-sm-10 col-md-6 col-lg-4 col-xl-2 py-2 \"></div>")
+  let cardDiv = $("<div class=\"col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 py-2 \"></div>")
   cardDiv.html(card);
   return cardDiv;
 }
