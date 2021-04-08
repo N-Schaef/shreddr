@@ -72,7 +72,7 @@ fn load_config(cli_arguments: &clap::ArgMatches) -> Result<ShreddrConfig, CLIErr
         info!("Loading config from file '{}'", c);
         cfg = confy::load_path(c)?;
     } else {
-        cfg = confy::load("shreddr")?;
+        cfg = confy::load("shreddr", None)?;
     }
 
     //Check if CLI overwrites

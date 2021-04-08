@@ -19,6 +19,7 @@ pub struct LocalDocumentRepository {
     index_reader: IndexReader,
     doc_file: PathBuf,
     schema: Schema,
+    requires_reindex: bool,
 }
 
 //Error Handling
@@ -56,6 +57,8 @@ struct Documents {
 impl LocalDocumentRepository {
     pub fn new(index_dir: &Path) -> Result<LocalDocumentRepository, IndexerError> {
         let i_dir: PathBuf = index_dir.into();
+        let doc_file = index_dir.join("docs.yaml");
+        let requires_reindex = migrations::migrate(&doc_file, &i_dir)?;
         let index = LocalDocumentRepository::init_index(&i_dir)?;
         let schema = index.schema();
         let reader = index
@@ -68,16 +71,17 @@ impl LocalDocumentRepository {
             .writer(5000000)
             .map_err(|e| IndexerError::TantivyException(format!("{:?}", e)))?;
 
-        let doc_file = index_dir.join("docs.yaml");
-
-        migrations::migrate(&doc_file)?;
-
         Ok(LocalDocumentRepository {
             schema,
             index_reader: reader,
             index_writer: writer,
             doc_file,
+            requires_reindex,
         })
+    }
+
+    pub fn requires_reindex(&self) -> bool {
+        self.requires_reindex
     }
 
     fn init_index(index_dir: &Path) -> Result<Index, IndexerError> {
@@ -296,7 +300,8 @@ impl LocalDocumentRepository {
                         .ok_or_else(|| IndexerError::UnknownField("tags".into()))?,
                 )
                 .ok_or(IndexerError::DocumentNotFound(doc_address))?
-                .u64_value();
+                .u64_value()
+                .ok_or_else(|| IndexerError::TantivyException("ID is not of type u64".into()))?;
             set.insert(id, score);
         }
         debug!("Got FTS results: {:#?}", set);
@@ -309,6 +314,11 @@ impl LocalDocumentRepository {
             Some(d) => Ok(Some(d.id)),
             None => Ok(None),
         }
+    }
+
+    fn _get_doc_ids(&self) -> Result<Vec<DocId>, IndexerError> {
+        let cfg: Documents = confy::load_path(&self.doc_file)?;
+        Ok(cfg.docs.into_iter().map(|doc| doc.id).collect())
     }
 }
 
@@ -359,6 +369,10 @@ impl DocumentRepository for LocalDocumentRepository {
     ) -> Result<Vec<DocumentData>, DocumentRepositoryError> {
         self._get_filtered_documents(offset, count, filter)
             .map_err(|e| e.into())
+    }
+
+    fn get_doc_ids(&self) -> Result<Vec<DocId>, DocumentRepositoryError> {
+        self._get_doc_ids().map_err(|e| e.into())
     }
 }
 

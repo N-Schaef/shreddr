@@ -96,10 +96,7 @@ impl Index {
             &cfg.data_dir,
             cfg.extract_extended_metadata,
         )?));
-        let extractor = Arc::new(RwLock::new(ContentExtractor::new(
-            &tmp_dir,
-            &cfg.tesseract_languages,
-        )));
+        let extractor = Arc::new(RwLock::new(ContentExtractor::new(&cfg.tesseract_languages)));
 
         Ok(Index {
             file_repo,
