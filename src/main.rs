@@ -29,7 +29,7 @@ mod metadata;
 mod server;
 mod watch;
 
-use index::document_repository::local_repository::LocalDocumentRepository;
+use index::document_repository::{local_repository::LocalDocumentRepository, DocumentRepository};
 use index::file_repository::local_repository::LocalFileRepository;
 use index::JobType;
 
@@ -57,9 +57,11 @@ pub enum ShreddrError {
     #[error("Could not initialize file repository: {0}")]
     FileRepoError(#[from] index::file_repository::local_repository::LocalFileRepositoryError),
     #[error("Could not initialize document repository: {0}")]
-    DocRepoError(#[from] index::document_repository::local_repository::IndexerError),
+    LocalDocRepoError(#[from] index::document_repository::local_repository::IndexerError),
     #[error("Requires at least one tesseract language to function")]
     NoTesseractLanguagesError(),
+    #[error("Error interacting with the document repository: {0}")]
+    DocRepoError(#[from] index::document_repository::DocumentRepositoryError),
 }
 
 fn main() -> Result<(), ShreddrError> {
@@ -102,6 +104,11 @@ fn main() -> Result<(), ShreddrError> {
         return Err(ShreddrError::NoTesseractLanguagesError());
     }
 
+    let reindexing_ids = match doc_repo.requires_reindex() {
+        true => doc_repo.get_doc_ids()?,
+        false => vec![],
+    };
+
     // Init backend
     let index = Arc::new(
         match index::Index::new(
@@ -116,6 +123,14 @@ fn main() -> Result<(), ShreddrError> {
             }
         },
     );
+
+    if !reindexing_ids.is_empty() {
+        println!("Reindexing documents");
+        for id in reindexing_ids {
+            println!("Reindexing file {}", id);
+            index.reprocess_document(id)?;
+        }
+    }
 
     //Start watcher thread
     let (doc_sender, doc_retriever) = crossbeam_channel::unbounded::<JobType>();
@@ -154,19 +169,22 @@ fn main() -> Result<(), ShreddrError> {
 
     //Start server or CLI
     if cfg.server {
-        let mut loggers: Vec<Box<dyn SharedLogger>> = vec![];
-        //Initialize terminal logging
-        loggers.push(TermLogger::new(
-            LevelFilter::Info,
-            Config::default(),
-            TerminalMode::Mixed,
-        ));
-        //Initialize logfile logging
-        loggers.push(WriteLogger::new(
-            LevelFilter::Debug,
-            Config::default(),
-            log_file,
-        ));
+        let loggers: Vec<Box<dyn SharedLogger>> = vec![
+            TermLogger::new(
+                //Initialize terminal logging
+                LevelFilter::Info,
+                Config::default(),
+                TerminalMode::Mixed,
+                ColorChoice::Auto,
+            ),
+            WriteLogger::new(
+                //Initialize logfile logging
+                LevelFilter::Debug,
+                Config::default(),
+                log_file,
+            ),
+        ];
+
         match CombinedLogger::init(loggers) {
             Ok(_) => {}
             Err(e) => println!("Could not initialize logger {}", e),

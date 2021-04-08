@@ -89,4 +89,7 @@ pub trait DocumentRepository {
         count: usize,
         filter: FilterOptions,
     ) -> Result<Vec<DocumentData>, DocumentRepositoryError>;
+
+    /// Returns a list of all known ids
+    fn get_doc_ids(&self) -> Result<Vec<super::DocId>, DocumentRepositoryError>;
 }

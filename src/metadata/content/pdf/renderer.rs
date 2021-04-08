@@ -1,65 +1,52 @@
-use glob::glob;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-/// Renders every page in the file as a separate grayscale image preprocessed with unpaper.
-/// The images are stored in the passed tmp_directory.
-pub fn render_pages_for_ocr(file: &Path, tmp_dir: &Path) -> Vec<PathBuf> {
-    let convert_output = Command::new("convert")
-        .arg("-density")
-        .arg(format!("{}", 300))
-        .arg("-depth")
-        .arg(format!("{}", 8))
-        .arg("-type")
-        .arg("grayscale")
+//Error Handling
+use thiserror::Error;
+#[derive(Error, Debug)]
+pub enum OCRError {
+    #[error("could not initialize ocrmypdf `{0}`")]
+    OcrmypdfError(String),
+    #[error("could not interact with temporary ocr directory")]
+    IOError(#[from] std::io::Error),
+    #[error("could not extract text as UTF-8")]
+    UTF8Error(#[from] std::str::Utf8Error),
+    #[error("could not extract ocr-image name `{0}`")]
+    ImageError(String),
+}
+
+/// OCRs the given file and replaces it with an optimized version where the text is inserted as copyable metadata
+pub fn ocr_file(file: &Path, tesseract_languages: &[String]) -> Result<(), OCRError> {
+    let languages = tesseract_languages.join("+");
+    let file = file
+        .to_str()
+        .ok_or_else(|| OCRError::ImageError(format!("{:#?}", file)))?;
+    let ocr_mypdfoutput = Command::new("ocrmypdf")
+        .arg("--deskew") //Fix skewed images
+        .arg("--clean") // Use unpaper to improve OCR (does not edit final PDF)
+        .arg("--force-ocr")
+        .arg("-l")
+        .arg(languages)
         .arg(file)
-        .arg(tmp_dir.join("convert-%04d.pnm").to_str().unwrap())
+        .arg(file)
         .output();
-    match convert_output {
+    match ocr_mypdfoutput {
         Ok(output) => {
             debug!("{}", std::str::from_utf8(&output.stdout).unwrap());
             if !output.status.success() {
-                error!(
-                    "Could not execute convert command: {}",
-                    std::str::from_utf8(&output.stderr).unwrap()
-                );
-                return vec![];
+                let msg = std::str::from_utf8(&output.stderr).unwrap();
+                let e = Err(OCRError::OcrmypdfError(msg.into()));
+                error!("{:?}", e);
+                return e;
             }
         }
         Err(e) => {
-            error!("Could not execute convert command: {}", e);
-            return vec![];
+            let e = Err(OCRError::OcrmypdfError(format!("{:?}", e)));
+            error!("{:?}", e);
+            return e;
         }
     }
-
-    let pnms = glob(tmp_dir.join("*.pnm").to_str().unwrap())
-        .unwrap()
-        .map(|x| x.unwrap())
-        .collect();
-    for image in &pnms {
-        let unpaper_output = Command::new("unpaper")
-            .arg("--overwrite")
-            .arg(image)
-            .arg(image)
-            .output();
-        match unpaper_output {
-            Ok(output) => {
-                debug!("{}", std::str::from_utf8(&output.stdout).unwrap());
-                if !output.status.success() {
-                    error!(
-                        "Could not execute convert command: {}",
-                        std::str::from_utf8(&output.stderr).unwrap()
-                    );
-                    return vec![];
-                }
-            }
-            Err(e) => {
-                error!("Could not execute convert command: {}", e);
-                return vec![];
-            }
-        }
-    }
-    pnms
+    Ok(())
 }
 
 pub fn render_thumbnail(file: &Path, thumbnail_file: &Path) {
@@ -89,7 +76,6 @@ pub fn render_thumbnail(file: &Path, thumbnail_file: &Path) {
                     "Could not execute convert command: {}",
                     std::str::from_utf8(&output.stderr).unwrap()
                 );
-                return;
             }
         }
         Err(e) => {

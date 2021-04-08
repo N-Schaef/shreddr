@@ -9,15 +9,14 @@ edition = "2018"
 [dependencies]
 log = "0.4"
 async-log = "2.0"
-simplelog = "0.9" # Logging
+simplelog = "0.10" # Logging
 sha2 = "0.9"
 notify = "4.0" # Watch directories
-pdf-extract = { git = "https://github.com/N-Schaef/pdf-extract" } # Extract PDF text
-tantivy = "0.12.0" # Full text search
+pdf-extract = { git = "https://github.com/jrmuizel/pdf-extract" } # Extract PDF text
+tantivy = "0.14.0" # Full text search
 futures = "0.3"
-tokio = {version = "0.3", features = ["full"] }
+tokio = {version = "1.4.0", features = ["full"] }
 chrono = { version = "0.4", features = ["serde"] }
-leptess = "0.9"
 glob = "0.3.0"
 thiserror = "1.0"
 regex = "1"
@@ -27,7 +26,7 @@ serde_json = "1.0"
 # CLI
 clap = "3.0.0-beta.2" #CLI arguments
 shrust = "0.0" # Interactive cli
-dialoguer = "0.7" # I/O
+dialoguer = "0.8" # I/O
 #indicatif = "0.15" #Progress bar
 #Server
 rocket = "0.4"
