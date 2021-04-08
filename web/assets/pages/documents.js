@@ -112,19 +112,22 @@ function createDocumentCard(doc) {
       </a>
     </div>
 
-    <img class="card-img-bottom doc-image" src="/thumbnails/${doc.id}.jpg" rel="nofollow" alt="Document thumbnail">
-
     <div class="docbutton-container">
-      <div class="btn-group docbuttons w-100" style="display: none;">
-        <a href="/documents/${doc.id}/download" title="Download document" class="btn btn-primary w-100 download-doc"
-          style="border-radius: 0 !important;">${feather.icons['download'].toSvg()}</a>
-        <button type="button" title="Reprocess document" class="btn btn-secondary w-100 reimport-doc"
-          style="border-radius: 0 !important;">${feather.icons['refresh-cw'].toSvg()}</button>
-        <a href="/documents/${doc.id}" title="Edit document metadata" class="btn btn-secondary w-100 edit-doc"
-          style="border-radius: 0 !important;">${feather.icons['edit'].toSvg()}</a>
-        <button type="button" title="Remove document" class="btn btn-danger w-100 remove-doc"
-          style="border-radius: 0 !important;">${feather.icons['trash-2'].toSvg()}</button>
-      </div>
+    <div class="btn-group docbuttons w-100" style="display: none;">
+      <a href="/documents/${doc.id}/download" title="Download document" class="btn btn-primary w-100 download-doc"
+        style="border-radius: 0 !important;">${feather.icons['download'].toSvg()}</a>
+      <button type="button" title="Reprocess document" class="btn btn-secondary w-100 reimport-doc"
+        style="border-radius: 0 !important;">${feather.icons['refresh-cw'].toSvg()}</button>
+      <a href="/documents/${doc.id}" title="Edit document metadata" class="btn btn-secondary w-100 edit-doc"
+        style="border-radius: 0 !important;">${feather.icons['edit'].toSvg()}</a>
+      <button type="button" title="Remove document" class="btn btn-danger w-100 remove-doc"
+        style="border-radius: 0 !important;">${feather.icons['trash-2'].toSvg()}</button>
+    </div>
+  </div>
+
+    <img class="card-img-bottom doc-image" src="/thumbnails/${doc.id}.jpg" rel="nofollow" alt="Document thumbnail">
+    <div class="card-body">
+    <p class="card-text"></p>
     </div>
 
     <div class="card-footer text-muted" style="padding: .5rem;">
