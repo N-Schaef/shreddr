@@ -237,10 +237,22 @@ impl Index {
             extracted: document_repository::ExtractedData::default(),
         };
         //Tag
-        self.tagger
+        match self
+            .tagger
             .write()
             .map_err(|_| IndexError::LockError("tagger".into()))?
-            .tag_document(&mut doc_data)?;
+            .tag_document(&mut doc_data)
+        {
+            Ok(_) => {}
+            Err(e) => match e {
+                TaggingError::EmptyBody(id) => {
+                    warn!("Could not tag document {}: {}", id, e);
+                }
+                _ => {
+                    return Err(e.into());
+                }
+            },
+        };
         //Doc Repo
         self.doc_repo
             .write()
