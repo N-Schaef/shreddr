@@ -183,7 +183,7 @@ function createDocumentCard(doc) {
     date.setUTCSeconds(doc.extracted.doc_date);
     card.find(".inferred").text("Document: " + date.toLocaleDateString());
   }
-  let cardDiv = $("<div class=\"col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 py-2 \"></div>")
+  let cardDiv = $("<div class=\"col-12 col-sm-6 col-md-6 col-lg-4 col-xl-2 py-2 \"></div>")
   cardDiv.html(card);
   return cardDiv;
 }
