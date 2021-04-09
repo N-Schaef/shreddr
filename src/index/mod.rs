@@ -302,10 +302,22 @@ impl Index {
         doc.extracted = Default::default();
         doc.body = body;
         //Tag
-        self.tagger
+        match self
+            .tagger
             .write()
             .map_err(|_| IndexError::LockError("tagger".into()))?
-            .tag_document(&mut doc)?;
+            .tag_document(&mut doc)
+        {
+            Ok(_) => {}
+            Err(e) => match e {
+                TaggingError::EmptyBody(id) => {
+                    warn!("Could not tag document {}: {}", id, e);
+                }
+                _ => {
+                    return Err(e.into());
+                }
+            },
+        };
         //Index
         self.doc_repo
             .write()
@@ -341,10 +353,22 @@ impl Index {
         doc.extracted = Default::default();
         doc.body = body;
         //Tag
-        self.tagger
+        match self
+            .tagger
             .write()
             .map_err(|_| IndexError::LockError("tagger".into()))?
-            .tag_document(&mut doc)?;
+            .tag_document(&mut doc)
+        {
+            Ok(_) => {}
+            Err(e) => match e {
+                TaggingError::EmptyBody(id) => {
+                    warn!("Could not tag document {}: {}", id, e);
+                }
+                _ => {
+                    return Err(e.into());
+                }
+            },
+        };
         //Index
         self.doc_repo
             .write()
