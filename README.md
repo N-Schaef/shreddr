@@ -84,7 +84,7 @@ You must use rust nightly and have to install some compile-time dependencies.
 
 For alpine the dependencies are (may be different for other distributions):
 ```
-tesseract-ocr tesseract-ocr-dev leptonica-dev clang clang-libs llvm-dev leptonica
+tesseract-ocr tesseract-ocr-dev leptonica-dev clang clang-libs llvm-dev leptonica unpaper ocrmypdf
 ```
 Then run:
 ```sh
