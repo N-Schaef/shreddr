@@ -89,10 +89,12 @@ function createTagButton(docId, tagMap, tagId, clickFunc) {
   var btn = $("<a href=\"/tags/"+tagId+"\" type=\"button\" class=\"btn btn-secondary btn-sm tag-btn mb-2\" style=\"border-color: transparent;\"></a>");
   btn.text(tag.name);
   btn.css("background-color", tag.color);
+  btn.css("color", isDark(tag.color) ? "var(--light)" : "var(--dark)")
   btn.addClass("tag-" + tag.id);
   btn.on("click", clickFunc);
   var removebtn = $("<button type=\"button\" class=\"btn btn-sm btn-secondary tag-btn mb-2\" style=\"border-color: transparent;\"><span data-feather=\"x\"></span></button>");
   removebtn.css("background-color", tag.color);
+  removebtn.css("color", isDark(tag.color) ? "var(--light)" : "var(--dark)")
   removebtn.on("click", function () {
     $.ajax({
       url: '/documents/' + docId + '/tags/' + tag.id,
@@ -111,7 +113,7 @@ function createTagButton(docId, tagMap, tagId, clickFunc) {
 function createAddButton(docId, tagMap) {
   var div = $("<div></div>");
   var dropdownButton = $("<button class=\"btn btn-sm btn-success dropdown-toggle\" type=\"button\" id=\"addTagButton\" data-toggle=\"dropdown\"><span data-feather=\"plus\"></span></button>");
-  var items = $("<div class=\"dropdown-menu\" aria-labelledby=\"addTagButton\"></div>");
+  var items = $("<div class=\"dropdown-menu tag-add-menu\" aria-labelledby=\"addTagButton\"></div>");
   var filter = $("<input class=\"form-control\" id=\"filterTags\" type=\"text\" placeholder=\"Search..\">");
   filter.on("keyup", function () {
     var value = $(this).val().toLowerCase();
@@ -125,6 +127,7 @@ function createAddButton(docId, tagMap) {
     var item = $("<button class=\"dropdown-item\" type=\"button\"></button>");
     item.text(value.name);
     item.css("background-color", value.color);
+    item.css("color", isDark(value.color) ? "var(--light)" : "var(--dark)");
     item.on("click", function () {
       $.ajax({
         url: '/documents/' + docId + '/tags/' + value.id,

@@ -1,3 +1,40 @@
 .tag-btn {
   margin-right: .3em;
 }
+
+.tag-filter-menu {
+  padding: .5rem .5rem;
+}
+
+.tag-filter-menu .dropdown-item {
+  margin: .5rem auto;
+  border-radius: 3px;
+}
+
+.docbutton-container {
+  position: relative;
+}
+
+.docbuttons {
+  position: absolute;
+  top: 0;
+}
+
+.doc-card {
+  /* Make sure document buttons always fit
+     inside the card */
+  min-width: 170px;
+}
+
+.doc-image {
+  padding: 1em;
+  height: 100%;
+  object-fit: contain;
+}
+
+.doc-title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: large;
+}
