@@ -130,7 +130,8 @@ impl LocalDocumentRepository {
         let body_str = match &doc_data.body {
             Some(s) => s.clone(),
             None => {
-                return Err(IndexerError::DocumentMissingBody(doc_data.id));
+                warn!("{}", IndexerError::DocumentMissingBody(doc_data.id));
+                String::new()
             }
         };
         doc.add_text(body, &body_str);
