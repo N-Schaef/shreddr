@@ -143,7 +143,10 @@ function createDocumentCard(doc) {
   card.mouseover(function () {
     $(this).removeClass("shadow-sm");
     $(this).addClass("shadow-lg");
-    $(this).find(".docbuttons").show();
+    if (!$(this).hasClass("doc-multiselect")) {
+      // Do not show buttons in selection mode
+      $(this).find(".docbuttons").show();
+    }
   });
   card.mouseout(function () {
     $(this).removeClass("shadow-lg");
@@ -189,6 +192,21 @@ function createDocumentCard(doc) {
   let cardDiv = $("<div class=\"col-12 col-sm-6 col-md-6 col-lg-4 col-xl-2 py-2 \"></div>")
   cardDiv.html(card);
   return cardDiv;
+}
+
+function toggleMultiSelect(elem) {
+  if (!elem.classList.contains("active")) {
+    // If button is currently inactive, we are on our way
+    // to multi-select mode
+    $(".doc-card").addClass(["doc-multiselect"]);
+    $(".doc-card").on("click", function() {
+      $(this).toggleClass("selected");
+    })
+  } else {
+    // Button has .active, so user wants to toggle multi-select
+    // mode off
+    $(".doc-card").removeClass(["doc-multiselect", "selected"]);
+  }
 }
 
 (function () {

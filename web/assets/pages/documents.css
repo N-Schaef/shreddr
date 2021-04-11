@@ -26,6 +26,18 @@
   min-width: 170px;
 }
 
+.doc-multiselect {
+  border: var(--gray) solid 3px;
+}
+
+.doc-multiselect.selected {
+  border: var(--blue) solid 3px;
+}
+
+.doc-multiselect * {
+  pointer-events: none;
+}
+
 .doc-image {
   padding: 1em;
   height: 100%;
