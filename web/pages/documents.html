@@ -51,6 +51,24 @@
     </div>
   </div>
 
+  <div id="multiselect-docbuttons" class="justify-content-center sticky-top sticky-offset p-1 mb-1 d-none">
+    <div class="btn-group docbuttons ml-1">
+      <button type="button" title="Reprocess documents" class="btn btn-primary w-100 reimport-doc" onclick="reprocessSelected()">
+        <span data-feather="refresh-cw"></span>
+      </button>
+      <button type="button" title="Select all" class="btn btn-secondary w-100 select-all-doc" onclick="selectAll()">
+        <span data-feather="check-square"></span>
+      </button>
+      <button type="button" title="Deselect all" class="btn btn-secondary w-100 deselect-all-doc" onclick="deselectAll()">
+        <span data-feather="square"></span>
+      </button>
+      <button type="button" title="Assign tag" class="btn btn-success dropdown-toggle w-100 add-tag">
+        <span data-feather="tag"></span>
+        <span class="pl-1">Add Tag</span>
+      </button>
+      <button type="button" title="Remove documents" class="btn btn-danger w-100 remove-doc" onclick="removeSelected()">
+        <span data-feather="trash-2"></span>
+      </button>
     </div>
   </div>
 

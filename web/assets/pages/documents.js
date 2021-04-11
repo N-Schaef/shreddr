@@ -199,6 +199,8 @@ function toggleMultiSelect(elem) {
     // If button is currently inactive, we are on our way
     // to multi-select mode
     $("#documents").addClass("doc-multiselect");
+    $("#multiselect-docbuttons").addClass("d-flex");
+    $("#multiselect-docbuttons").removeClass("d-none");
     $(".doc-card").on("click", function() {
       $(this).toggleClass("selected");
     })
@@ -206,6 +208,8 @@ function toggleMultiSelect(elem) {
     // Button has .active, so user wants to toggle multi-select
     // mode off
     $("#documents").removeClass("doc-multiselect")
+    $("#multiselect-docbuttons").addClass("d-none");
+    $("#multiselect-docbuttons").removeClass("d-flex");
     $(".doc-card").removeClass("selected");
     $(".doc-card").unbind("click")
   }

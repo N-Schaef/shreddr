@@ -5,6 +5,11 @@
 .tag-label {
   height: 24px;
 }
+
+.sticky-offset {
+  top: 86px;
+}
+
 .tag-filter-menu {
   padding: .5rem .5rem;
 }
@@ -14,11 +19,11 @@
   border-radius: 3px;
 }
 
-.docbutton-container {
+.doc-card .docbutton-container {
   position: relative;
 }
 
-.docbuttons {
+.doc-card .docbuttons {
   position: absolute;
   top: 0;
 }
@@ -39,6 +44,10 @@
 
 .doc-multiselect .doc-card * {
   pointer-events: none;
+}
+
+#multiselect-docbuttons .docbuttons {
+  box-shadow: 0 0 3em grey;
 }
 
 .doc-image {
