@@ -19,7 +19,6 @@ function updateTitle() {
     contentType: 'application/json',
     data: JSON.stringify(patch),
   });
-  $("#doctitle").trigger( "blur" )
 }
 
 function updateLanguage() {
@@ -29,7 +28,6 @@ function updateLanguage() {
     contentType: 'application/json',
     data: JSON.stringify(patch),
   });
-  $("#lang").trigger( "blur" )
 }
 
 
@@ -75,9 +73,11 @@ function initButtons(docId) {
 
 
   //Title change
-  $("#doctitle").on("keypress", function (e) { if (e.which == 13) { updateTitle();   return false; }  });
+  $("#doctitle").on("keypress", function (e) { if (e.which == 13) {$("#doctitle").blur();  return false; }  });
+  $("#doctitle").on("focusout", function (e) { updateTitle();});
   //Language change
-  $("#lang").on("keypress", function (e) { if (e.which == 13) { updateLanguage();   return false; }  });
+  $("#lang").on("keypress", function (e) { if (e.which == 13) {$("#lang").blur();  return false; }  });
+  $("#lang").on("focusout", function (e) { updateLanguage();});
   
 }
 
