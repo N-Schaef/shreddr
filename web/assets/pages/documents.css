@@ -10,13 +10,20 @@
   top: 86px;
 }
 
-.tag-filter-menu {
+.tag-filter-menu,
+.add-tag-menu {
   padding: .5rem .5rem;
 }
 
 .tag-filter-menu .dropdown-item {
   margin: .5rem auto;
   border-radius: 3px;
+.add-tag-menu .btn-group {
+  margin: .5rem .5rem 0 0;
+}
+
+.add-tag-menu .tag-container {
+  width: 15rem;
 }
 
 .doc-card .docbutton-container {

@@ -69,6 +69,14 @@
       <button type="button" title="Remove documents" class="btn btn-danger w-100 remove-doc" onclick="removeSelected()">
         <span data-feather="trash-2"></span>
       </button>
+      <button id="addTagButton" type="button" title="Assign tag" data-toggle="dropdown" class="btn btn-success dropdown-toggle w-100 add-tag">
+        <span data-feather="tag"></span>
+        <span class="pl-1">Tags</span>
+      </button>
+      <div class="dropdown-menu add-tag-menu" aria-labelledby="addTagButton">
+        <input class="form-control tag-filter" type="text" placeholder="Search..">
+        <div class="d-flex tag-container flex-wrap"></div>
+      </div>
     </div>
   </div>
 
