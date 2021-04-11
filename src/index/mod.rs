@@ -185,8 +185,8 @@ impl Index {
     /// Imports a new document
     /// This function computes the hash value of each document and skips the file, if it is already contained in the repo
     /// To reimport/reprocess a document use the `reprocess_document` function
-    pub fn import_document(&self, file: &Path, copy: bool) -> Result<DocId, IndexError> {
-        let hash = FileExtractor::get_file_hash(file)?;
+    pub fn import_document(&self, original_file: &Path, copy: bool) -> Result<DocId, IndexError> {
+        let hash = FileExtractor::get_file_hash(original_file)?;
         if let Ok(Some(found_id)) = self
             .doc_repo
             .read()
@@ -195,30 +195,37 @@ impl Index {
         {
             debug!(
                 "File {:?} already contained in repo with id {}",
-                file, found_id
+                original_file, found_id
             );
             return Ok(found_id);
         }
-        info!("Importing file {:?}", file);
+        info!("Importing file {:?}", original_file);
         let id = self.get_next_id()?;
-        let original_name = file.file_name().ok_or(IndexError::OSStringError())?;
-        //Import
+        let original_name = original_file
+            .file_name()
+            .ok_or(IndexError::OSStringError())?;
+        // Import
         (*self.file_repo)
             .write()
             .map_err(|_| IndexError::LockError("file repository".into()))?
-            .add_document(id, file)?;
+            .add_document(id, original_file)?;
 
-        //Extract
+        // Get file back from index
+        let new_file = (*self.file_repo)
+            .read()
+            .map_err(|_| IndexError::LockError("file repository".into()))?
+            .get_document(id)?;
+        // Extract
         let body = self
             .extractor
             .write()
             .map_err(|_| IndexError::LockError("extractor".into()))?
-            .extract_body(file);
+            .extract_body(&new_file);
         //Create thumbnail
         let mut thumbnail_file = self.thumbnails_dir.join("tmp");
         thumbnail_file.set_file_name(format!("{}.jpg", id.to_string()));
 
-        ContentExtractor::render_thumbnail(&file, &thumbnail_file);
+        ContentExtractor::render_thumbnail(&new_file, &thumbnail_file);
 
         let original_filename: String = original_name
             .to_str()
@@ -232,7 +239,7 @@ impl Index {
             tags: vec![],
             language: None,
             imported_date: chrono::Utc::now(),
-            file_size: FileExtractor::get_file_size(file)?,
+            file_size: FileExtractor::get_file_size(original_file)?,
             hash,
             extracted: document_repository::ExtractedData::default(),
         };
@@ -260,7 +267,7 @@ impl Index {
             .add_document(&doc_data)?;
 
         if !copy {
-            std::fs::remove_file(file)?;
+            std::fs::remove_file(original_file)?;
         }
         Ok(id)
     }
