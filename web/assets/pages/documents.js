@@ -105,7 +105,7 @@ function nextHandler(pageIndex){
 
 function createDocumentCard(doc) {
   const template = `
-  <div class="doc-card card shadow-sm h-100" id="doc-${doc.id}">
+  <div class="doc-card card shadow-sm h-100" id="doc-${doc.id}" data-doc_id="${doc.id}">
     <div class="card-header" style="padding: .5rem;">
       <a href="/documents/${doc.id}" class="text-dark" style="text-decoration: none;">
         <div class="doc-title">${doc.title}</div>
@@ -206,6 +206,36 @@ function toggleMultiSelect(elem) {
     $(".doc-card").on("click", function() {
       $(this).toggleClass("selected");
     })
+
+    docbuttons.find(".tag-filter").on("keyup", function () {
+      var value = $(this).val().toLowerCase();
+      docbuttons.find(".add-tag-menu .btn-group").filter(function () {
+        let contains = $(this).find(".btn-add-tag").text().toLowerCase().indexOf(value) > -1;
+        $(this).toggle(contains);
+      });
+    });
+
+    // Remove old set of tags
+    docbuttons.find(".tag-container").empty();
+
+    // Fill with fresh tags from server
+    $.get("/tags/json").done(function (data) {
+      data.forEach(function (tag) {
+        var item = $("<div class=\"btn-group\"><button class=\"btn btn-sm btn-add-tag\" type=\"button\"></button><button class=\"btn btn-sm btn-danger btn-del-tag\" type=\"button\">X</button></div>");
+        var add_button = item.find(".btn-add-tag")
+        var del_button = item.find(".btn-del-tag");
+
+        add_button.text(tag.name);
+        add_button.css("background-color", tag.color);
+        add_button.css("color", isDark(tag.color) ? "var(--light)" : "var(--dark)");
+        add_button.on("click", () => addTagToSelected(tag));
+
+        del_button.on("click", () => removeTagFromSelected(tag))
+
+        docbuttons.find(".tag-container").append(item);
+      });
+    });
+
   } else {
     // Button has .active, so user wants to toggle multi-select
     // mode off
@@ -216,6 +246,62 @@ function toggleMultiSelect(elem) {
     $(".doc-card").removeClass("selected");
     $(".doc-card").unbind("click")
   }
+}
+
+function reprocessSelected() {
+  $(".doc-card.selected").each(function() {
+    $.ajax({
+      url: "/documents/" + this.dataset.doc_id + "/reimport",
+      type: 'PUT',
+      success: function (result) {
+        updateStatusWindow();
+      }
+    });
+  });
+}
+
+function removeSelected() {
+  $(".doc-card.selected").each(function() {
+    $.ajax({
+      url: "/documents/" + this.dataset.doc_id,
+      type: 'DELETE',
+      success: function (result) {
+        location.reload();
+      }
+    });
+  });
+}
+
+function addTagToSelected(tag) {
+  $(".doc-card.selected").each(function() {
+    $.ajax({
+      url: '/documents/' + this.dataset.doc_id + '/tags/' + tag.id,
+      type: 'POST',
+      success: function (result) {
+        location.reload();
+      }
+    });
+  });
+}
+
+function removeTagFromSelected(tag) {
+  $(".doc-card.selected").each(function() {
+    $.ajax({
+      url: '/documents/' + this.dataset.doc_id + '/tags/' + tag.id,
+      type: 'DELETE',
+      success: function (result) {
+        location.reload();
+      }
+    });
+  });
+}
+
+function selectAll() {
+  $(".doc-card").addClass("selected");
+}
+
+function deselectAll() {
+  $(".doc-card").removeClass("selected");
 }
 
 (function () {
