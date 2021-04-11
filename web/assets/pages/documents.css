@@ -39,3 +39,18 @@
   text-overflow: ellipsis;
   font-size: large;
 }
+
+.no-more {
+  opacity: 0;
+  color: #999;
+  display: inline-block;
+  vertical-align: middle;
+  text-decoration: none;
+  transition: opacity 400ms;
+}
+
+.status {
+  text-align: center;
+  margin-top: 29px;
+  min-height: 40px;
+}

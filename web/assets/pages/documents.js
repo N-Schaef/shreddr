@@ -221,10 +221,15 @@ function createDocumentCard(doc) {
       $("#filter-btn").html(createSearchTagButton());
       feather.replace();
 
-     window.ias = new InfiniteAjaxScroll('#documents',{
+      window.ias = new InfiniteAjaxScroll('#documents',{
        item: '.card',
        next: nextHandler,
-     })
+      });
+
+      window.ias.on('last', function() {
+      let el = document.querySelector('.no-more');
+      el.style.opacity = '1';
+      });
 
     });
 
