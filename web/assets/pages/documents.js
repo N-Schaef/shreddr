@@ -195,12 +195,14 @@ function createDocumentCard(doc) {
 }
 
 function toggleMultiSelect(elem) {
+  var docbuttons = $("#multiselect-docbuttons");
+
   if (!elem.classList.contains("active")) {
     // If button is currently inactive, we are on our way
     // to multi-select mode
     $("#documents").addClass("doc-multiselect");
-    $("#multiselect-docbuttons").addClass("d-flex");
-    $("#multiselect-docbuttons").removeClass("d-none");
+    docbuttons.addClass("d-flex");
+    docbuttons.removeClass("d-none");
     $(".doc-card").on("click", function() {
       $(this).toggleClass("selected");
     })
@@ -208,8 +210,9 @@ function toggleMultiSelect(elem) {
     // Button has .active, so user wants to toggle multi-select
     // mode off
     $("#documents").removeClass("doc-multiselect")
-    $("#multiselect-docbuttons").addClass("d-none");
-    $("#multiselect-docbuttons").removeClass("d-flex");
+    docbuttons.addClass("d-none");
+    docbuttons.removeClass("d-flex");
+    docbuttons.find(".tag-filter").unbind("keyup");
     $(".doc-card").removeClass("selected");
     $(".doc-card").unbind("click")
   }
