@@ -1,4 +1,7 @@
 var tagMap = new Map()
+
+var lastDocYear = null;
+
 function filterByTag(tagId) {
   var tags = JSON.parse(sessionStorage.getItem("filterTags")) || [];
   tags.push(tagId)
@@ -14,6 +17,22 @@ function removeTagFilter(tagId) {
   }
   sessionStorage.setItem("filterTags", JSON.stringify(Array.from(new Set(tags))));
   location.reload();
+}
+
+function addDocYear(seconds){
+  var date = new Date(0);
+  if (seconds > 0){
+    date.setUTCSeconds(seconds)
+    var year = date.getFullYear();
+  }else{
+    var year = "Unknown";
+  }
+
+  if(year != lastDocYear){
+    lastDocYear = year;
+    return $(`<div class=\"year-headline col-12\"><h2>${year}</h2></div>`);
+  }
+  return null;
 }
 
 function createSearchTagButton(){
@@ -94,6 +113,23 @@ function nextHandler(pageIndex){
   .then((data) => {
     let frag = document.createDocumentFragment();
     data.forEach(function (docData) {
+      let searchParams = new URLSearchParams(window.location.search)
+      if (searchParams.has('order')) {
+        var order = searchParams.get('order')
+      }
+      if (order === "1"){
+        if (docData.extracted.doc_date) {
+          var seconds = docData.extracted.doc_date;
+        }else{
+          var seconds = 0;
+        }
+      }else{
+        var seconds = docData.imported_date;
+      }
+      let yearSep = addDocYear(seconds);
+      if(yearSep !== null){
+        frag.appendChild(yearSep[0]);
+      }
       let item = createDocumentCard(docData)
       frag.appendChild(item[ 0 ]);
     });
@@ -193,16 +229,6 @@ function createDocumentCard(doc) {
 
 (function () {
   'use strict'
-
-  let searchParams = new URLSearchParams(window.location.search)
-  var order = 0;
-  if (searchParams.has('order')) {
-    order = searchParams.get('order')
-  }
-  var page = 1;
-  if (searchParams.has('page')) {
-    page = searchParams.get('page')
-  }
 
   var tags = JSON.parse(sessionStorage.getItem("filterTags")) || [];
   tagMap = new Map()
