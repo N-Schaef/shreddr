@@ -206,6 +206,7 @@ function toggleMultiSelect(elem) {
     // Button has .active, so user wants to toggle multi-select
     // mode off
     $(".doc-card").removeClass(["doc-multiselect", "selected"]);
+    $(".doc-card").unbind("click")
   }
 }
 
