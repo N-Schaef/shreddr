@@ -46,12 +46,12 @@ function createSearchTagButton(){
 }
 
 function createTagButton(tagId, clickFunc) {
-  var btn = $("<button type=\"button\" class=\"btn btn-sm mb-1 tag-btn\">unknown tag</button>");
+  var btn = $("<button type=\"button\" class=\"btn btn-sm tag-btn\"><div class=\"tag-label\">unknown tag</div></button>");
   var tag = tagMap.get(tagId);
   if (!tag) {
     return "";
   }
-  btn.text(tag.name);
+  btn.find(".tag-label").text(tag.name);
   btn.css("background-color", tag.color);
   btn.css("color", isDark(tag.color) ? "var(--light)" : "var(--dark)")
   btn.addClass("tag-" + tag.id);

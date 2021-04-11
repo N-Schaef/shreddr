@@ -2,6 +2,9 @@
   margin-right: .3em;
 }
 
+.tag-label {
+  height: 24px;
+}
 .tag-filter-menu {
   padding: .5rem .5rem;
 }
