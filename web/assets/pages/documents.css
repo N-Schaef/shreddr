@@ -26,15 +26,15 @@
   min-width: 170px;
 }
 
-.doc-multiselect {
+.doc-multiselect .doc-card {
   border: var(--gray) solid 3px;
 }
 
-.doc-multiselect.selected {
+.doc-multiselect .doc-card.selected {
   border: var(--blue) solid 3px;
 }
 
-.doc-multiselect * {
+.doc-multiselect .doc-card * {
   pointer-events: none;
 }
 
