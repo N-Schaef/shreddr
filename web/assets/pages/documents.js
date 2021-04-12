@@ -304,6 +304,18 @@ function deselectAll() {
   $(".doc-card").removeClass("selected");
 }
 
+function initScroll(){
+  window.ias = new InfiniteAjaxScroll('#documents',{
+    item: '.card',
+    next: nextHandler,
+  });
+}
+
+function reloadDocuments(){
+  $("#documents").empty();
+  initScroll();
+}
+
 (function () {
   'use strict'
 
@@ -333,12 +345,7 @@ function deselectAll() {
 
       $("#filter-btn").html(createSearchTagButton());
       feather.replace();
-
-     window.ias = new InfiniteAjaxScroll('#documents',{
-       item: '.card',
-       next: nextHandler,
-     })
-
+      initScroll();
     });
 
 
