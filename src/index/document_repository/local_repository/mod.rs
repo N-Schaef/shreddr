@@ -1,14 +1,14 @@
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
-use tantivy::query::BooleanQuery;
-use tantivy::tokenizer::{NgramTokenizer, Token, Tokenizer};
+use tantivy::query::QueryParser;
+use tantivy::tokenizer::{LowerCaser, NgramTokenizer, TextAnalyzer};
 
 use crate::index::DocId;
 use array_tool::vec::Intersect;
 
 use tantivy::collector::{Count, TopDocs};
 use tantivy::schema::*;
-use tantivy::{Index, IndexReader, IndexWriter, ReloadPolicy};
+use tantivy::{Index, IndexReader, IndexWriter, ReloadPolicy, TantivyError};
 
 use super::{DocumentData, DocumentRepository, DocumentRepositoryError, FilterOptions, SortOrder};
 
@@ -29,6 +29,8 @@ use thiserror::Error;
 pub enum IndexerError {
     #[error("error in tantivy index `{0}`")]
     TantivyException(String),
+    #[error("error in tantivy index `{0}`")]
+    TantivyError(#[from] TantivyError),
     #[error("index schema does not contain field `{0}`")]
     UnknownField(String),
     #[error("document does not contain field `{0}`")]
@@ -47,6 +49,8 @@ pub enum IndexerError {
     ConfigError(#[from] confy::ConfyError),
     #[error("could not migrate repo")]
     MigrationError(#[from] migrations::MigrationError),
+    #[error("Could not parse query {0}")]
+    QueryError(#[from] tantivy::query::QueryParserError),
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -95,13 +99,13 @@ impl LocalDocumentRepository {
 
     fn init_index(index_dir: &Path, force: bool) -> Result<Index, IndexerError> {
         info!("Initializing index");
-        let tokenizer = NgramTokenizer::new(3, 6, false);
+        let tokenizer = TextAnalyzer::from(NgramTokenizer::new(3, 6, false)).filter(LowerCaser);
 
         let mut schema_builder = Schema::builder();
         let full_text_options = TextOptions::default().set_indexing_options(
             TextFieldIndexing::default()
                 .set_tokenizer("ngram")
-                .set_index_option(IndexRecordOption::WithFreqs),
+                .set_index_option(IndexRecordOption::WithFreqsAndPositions),
         );
         let id_option = IntOptions::default()
             .set_stored()
@@ -228,7 +232,7 @@ impl LocalDocumentRepository {
                 cfg.docs.retain(|d| {
                     query_result
                         .get(&d.id)
-                        .map(|score| score > &(max * 0.1))
+                        .map(|score| score > &(max * 0.05))
                         .unwrap_or(false)
                 });
                 cfg.docs.sort_unstable_by(|a, b| {
@@ -287,19 +291,12 @@ impl LocalDocumentRepository {
     }
 
     fn query(&self, query: &str) -> Result<HashMap<DocId, f32>, IndexerError> {
-        let tokenizer = NgramTokenizer::new(3, 6, false);
-        let mut queries: Vec<Term> = Vec::new();
-        let mut stream = tokenizer.token_stream(&query);
-        stream.process(&mut |token: &Token| {
-            queries.push(Term::from_field_text(
-                self.schema.get_field("body").unwrap(),
-                &token.text,
-            ))
-        });
-        let q = BooleanQuery::new_multiterms_query(queries);
+        let query_parser =
+            QueryParser::for_index(&self.index, vec![self.schema.get_field("body").unwrap()]);
+        let query = query_parser.parse_query(query)?;
         let searcher = self.index_reader.searcher();
         let result = searcher
-            .search(&q, &TopDocs::with_limit(100))
+            .search(&query, &TopDocs::with_limit(100))
             .map_err(|e| IndexerError::TantivyException(format!("{:?}", e)))?;
         let mut set = HashMap::new();
         for (score, doc_address) in result {
