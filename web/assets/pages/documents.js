@@ -265,8 +265,8 @@ function removeSelected() {
     $.ajax({
       url: "/documents/" + this.dataset.doc_id,
       type: 'DELETE',
-      success: function (result) {
-        location.reload();
+      success: () => {
+        console.log(`DELETE for doc ${this.dataset.doc_id}`);
       }
     });
   });
@@ -277,8 +277,8 @@ function addTagToSelected(tag) {
     $.ajax({
       url: '/documents/' + this.dataset.doc_id + '/tags/' + tag.id,
       type: 'POST',
-      success: function (result) {
-        location.reload();
+      success: () => {
+        console.log(`POST for doc ${this.dataset.doc_id}, tag ${tag.id}`);
       }
     });
   });
@@ -289,8 +289,8 @@ function removeTagFromSelected(tag) {
     $.ajax({
       url: '/documents/' + this.dataset.doc_id + '/tags/' + tag.id,
       type: 'DELETE',
-      success: function (result) {
-        location.reload();
+      success: () => {
+        console.log(`POST for doc ${this.dataset.doc_id}, tag ${tag.id}`);
       }
     });
   });
