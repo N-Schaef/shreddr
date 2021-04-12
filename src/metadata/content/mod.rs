@@ -79,6 +79,13 @@ impl ContentExtractor {
             "Rendering thumbnail for `{:#?}` in `{:#?}`",
             file, thumbnail_file
         );
+        if thumbnail_file.exists() {
+            debug!(
+                "Thumbnail `{:#?}` already exists. Skipping.",
+                thumbnail_file
+            );
+            return;
+        }
 
         if let Some(ext) = ContentExtractor::extract_extension(file) {
             match ext.as_str() {
