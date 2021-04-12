@@ -126,7 +126,11 @@ function nextHandler(pageIndex){
       }else{
         var seconds = docData.imported_date;
       }
-      let yearSep = addDocYear(seconds);
+      var yearSep = null
+      if (!searchParams.has('query')) {
+        yearSep = addDocYear(seconds);
+      }
+      
       if(yearSep !== null){
         frag.appendChild(yearSep[0]);
       }
