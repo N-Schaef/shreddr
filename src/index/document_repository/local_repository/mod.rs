@@ -19,6 +19,7 @@ pub struct LocalDocumentRepository {
     index_reader: IndexReader,
     doc_file: PathBuf,
     schema: Schema,
+    index: Index,
     requires_reindex: bool,
 }
 
@@ -58,8 +59,15 @@ impl LocalDocumentRepository {
     pub fn new(index_dir: &Path) -> Result<LocalDocumentRepository, IndexerError> {
         let i_dir: PathBuf = index_dir.into();
         let doc_file = index_dir.join("docs.yaml");
-        let requires_reindex = migrations::migrate(&doc_file, &i_dir)?;
-        let index = LocalDocumentRepository::init_index(&i_dir)?;
+        let mut requires_reindex = migrations::migrate(&doc_file, &i_dir)?;
+        let index = match LocalDocumentRepository::init_index(&i_dir, false) {
+            Ok(i) => i,
+            Err(e) => {
+                warn!("Could not create index: {}. Trying to overwrite.", e);
+                requires_reindex = true;
+                LocalDocumentRepository::init_index(&i_dir, true)?
+            }
+        };
         let schema = index.schema();
         let reader = index
             .reader_builder()
@@ -73,6 +81,7 @@ impl LocalDocumentRepository {
 
         Ok(LocalDocumentRepository {
             schema,
+            index,
             index_reader: reader,
             index_writer: writer,
             doc_file,
@@ -84,7 +93,7 @@ impl LocalDocumentRepository {
         self.requires_reindex
     }
 
-    fn init_index(index_dir: &Path) -> Result<Index, IndexerError> {
+    fn init_index(index_dir: &Path, force: bool) -> Result<Index, IndexerError> {
         info!("Initializing index");
         let tokenizer = NgramTokenizer::new(3, 6, false);
 
@@ -105,8 +114,11 @@ impl LocalDocumentRepository {
         let schema = schema_builder.build();
         let dir = tantivy::directory::MmapDirectory::open(index_dir)
             .map_err(|e| IndexerError::TantivyException(format!("{:?}", e)))?;
-        let index = Index::open_or_create(dir, schema)
-            .map_err(|e| IndexerError::TantivyException(format!("{:?}", e)))?;
+        let index = match force {
+            false => Index::open_or_create(dir, schema),
+            true => Index::create(dir, schema),
+        }
+        .map_err(|e| IndexerError::TantivyException(format!("{:?}", e)))?;
         index.tokenizers().register("ngram", tokenizer);
         Ok(index)
     }
