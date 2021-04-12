@@ -248,12 +248,20 @@ function toggleMultiSelect(elem) {
   }
 }
 
+function reselectDocument(doc){
+  doc.on("click", function() {
+    $(this).toggleClass("selected");
+  });
+  doc.addClass("selected");
+}
+
 function reprocessSelected() {
   $(".doc-card.selected").each(function() {
     $.ajax({
       url: "/documents/" + this.dataset.doc_id + "/reimport",
       type: 'PUT',
       success: function (result) {
+        reloadDocument(this.dataset.doc_id, true);
         updateStatusWindow();
       }
     });
@@ -266,6 +274,7 @@ function removeSelected() {
       url: "/documents/" + this.dataset.doc_id,
       type: 'DELETE',
       success: () => {
+        removeDocument(this.dataset.doc_id);
         console.log(`DELETE for doc ${this.dataset.doc_id}`);
       }
     });
@@ -278,6 +287,7 @@ function addTagToSelected(tag) {
       url: '/documents/' + this.dataset.doc_id + '/tags/' + tag.id,
       type: 'POST',
       success: () => {
+        reloadDocument(this.dataset.doc_id, true);
         console.log(`POST for doc ${this.dataset.doc_id}, tag ${tag.id}`);
       }
     });
@@ -290,6 +300,7 @@ function removeTagFromSelected(tag) {
       url: '/documents/' + this.dataset.doc_id + '/tags/' + tag.id,
       type: 'DELETE',
       success: () => {
+        reloadDocument(this.dataset.doc_id, true);
         console.log(`POST for doc ${this.dataset.doc_id}, tag ${tag.id}`);
       }
     });
@@ -314,6 +325,21 @@ function initScroll(){
 function reloadDocuments(){
   $("#documents").empty();
   initScroll();
+}
+
+function reloadDocument(id, reselect=false){
+  fetch(`/documents/${id}/json?`)
+  .then(response => response.json())
+  .then((newdoc) => {
+    $(`#doc-${id}`).parent().replaceWith(createDocumentCard(newdoc));
+    if(reselect){
+      reselectDocument($(`#doc-${id}`));
+    }
+    });
+}
+
+function removeDocument(id){
+  $(`#doc-${id}`).parent().remove();
 }
 
 (function () {
