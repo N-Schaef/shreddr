@@ -4,9 +4,7 @@
 <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
   <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Documents</h1>
-    <div id="filter-content">
-
-    </div>
+    <div id="filter-content" class="btn-toolbar mb-2 mb-md-0"></div>
 
     <div class="btn-toolbar mb-2 mb-md-0">
       <!--
@@ -16,9 +14,8 @@
       </div>
       -->
 
-      <button type="button" class="btn btn-sm btn-success dropdown-toggle mr-1" data-toggle="dropdown"
-        aria-haspopup="true" aria-expanded="false">
-        Add
+      <button type="button" class="btn btn-sm btn-success dropdown-toggle mr-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span>Add</span>
       </button>
       <div class="dropdown-menu">
         <form enctype="multipart/form-data" class="px-4 py-3 custom-form" id="uploadForm">
@@ -33,21 +30,49 @@
         </form>
       </div>
 
-      <div id="filter-btn">
+      <div id="filter-btn"></div>
 
+      <div>
+        <button class="btn btn-sm btn-outline-secondary dropdown-toggle mr-1" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span data-feather="arrow-down"></span>
+          <span class="pl-1">Sort By</span>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+          <a class="dropdown-item" href="?order=0">Imported Date</a>
+          <a class="dropdown-item" href="?order=1">Document Date</a>
+        </div>
       </div>
 
       <div>
-      <button class="btn btn-sm btn-outline-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <span data-feather="arrow-down"></span> Sort By
-      </button>
-      <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-        <a class="dropdown-item" href="?order=0">Imported Date</a>
-        <a class="dropdown-item" href="?order=1">Document Date</a>
+        <button class="btn btn-sm btn-outline-secondary" href="#" role="button" id="startMultiselect" data-toggle="button" onclick="toggleMultiSelect(this)">
+          <span data-feather="list"></span>
+        </button>
       </div>
     </div>
+  </div>
 
+  <div id="multiselect-docbuttons" class="justify-content-center sticky-top sticky-offset p-1 mb-1 d-none">
+    <div class="btn-group docbuttons ml-1">
+      <button type="button" title="Reprocess documents" class="btn btn-primary w-100 reimport-doc" onclick="reprocessSelected()">
+        <span data-feather="refresh-cw"></span>
+      </button>
+      <button type="button" title="Select all" class="btn btn-secondary w-100 select-all-doc" onclick="selectAll()">
+        <span data-feather="check-square"></span>
+      </button>
+      <button type="button" title="Deselect all" class="btn btn-secondary w-100 deselect-all-doc" onclick="deselectAll()">
+        <span data-feather="square"></span>
+      </button>
+      <button type="button" title="Remove documents" class="btn btn-danger w-100 remove-doc" onclick="removeSelected()">
+        <span data-feather="trash-2"></span>
+      </button>
+      <button id="addTagButton" type="button" title="Assign tag" data-toggle="dropdown" class="btn btn-success dropdown-toggle w-100 add-tag">
+        <span data-feather="tag"></span>
+        <span class="pl-1">Tags</span>
+      </button>
+      <div class="dropdown-menu add-tag-menu" aria-labelledby="addTagButton">
+        <input class="form-control tag-filter" type="text" placeholder="Search..">
+        <div class="d-flex tag-container flex-wrap"></div>
+      </div>
     </div>
   </div>
 

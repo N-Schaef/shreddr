@@ -65,12 +65,12 @@ function createSearchTagButton(){
 }
 
 function createTagButton(tagId, clickFunc) {
-  var btn = $("<button type=\"button\" class=\"btn btn-sm mb-1 tag-btn\">unknown tag</button>");
+  var btn = $("<button type=\"button\" class=\"btn btn-sm tag-btn\"><div class=\"tag-label\">unknown tag</div></button>");
   var tag = tagMap.get(tagId);
   if (!tag) {
     return "";
   }
-  btn.text(tag.name);
+  btn.find(".tag-label").text(tag.name);
   btn.css("background-color", tag.color);
   btn.css("color", isDark(tag.color) ? "var(--light)" : "var(--dark)")
   btn.addClass("tag-" + tag.id);
@@ -145,7 +145,7 @@ function nextHandler(pageIndex){
 
 function createDocumentCard(doc) {
   const template = `
-  <div class="doc-card card shadow-sm h-100" id="doc-${doc.id}">
+  <div class="doc-card card shadow-sm h-100" id="doc-${doc.id}" data-doc_id="${doc.id}">
     <div class="card-header" style="padding: .5rem;">
       <a href="/documents/${doc.id}" class="text-dark" style="text-decoration: none;">
         <div class="doc-title">${doc.title}</div>
@@ -153,17 +153,17 @@ function createDocumentCard(doc) {
     </div>
 
     <div class="docbutton-container">
-    <div class="btn-group docbuttons w-100" style="display: none;">
-      <a href="/documents/${doc.id}/download" title="Download document" class="btn btn-primary w-100 download-doc"
-        style="border-radius: 0 !important;">${feather.icons['download'].toSvg()}</a>
-      <button type="button" title="Reprocess document" class="btn btn-secondary w-100 reimport-doc"
-        style="border-radius: 0 !important;">${feather.icons['refresh-cw'].toSvg()}</button>
-      <a href="/documents/${doc.id}" title="Edit document metadata" class="btn btn-secondary w-100 edit-doc"
-        style="border-radius: 0 !important;">${feather.icons['edit'].toSvg()}</a>
-      <button type="button" title="Remove document" class="btn btn-danger w-100 remove-doc"
-        style="border-radius: 0 !important;">${feather.icons['trash-2'].toSvg()}</button>
+      <div class="btn-group docbuttons w-100" style="display: none;">
+        <a href="/documents/${doc.id}/download" title="Download document" class="btn btn-primary w-100 download-doc"
+          style="border-radius: 0 !important;">${feather.icons['download'].toSvg()}</a>
+        <button type="button" title="Reprocess document" class="btn btn-secondary w-100 reimport-doc"
+          style="border-radius: 0 !important;">${feather.icons['refresh-cw'].toSvg()}</button>
+        <a href="/documents/${doc.id}" title="Edit document metadata" class="btn btn-secondary w-100 edit-doc"
+          style="border-radius: 0 !important;">${feather.icons['edit'].toSvg()}</a>
+        <button type="button" title="Remove document" class="btn btn-danger w-100 remove-doc"
+          style="border-radius: 0 !important;">${feather.icons['trash-2'].toSvg()}</button>
+      </div>
     </div>
-  </div>
 
     <img class="card-img-bottom doc-image" src="/thumbnails/${doc.id}.jpg" rel="nofollow" alt="Document thumbnail">
     <div class="card-body">
@@ -183,7 +183,10 @@ function createDocumentCard(doc) {
   card.mouseover(function () {
     $(this).removeClass("shadow-sm");
     $(this).addClass("shadow-lg");
-    $(this).find(".docbuttons").show();
+    if (!$("#documents").hasClass("doc-multiselect")) {
+      // Do not show buttons in selection mode
+      $(this).find(".docbuttons").show();
+    }
   });
   card.mouseout(function () {
     $(this).removeClass("shadow-lg");
@@ -231,6 +234,159 @@ function createDocumentCard(doc) {
   return cardDiv;
 }
 
+function toggleMultiSelect(elem) {
+  var docbuttons = $("#multiselect-docbuttons");
+
+  if (!elem.classList.contains("active")) {
+    // If button is currently inactive, we are on our way
+    // to multi-select mode
+    $("#documents").addClass("doc-multiselect");
+    docbuttons.addClass("d-flex");
+    docbuttons.removeClass("d-none");
+    $(".doc-card").on("click", function() {
+      $(this).toggleClass("selected");
+    })
+
+    docbuttons.find(".tag-filter").on("keyup", function () {
+      var value = $(this).val().toLowerCase();
+      docbuttons.find(".add-tag-menu .btn-group").filter(function () {
+        let contains = $(this).find(".btn-add-tag").text().toLowerCase().indexOf(value) > -1;
+        $(this).toggle(contains);
+      });
+    });
+
+    // Remove old set of tags
+    docbuttons.find(".tag-container").empty();
+
+    // Fill with fresh tags from server
+    $.get("/tags/json").done(function (data) {
+      data.forEach(function (tag) {
+        var item = $("<div class=\"btn-group\"><button class=\"btn btn-sm btn-add-tag\" type=\"button\"></button><button class=\"btn btn-sm btn-danger btn-del-tag\" type=\"button\">X</button></div>");
+        var add_button = item.find(".btn-add-tag")
+        var del_button = item.find(".btn-del-tag");
+
+        add_button.text(tag.name);
+        add_button.css("background-color", tag.color);
+        add_button.css("color", isDark(tag.color) ? "var(--light)" : "var(--dark)");
+        add_button.on("click", () => addTagToSelected(tag));
+
+        del_button.on("click", () => removeTagFromSelected(tag))
+
+        docbuttons.find(".tag-container").append(item);
+      });
+    });
+
+  } else {
+    // Button has .active, so user wants to toggle multi-select
+    // mode off
+    $("#documents").removeClass("doc-multiselect")
+    docbuttons.addClass("d-none");
+    docbuttons.removeClass("d-flex");
+    docbuttons.find(".tag-filter").unbind("keyup");
+    $(".doc-card").removeClass("selected");
+    $(".doc-card").unbind("click")
+  }
+}
+
+function reselectDocument(doc){
+  doc.on("click", function() {
+    $(this).toggleClass("selected");
+  });
+  doc.addClass("selected");
+}
+
+function reprocessSelected() {
+  $(".doc-card.selected").each(function() {
+    $.ajax({
+      url: "/documents/" + this.dataset.doc_id + "/reimport",
+      type: 'PUT',
+      success: function (result) {
+        reloadDocument(this.dataset.doc_id, true);
+        updateStatusWindow();
+      }
+    });
+  });
+}
+
+function removeSelected() {
+  $(".doc-card.selected").each(function() {
+    $.ajax({
+      url: "/documents/" + this.dataset.doc_id,
+      type: 'DELETE',
+      success: () => {
+        removeDocument(this.dataset.doc_id);
+        console.log(`DELETE for doc ${this.dataset.doc_id}`);
+      }
+    });
+  });
+}
+
+function addTagToSelected(tag) {
+  $(".doc-card.selected").each(function() {
+    $.ajax({
+      url: '/documents/' + this.dataset.doc_id + '/tags/' + tag.id,
+      type: 'POST',
+      success: () => {
+        reloadDocument(this.dataset.doc_id, true);
+        console.log(`POST for doc ${this.dataset.doc_id}, tag ${tag.id}`);
+      }
+    });
+  });
+}
+
+function removeTagFromSelected(tag) {
+  $(".doc-card.selected").each(function() {
+    $.ajax({
+      url: '/documents/' + this.dataset.doc_id + '/tags/' + tag.id,
+      type: 'DELETE',
+      success: () => {
+        reloadDocument(this.dataset.doc_id, true);
+        console.log(`POST for doc ${this.dataset.doc_id}, tag ${tag.id}`);
+      }
+    });
+  });
+}
+
+function selectAll() {
+  $(".doc-card").addClass("selected");
+}
+
+function deselectAll() {
+  $(".doc-card").removeClass("selected");
+}
+
+function initScroll(){
+  window.ias = new InfiniteAjaxScroll('#documents',{
+    item: '.card',
+    next: nextHandler,
+   });
+
+   window.ias.on('last', function() {
+   let el = document.querySelector('.no-more');
+   el.style.opacity = '1';
+   });
+}
+
+function reloadDocuments(){
+  $("#documents").empty();
+  initScroll();
+}
+
+function reloadDocument(id, reselect=false){
+  fetch(`/documents/${id}/json?`)
+  .then(response => response.json())
+  .then((newdoc) => {
+    $(`#doc-${id}`).parent().replaceWith(createDocumentCard(newdoc));
+    if(reselect){
+      reselectDocument($(`#doc-${id}`));
+    }
+    });
+}
+
+function removeDocument(id){
+  $(`#doc-${id}`).parent().remove();
+}
+
 (function () {
   'use strict'
 
@@ -250,17 +406,7 @@ function createDocumentCard(doc) {
 
       $("#filter-btn").html(createSearchTagButton());
       feather.replace();
-
-      window.ias = new InfiniteAjaxScroll('#documents',{
-       item: '.card',
-       next: nextHandler,
-      });
-
-      window.ias.on('last', function() {
-      let el = document.querySelector('.no-more');
-      el.style.opacity = '1';
-      });
-
+      initScroll();
     });
 
 
