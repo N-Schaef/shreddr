@@ -222,7 +222,13 @@ impl Tagger {
         //TODO improve
         let mut ids: Vec<TagId> = vec![];
         for (_, tag_cfg) in self.tags.iter() {
-            let tag = from_tag_config(tag_cfg).unwrap();
+            let tag = match from_tag_config(tag_cfg) {
+                Ok(t) => t,
+                Err(e) => {
+                    error!("Invalid tag in config: {:#?} ({})", tag_cfg, e);
+                    continue;
+                }
+            };
             if tag.matcher.match_document(&doc)? {
                 doc.tags.push(tag.id);
                 ids.push(tag.id);
