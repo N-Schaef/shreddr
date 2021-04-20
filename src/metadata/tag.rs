@@ -139,6 +139,9 @@ impl Tagger {
     }
 
     pub fn add_tag(&mut self, mut tag: TagConfig) -> Result<(), TaggingError> {
+        // Try to build tag and fail early
+        from_tag_config(&tag)?;
+
         //Load config
         let mut cfg: TagsConfig = confy::load_path(&self.tags_file)?;
 
@@ -157,6 +160,9 @@ impl Tagger {
     }
 
     pub fn add_or_replace_tag(&mut self, mut tag: TagConfig) -> Result<(), TaggingError> {
+        // Try to build tag and fail early
+        from_tag_config(&tag)?;
+
         //Load config
         let mut cfg: TagsConfig = confy::load_path(&self.tags_file)?;
 
