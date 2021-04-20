@@ -94,6 +94,7 @@ cargo install --path .
 
 ### Docker
 This repository already includes a `Dockerfile` and a `docker-compose.yml` file for creating an alpine linux Shreddr web-server image.
+You can also use the [Docker Hub image](https://hub.docker.com/repository/docker/nicotin/shreddr) by removing the `build` block and replace image by `nicotin/shreddr:latest`.
 You have to bind an external port to `8000` to access the web-interface.
 Additionally, you have to mount the data and consume directories.
 The consume directory should be a direct directory mount in most cases, in which you will put your PDF files.
