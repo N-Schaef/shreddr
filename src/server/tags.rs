@@ -68,7 +68,7 @@ pub fn create_or_update_tag(
     index: State<Arc<Index>>,
     tag_form: Form<TagForm>,
     id: TagId,
-) -> Result<Redirect, Box<dyn std::error::Error>> {
+) -> Result<Redirect, crate::index::IndexError> {
     let form = tag_form.0;
     let matcher = match form.matcher_type {
         1 => Some(MatcherConfig::FullMatcher {
