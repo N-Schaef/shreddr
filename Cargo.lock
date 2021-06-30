@@ -778,6 +778,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "fastdivide"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4a99a2d53cf90642500986ad22e5083b09e42d44c408f5f112e2a4a0925a643c"
+
+[[package]]
 name = "filetime"
 version = "0.2.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1149,6 +1155,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "itertools"
+version = "0.10.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "69ddb889f9d0d08a67338271fa9b62996bc788c7796a5c18cf057420aaed5eaf"
+dependencies = [
+ "either",
+]
+
+[[package]]
 name = "itoa"
 version = "0.4.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1253,6 +1268,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1f374d42cdfc1d7dbf3d3dec28afab2eb97ffbf43a3234d795b5986dbf4b90ba"
 dependencies = [
  "hashbrown 0.9.1",
+]
+
+[[package]]
+name = "lz4_flex"
+version = "0.8.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5827b976d911b5d2e42b2ccfc7c0d2461a1414e8280436885218762fc529b3f8"
+dependencies = [
+ "twox-hash",
 ]
 
 [[package]]
@@ -2236,12 +2260,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fe0f37c9e8f3c5a4a66ad655a93c74daac4ad00c441533bf5c6e7990bb42604e"
 
 [[package]]
-name = "snap"
-version = "1.0.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "45456094d1983e2ee2a18fdfebce3189fa451699d0502cb8e3b49dba5ba41451"
-
-[[package]]
 name = "stable_deref_trait"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2261,6 +2279,12 @@ name = "state"
 version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3015a7d0a5fd5105c91c3710d42f9ccf0abfb287d62206484dcc67f9569a6483"
+
+[[package]]
+name = "static_assertions"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 
 [[package]]
 name = "stdweb"
@@ -2356,9 +2380,9 @@ dependencies = [
 
 [[package]]
 name = "tantivy"
-version = "0.14.0"
+version = "0.15.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "edca90bddda472f39fdc74a031d61d52b08b1de97f2a704afae726a8004abb0d"
+checksum = "3ba3f306fc641b31e8cfbd5739ade0d1c745791a635909b4bddb85f8333b8dbd"
 dependencies = [
  "base64 0.13.0",
  "bitpacking",
@@ -2369,13 +2393,16 @@ dependencies = [
  "crossbeam",
  "downcast-rs",
  "fail",
+ "fastdivide",
  "fnv",
  "fs2",
  "futures",
  "htmlescape",
+ "itertools",
  "levenshtein_automata",
  "log 0.4.14",
  "lru",
+ "lz4_flex",
  "memmap",
  "murmurhash32",
  "num_cpus",
@@ -2386,8 +2413,8 @@ dependencies = [
  "serde",
  "serde_json",
  "smallvec",
- "snap",
  "stable_deref_trait",
+ "tantivy-bitpacker",
  "tantivy-fst",
  "tantivy-query-grammar",
  "tempfile",
@@ -2395,6 +2422,12 @@ dependencies = [
  "uuid",
  "winapi 0.3.9",
 ]
+
+[[package]]
+name = "tantivy-bitpacker"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e6695277b60137e29c16549f30fdb68c57638bcda9a4a18e75f342636c2b3e4b"
 
 [[package]]
 name = "tantivy-fst"
@@ -2409,9 +2442,9 @@ dependencies = [
 
 [[package]]
 name = "tantivy-query-grammar"
-version = "0.14.0"
+version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "70864085b31ecd5af8f53a76506440ece1c426d187f3d72f4b722e238d2ce19a"
+checksum = "466e0218472a9b276a73e38b2571ac02f9a1b270b4481c9cd8cc23a63d1307e9"
 dependencies = [
  "combine",
 ]
@@ -2605,6 +2638,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "59b11b2b5241ba34be09c3cc85a36e56e48f9888862e19cedf23336d35316ed1"
 dependencies = [
  "memchr",
+]
+
+[[package]]
+name = "twox-hash"
+version = "1.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "04f8ab788026715fa63b31960869617cba39117e520eb415b0139543e325ab59"
+dependencies = [
+ "cfg-if 0.1.10",
+ "static_assertions",
 ]
 
 [[package]]
