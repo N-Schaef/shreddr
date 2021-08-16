@@ -24,7 +24,7 @@ serde = "1.0"
 serde_derive = "1.0"
 serde_json = "1.0"
 # CLI
-clap = "3.0.0-beta.2" #CLI arguments
+clap = "3.0.0-beta.4" #CLI arguments
 shrust = "0.0" # Interactive cli
 dialoguer = "0.8" # I/O
 #indicatif = "0.15" #Progress bar
