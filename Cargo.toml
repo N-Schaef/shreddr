@@ -13,7 +13,7 @@ simplelog = "0.10" # Logging
 sha2 = "0.9"
 notify = "4.0" # Watch directories
 pdf-extract = { git = "https://github.com/jrmuizel/pdf-extract" } # Extract PDF text
-tantivy = "0.14.0" # Full text search
+tantivy = "0.16.0" # Full text search
 futures = "0.3"
 tokio = {version = "1.5.0", features = ["full"] }
 chrono = { version = "0.4", features = ["serde"] }
