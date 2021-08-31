@@ -30,7 +30,7 @@ dialoguer = "0.8" # I/O
 #indicatif = "0.15" #Progress bar
 #Server
 rocket = "0.4"
-rust-embed="5.6"
+rust-embed="6.1"
 rocket_contrib = "0.4"
 string_template = "0.2"
 rocket-multipart-form-data = "0.9"
