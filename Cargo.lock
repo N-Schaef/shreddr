@@ -624,9 +624,9 @@ dependencies = [
 
 [[package]]
 name = "diligent-date-parser"
-version = "0.1.2"
+version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e37ea528f01b8bfca1f71bcd06a8e6c898bf8fdfbf24dd9dbc7fb49338ed6d84"
+checksum = "c2d0fd95c7c02e2d6c588c6c5628466fff9bdde4b8c6196465e087b08e792720"
 dependencies = [
  "chrono",
 ]
