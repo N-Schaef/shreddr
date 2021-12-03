@@ -19,7 +19,7 @@ pub fn get_content_page<'r>(page_name: &str) -> response::Result<'r> {
     //Header
     let mut document = match Pages::get("header.html") {
         Some(h) => {
-            let mut content = h.into_owned();
+            let mut content = h.data.into_owned();
             let template = Template::new(&std::str::from_utf8_mut(&mut content).unwrap());
             let v = vec![clap::crate_version!()];
             template.render_positional(&v).into_bytes()
@@ -29,13 +29,13 @@ pub fn get_content_page<'r>(page_name: &str) -> response::Result<'r> {
 
     //Content
     match Pages::get(page_name) {
-        Some(h) => document.append(&mut h.into_owned()),
+        Some(h) => document.append(&mut h.data.into_owned()),
         None => return Err(Status::NotFound),
     };
 
     //Footer
     match Pages::get("footer.html") {
-        Some(h) => document.append(&mut h.into_owned()),
+        Some(h) => document.append(&mut h.data.into_owned()),
         None => return Err(Status::NotFound),
     };
 
@@ -52,7 +52,7 @@ pub fn get_content_page_with_named_template<'r>(
     //Header
     let mut document = match Pages::get("header.html") {
         Some(h) => {
-            let mut content = h.into_owned();
+            let mut content = h.data.into_owned();
             let template = Template::new(&std::str::from_utf8_mut(&mut content).unwrap());
             let v = vec![clap::crate_version!()];
             template.render_positional(&v).into_bytes()
@@ -63,7 +63,7 @@ pub fn get_content_page_with_named_template<'r>(
     //Content
     match Pages::get(page_name) {
         Some(h) => {
-            let mut content = h.into_owned();
+            let mut content = h.data.into_owned();
             let template = Template::new(&std::str::from_utf8_mut(&mut content).unwrap());
             document.append(&mut template.render_named(values).into_bytes());
         }
@@ -72,7 +72,7 @@ pub fn get_content_page_with_named_template<'r>(
 
     //Footer
     match Pages::get("footer.html") {
-        Some(h) => document.append(&mut h.into_owned()),
+        Some(h) => document.append(&mut h.data.into_owned()),
         None => return Err(Status::NotFound),
     };
 
@@ -119,7 +119,7 @@ pub fn assets<'r>(file: PathBuf) -> response::Result<'r> {
                 .ok_or_else(|| Status::new(400, "Could not get file content type"))?;
             response::Response::build()
                 .header(content_type)
-                .sized_body(Cursor::new(d))
+                .sized_body(Cursor::new(d.data))
                 .ok()
         },
     )

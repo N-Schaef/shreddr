@@ -376,9 +376,3 @@ impl DocumentRepository for LocalDocumentRepository {
         self._get_doc_ids().map_err(|e| e.into())
     }
 }
-
-#[derive(Debug)]
-pub struct SearchResult {
-    id: u64,
-    score: f32,
-}

@@ -2,45 +2,45 @@
 name = "shreddr"
 version = "0.2.3-dev"
 authors = ["Nico Schäfer <nschaefer@cs.uni-kl.de>"]
-edition = "2018"
+edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-log = "0.4"
-async-log = "2.0"
-simplelog = "0.10" # Logging
-sha2 = "0.9"
-notify = "4.0" # Watch directories
+log = "0.4.14"
+async-log = "2.0.0"
+simplelog = "0.11.0" # Logging
+sha2 = "0.9.8"
+notify = "4.0.17" # Watch directories
 pdf-extract = { git = "https://github.com/jrmuizel/pdf-extract" } # Extract PDF text
 tantivy = "0.14.0" # Full text search
-futures = "0.3"
-tokio = {version = "1.5.0", features = ["full"] }
-chrono = { version = "0.4", features = ["serde"] }
+futures = "0.1.29"
+tokio = {version = "1.14.0", features = ["full"] }
+chrono = { version = "0.4.19", features = ["serde"] }
 glob = "0.3.0"
-thiserror = "1.0"
-regex = "1"
-serde = "1.0"
-serde_derive = "1.0"
-serde_json = "1.0"
+thiserror = "1.0.30"
+regex = "1.5.4"
+serde = "1.0.130"
+serde_derive = "1.0.130"
+serde_json = "1.0.72"
 # CLI
-clap = "3.0.0-beta.2" #CLI arguments
-shrust = "0.0" # Interactive cli
-dialoguer = "0.8" # I/O
+clap = "2.34.0" #CLI arguments
+shrust = "0.0.7" # Interactive cli
+dialoguer = "0.9.0" # I/O
 #indicatif = "0.15" #Progress bar
 #Server
-rocket = "0.4"
-rust-embed="5.6"
-rocket_contrib = "0.4"
-string_template = "0.2"
-rocket-multipart-form-data = "0.9"
-tempfile = "3.2"
-crossbeam-channel = "0.5"
+rocket = "0.4.10"
+rust-embed="6.3.0"
+rocket_contrib = "0.4.10"
+string_template = "0.2.1"
+rocket-multipart-form-data = "0.9.6"
+tempfile = "3.2.0"
+crossbeam-channel = "0.5.1"
 # Meta Data extraction
-commonregex = "0.2"
-diligent-date-parser  = "0.1"
-array_tool = "1.0"
-whatlang = "0.12"
+commonregex = "0.2.0"
+diligent-date-parser  = "0.1.3"
+array_tool = "1.0.3"
+whatlang = "0.12.0"
 
 [dependencies.confy]
 git = "https://github.com/rust-cli/confy"
