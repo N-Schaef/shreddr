@@ -20,7 +20,7 @@ pub fn get_content_page<'r>(page_name: &str) -> response::Result<'r> {
     let mut document = match Pages::get("header.html") {
         Some(h) => {
             let mut content = h.data.into_owned();
-            let template = Template::new(&std::str::from_utf8_mut(&mut content).unwrap());
+            let template = Template::new(std::str::from_utf8_mut(&mut content).unwrap());
             let v = vec![clap::crate_version!()];
             template.render_positional(&v).into_bytes()
         }
@@ -53,7 +53,7 @@ pub fn get_content_page_with_named_template<'r>(
     let mut document = match Pages::get("header.html") {
         Some(h) => {
             let mut content = h.data.into_owned();
-            let template = Template::new(&std::str::from_utf8_mut(&mut content).unwrap());
+            let template = Template::new(std::str::from_utf8_mut(&mut content).unwrap());
             let v = vec![clap::crate_version!()];
             template.render_positional(&v).into_bytes()
         }
@@ -64,7 +64,7 @@ pub fn get_content_page_with_named_template<'r>(
     match Pages::get(page_name) {
         Some(h) => {
             let mut content = h.data.into_owned();
-            let template = Template::new(&std::str::from_utf8_mut(&mut content).unwrap());
+            let template = Template::new(std::str::from_utf8_mut(&mut content).unwrap());
             document.append(&mut template.render_named(values).into_bytes());
         }
         None => return Err(Status::NotFound),

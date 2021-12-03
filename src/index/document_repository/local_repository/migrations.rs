@@ -13,11 +13,11 @@ use thiserror::Error;
 #[derive(Error, Debug)]
 pub enum MigrationError {
     #[error("unsupported repo version {0}")]
-    VersionError(usize),
+    Version(usize),
     #[error("could not load/write document file")]
-    ConfigError(#[from] confy::ConfyError),
+    Config(#[from] confy::ConfyError),
     #[error("could not read/delete file")]
-    IOError(#[from] io::Error),
+    IO(#[from] io::Error),
 }
 
 pub fn migrate(file: &Path, index_dir: &Path) -> Result<bool, MigrationError> {
@@ -29,7 +29,7 @@ pub fn migrate(file: &Path, index_dir: &Path) -> Result<bool, MigrationError> {
     let version = version_object.version;
 
     if version > 2 {
-        return Err(MigrationError::VersionError(version));
+        return Err(MigrationError::Version(version));
     }
 
     if version == 0 {

@@ -126,7 +126,7 @@ fn edit_tag_from_config<'r>(tag: &TagConfig) -> response::Result<'r> {
             case_insensitive,
         } => {
             map.insert("type", "1");
-            map.insert("full_match_str", &match_str);
+            map.insert("full_match_str", match_str);
 
             if *case_insensitive {
                 map.insert("checked", "checked");
@@ -134,14 +134,14 @@ fn edit_tag_from_config<'r>(tag: &TagConfig) -> response::Result<'r> {
         }
         MatcherConfig::RegexMatcher { match_str } => {
             map.insert("type", "2");
-            map.insert("regex_str", &match_str);
+            map.insert("regex_str", match_str);
         }
         MatcherConfig::AnyMatcher {
             match_str,
             case_insensitive,
         } => {
             map.insert("type", "3");
-            map.insert("any_match_str", &match_str);
+            map.insert("any_match_str", match_str);
 
             if *case_insensitive {
                 map.insert("any_checked", "checked");

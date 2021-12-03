@@ -27,7 +27,7 @@ pub enum LocalFileRepositoryError {
 
 impl LocalFileRepository {
     pub fn new(document_dir: &Path) -> Result<LocalFileRepository, LocalFileRepositoryError> {
-        let docs = LocalFileRepository::load_documents(&document_dir)?;
+        let docs = LocalFileRepository::load_documents(document_dir)?;
         Ok(LocalFileRepository {
             document_dir: document_dir.into(),
             documents: docs,

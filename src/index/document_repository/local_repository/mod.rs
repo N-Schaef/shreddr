@@ -206,7 +206,7 @@ impl LocalDocumentRepository {
         let mut sorted = false;
         if let Some(query) = &filter.query {
             if !query.is_empty() {
-                let query_result = self.query(&query)?;
+                let query_result = self.query(query)?;
                 let mut max: f32 = 0.0;
                 for v in query_result.values() {
                     if v > &max {
@@ -277,7 +277,7 @@ impl LocalDocumentRepository {
     fn query(&self, query: &str) -> Result<HashMap<DocId, f32>, IndexerError> {
         let tokenizer = NgramTokenizer::new(3, 6, false);
         let mut queries: Vec<Term> = Vec::new();
-        let mut stream = tokenizer.token_stream(&query);
+        let mut stream = tokenizer.token_stream(query);
         stream.process(&mut |token: &Token| {
             queries.push(Term::from_field_text(
                 self.schema.get_field("body").unwrap(),

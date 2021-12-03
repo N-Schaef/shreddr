@@ -229,7 +229,7 @@ impl Tagger {
                     continue;
                 }
             };
-            if tag.matcher.match_document(&doc)? {
+            if tag.matcher.match_document(doc)? {
                 doc.tags.push(tag.id);
                 ids.push(tag.id);
             }

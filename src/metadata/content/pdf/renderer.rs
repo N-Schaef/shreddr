@@ -6,13 +6,13 @@ use thiserror::Error;
 #[derive(Error, Debug)]
 pub enum OCRError {
     #[error("could not initialize ocrmypdf `{0}`")]
-    OcrmypdfError(String),
+    Ocrmypdf(String),
     #[error("could not interact with temporary ocr directory")]
-    IOError(#[from] std::io::Error),
+    IO(#[from] std::io::Error),
     #[error("could not extract text as UTF-8")]
-    UTF8Error(#[from] std::str::Utf8Error),
+    UTF8(#[from] std::str::Utf8Error),
     #[error("could not extract ocr-image name `{0}`")]
-    ImageError(String),
+    Image(String),
 }
 
 /// OCRs the given file and replaces it with an optimized version where the text is inserted as copyable metadata
@@ -20,7 +20,7 @@ pub fn ocr_file(file: &Path, tesseract_languages: &[String]) -> Result<(), OCREr
     let languages = tesseract_languages.join("+");
     let file = file
         .to_str()
-        .ok_or_else(|| OCRError::ImageError(format!("{:#?}", file)))?;
+        .ok_or_else(|| OCRError::Image(format!("{:#?}", file)))?;
     let ocr_mypdfoutput = Command::new("ocrmypdf")
         .arg("--deskew") //Fix skewed images
         .arg("--clean") // Use unpaper to improve OCR (does not edit final PDF)
@@ -35,13 +35,13 @@ pub fn ocr_file(file: &Path, tesseract_languages: &[String]) -> Result<(), OCREr
             debug!("{}", std::str::from_utf8(&output.stdout).unwrap());
             if !output.status.success() {
                 let msg = std::str::from_utf8(&output.stderr).unwrap();
-                let e = Err(OCRError::OcrmypdfError(msg.into()));
+                let e = Err(OCRError::Ocrmypdf(msg.into()));
                 error!("{:?}", e);
                 return e;
             }
         }
         Err(e) => {
-            let e = Err(OCRError::OcrmypdfError(format!("{:?}", e)));
+            let e = Err(OCRError::Ocrmypdf(format!("{:?}", e)));
             error!("{:?}", e);
             return e;
         }

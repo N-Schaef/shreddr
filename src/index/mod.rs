@@ -61,23 +61,23 @@ use thiserror::Error;
 #[derive(Error, Debug)]
 pub enum IndexError {
     #[error("error while interacting with file repository: `{0}`")]
-    FileRepoError(#[from] FileRepositoryError),
+    FileRepo(#[from] FileRepositoryError),
     #[error("error while interacting with document repository: `{0}`")]
-    DocRepoError(#[from] DocumentRepositoryError),
+    DocRepo(#[from] DocumentRepositoryError),
     #[error("error while interacting with tagger: `{0}`")]
-    TaggerError(#[from] TaggingError),
+    Tagger(#[from] TaggingError),
     #[error("could not extract text from pdf file")]
-    PDFError(),
+    Pdf(),
     #[error("could not get lock on {0}")]
-    LockError(String),
+    Lock(String),
     #[error("error during IO operation `{0}`")]
-    IOError(#[from] std::io::Error),
+    IO(#[from] std::io::Error),
     #[error("could not convert OSString to string")]
-    OSStringError(),
+    OSString(),
     #[error("could not parse id from ID file")]
-    IDError(#[from] std::num::ParseIntError),
+    ID(#[from] std::num::ParseIntError),
     #[error("error during file metadata extraction")]
-    FileExtractorError(#[from] FileExtractError),
+    FileExtractor(#[from] FileExtractError),
 }
 
 impl Index {
@@ -117,7 +117,7 @@ impl Index {
     pub fn get_current_job(&self) -> Result<Option<Job>, IndexError> {
         let clone = (*self.current_job)
             .read()
-            .map_err(|_| IndexError::LockError("current_job".into()))?
+            .map_err(|_| IndexError::Lock("current_job".into()))?
             .as_ref()
             .cloned();
         Ok(clone)
@@ -131,7 +131,7 @@ impl Index {
 
         (*self.current_job)
             .write()
-            .map_err(|_| IndexError::LockError("current_job".into()))?
+            .map_err(|_| IndexError::Lock("current_job".into()))?
             .replace(job.clone());
 
         match &job.job {
@@ -148,7 +148,7 @@ impl Index {
         };
         Ok((*self.current_job)
             .write()
-            .map_err(|_| IndexError::LockError("current_job".into()))?
+            .map_err(|_| IndexError::Lock("current_job".into()))?
             .take()
             .unwrap())
     }
@@ -190,7 +190,7 @@ impl Index {
         if let Ok(Some(found_id)) = self
             .doc_repo
             .read()
-            .map_err(|_| IndexError::LockError("document repository".into()))?
+            .map_err(|_| IndexError::Lock("document repository".into()))?
             .contains_hash(&hash)
         {
             debug!(
@@ -201,36 +201,32 @@ impl Index {
         }
         info!("Importing file {:?}", original_file);
         let id = self.get_next_id()?;
-        let original_name = original_file
-            .file_name()
-            .ok_or(IndexError::OSStringError())?;
+        let original_name = original_file.file_name().ok_or(IndexError::OSString())?;
         // Import
         (*self.file_repo)
             .write()
-            .map_err(|_| IndexError::LockError("file repository".into()))?
+            .map_err(|_| IndexError::Lock("file repository".into()))?
             .add_document(id, original_file)?;
 
         // Get file back from index
         let new_file = (*self.file_repo)
             .read()
-            .map_err(|_| IndexError::LockError("file repository".into()))?
+            .map_err(|_| IndexError::Lock("file repository".into()))?
             .get_document(id)?;
         // Extract
         let body = self
             .extractor
             .write()
-            .map_err(|_| IndexError::LockError("extractor".into()))?
+            .map_err(|_| IndexError::Lock("extractor".into()))?
             .extract_body(&new_file);
         //Create thumbnail
         let mut thumbnail_file = self.thumbnails_dir.join("tmp");
-        thumbnail_file.set_file_name(format!("{}.jpg", id.to_string()));
+        thumbnail_file.set_file_name(format!("{}.jpg", id));
 
         ContentExtractor::render_thumbnail(&new_file, &thumbnail_file);
 
-        let original_filename: String = original_name
-            .to_str()
-            .ok_or(IndexError::OSStringError())?
-            .into();
+        let original_filename: String =
+            original_name.to_str().ok_or(IndexError::OSString())?.into();
         let mut doc_data = DocumentData {
             id,
             title: original_filename.clone(),
@@ -247,7 +243,7 @@ impl Index {
         match self
             .tagger
             .write()
-            .map_err(|_| IndexError::LockError("tagger".into()))?
+            .map_err(|_| IndexError::Lock("tagger".into()))?
             .tag_document(&mut doc_data)
         {
             Ok(_) => {}
@@ -263,7 +259,7 @@ impl Index {
         //Doc Repo
         self.doc_repo
             .write()
-            .map_err(|_| IndexError::LockError("document repository".into()))?
+            .map_err(|_| IndexError::Lock("document repository".into()))?
             .add_document(&doc_data)?;
 
         if !copy {
@@ -276,7 +272,7 @@ impl Index {
     pub fn update_doc_metadata(&self, doc: DocumentData) -> Result<(), IndexError> {
         self.doc_repo
             .write()
-            .map_err(|_| IndexError::LockError("document repository".into()))?
+            .map_err(|_| IndexError::Lock("document repository".into()))?
             .update_metadata(&doc)?;
         Ok(())
     }
@@ -285,23 +281,23 @@ impl Index {
     pub fn reprocess_document(&self, id: DocId) -> Result<(), IndexError> {
         let doc_path = (*self.file_repo)
             .read()
-            .map_err(|_| IndexError::LockError("file repository".into()))?
+            .map_err(|_| IndexError::Lock("file repository".into()))?
             .get_document(id)?;
         //Extract
         let body = self
             .extractor
             .write()
-            .map_err(|_| IndexError::LockError("extractor".into()))?
+            .map_err(|_| IndexError::Lock("extractor".into()))?
             .extract_body(&doc_path);
         //Create thumbnail
         let mut thumbnail_file = self.thumbnails_dir.join("tmp");
-        thumbnail_file.set_file_name(format!("{}.jpg", id.to_string()));
+        thumbnail_file.set_file_name(format!("{}.jpg", id));
         ContentExtractor::render_thumbnail(&doc_path, &thumbnail_file);
 
         let mut doc = self
             .doc_repo
             .write()
-            .map_err(|_| IndexError::LockError("document repository".into()))?
+            .map_err(|_| IndexError::Lock("document repository".into()))?
             .get_document(id)?;
 
         //reset inferred data
@@ -312,7 +308,7 @@ impl Index {
         match self
             .tagger
             .write()
-            .map_err(|_| IndexError::LockError("tagger".into()))?
+            .map_err(|_| IndexError::Lock("tagger".into()))?
             .tag_document(&mut doc)
         {
             Ok(_) => {}
@@ -328,7 +324,7 @@ impl Index {
         //Index
         self.doc_repo
             .write()
-            .map_err(|_| IndexError::LockError("document repository".into()))?
+            .map_err(|_| IndexError::Lock("document repository".into()))?
             .add_document(&doc)?;
         Ok(())
     }
@@ -339,21 +335,21 @@ impl Index {
         let mut doc = self
             .doc_repo
             .write()
-            .map_err(|_| IndexError::LockError("document repository".into()))?
+            .map_err(|_| IndexError::Lock("document repository".into()))?
             .get_document(id)?;
         let doc_path = (*self.file_repo)
             .read()
-            .map_err(|_| IndexError::LockError("file repository".into()))?
+            .map_err(|_| IndexError::Lock("file repository".into()))?
             .get_document(id)?;
         //Extract
         let body = self
             .extractor
             .write()
-            .map_err(|_| IndexError::LockError("extractor".into()))?
+            .map_err(|_| IndexError::Lock("extractor".into()))?
             .ocr(&doc_path);
         //Create thumbnail
         let mut thumbnail_file = self.thumbnails_dir.join("tmp");
-        thumbnail_file.set_file_name(format!("{}.jpg", id.to_string()));
+        thumbnail_file.set_file_name(format!("{}.jpg", id));
         ContentExtractor::render_thumbnail(&doc_path, &thumbnail_file);
         //reset inferred data
         doc.tags = vec![];
@@ -363,7 +359,7 @@ impl Index {
         match self
             .tagger
             .write()
-            .map_err(|_| IndexError::LockError("tagger".into()))?
+            .map_err(|_| IndexError::Lock("tagger".into()))?
             .tag_document(&mut doc)
         {
             Ok(_) => {}
@@ -379,7 +375,7 @@ impl Index {
         //Index
         self.doc_repo
             .write()
-            .map_err(|_| IndexError::LockError("document repository".into()))?
+            .map_err(|_| IndexError::Lock("document repository".into()))?
             .add_document(&doc)?;
         Ok(())
     }
@@ -389,7 +385,7 @@ impl Index {
     pub fn len(&self) -> Result<usize, IndexError> {
         self.doc_repo
             .read()
-            .map_err(|_| IndexError::LockError("document repository".into()))?
+            .map_err(|_| IndexError::Lock("document repository".into()))?
             .len()
             .map_err(|e| e.into())
     }
@@ -399,7 +395,7 @@ impl Index {
     pub fn get_document_path(&self, id: DocId) -> Result<PathBuf, IndexError> {
         self.file_repo
             .read()
-            .map_err(|_| IndexError::LockError("file repository".into()))?
+            .map_err(|_| IndexError::Lock("file repository".into()))?
             .get_document(id)
             .map_err(|e| e.into())
     }
@@ -413,7 +409,7 @@ impl Index {
     ) -> Result<Vec<DocumentData>, IndexError> {
         self.doc_repo
             .read()
-            .map_err(|_| IndexError::LockError("document repository".into()))?
+            .map_err(|_| IndexError::Lock("document repository".into()))?
             .get_documents(offset, count)
             .map_err(|e| e.into())
     }
@@ -421,7 +417,7 @@ impl Index {
     pub fn get_document(&self, id: DocId) -> Result<DocumentData, IndexError> {
         self.doc_repo
             .read()
-            .map_err(|_| IndexError::LockError("document repository".into()))?
+            .map_err(|_| IndexError::Lock("document repository".into()))?
             .get_document(id)
             .map_err(|e| e.into())
     }
@@ -435,7 +431,7 @@ impl Index {
     ) -> Result<Vec<DocumentData>, IndexError> {
         self.doc_repo
             .read()
-            .map_err(|_| IndexError::LockError("document repository".into()))?
+            .map_err(|_| IndexError::Lock("document repository".into()))?
             .get_filtered_documents(offset, count, filter)
             .map_err(|e| e.into())
     }
@@ -444,11 +440,11 @@ impl Index {
     pub fn remove_document(&self, id: DocId) -> Result<(), IndexError> {
         self.file_repo
             .write()
-            .map_err(|_| IndexError::LockError("file repository".into()))?
+            .map_err(|_| IndexError::Lock("file repository".into()))?
             .remove_document(id)?;
         self.doc_repo
             .write()
-            .map_err(|_| IndexError::LockError("document repository".into()))?
+            .map_err(|_| IndexError::Lock("document repository".into()))?
             .remove_document(id)?;
         Ok(())
     }
@@ -462,7 +458,7 @@ impl Index {
     pub fn add_tag(&self, tag: TagConfig) -> Result<(), IndexError> {
         self.tagger
             .write()
-            .map_err(|_| IndexError::LockError("tagger".into()))?
+            .map_err(|_| IndexError::Lock("tagger".into()))?
             .add_tag(tag)
             .map_err(|x| x.into())
     }
@@ -472,7 +468,7 @@ impl Index {
     pub fn add_or_replace_tag(&self, tag: TagConfig) -> Result<(), IndexError> {
         self.tagger
             .write()
-            .map_err(|_| IndexError::LockError("tagger".into()))?
+            .map_err(|_| IndexError::Lock("tagger".into()))?
             .add_or_replace_tag(tag)
             .map_err(|x| x.into())
     }
@@ -482,7 +478,7 @@ impl Index {
         let mut read = self
             .tagger
             .write()
-            .map_err(|_| IndexError::LockError("tagger".into()))?;
+            .map_err(|_| IndexError::Lock("tagger".into()))?;
         read.remove_tag(id).map_err(|x| x.into())
     }
 
