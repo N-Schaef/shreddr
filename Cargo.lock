@@ -362,7 +362,7 @@ dependencies = [
 [[package]]
 name = "confy"
 version = "0.4.0"
-source = "git+https://github.com/rust-cli/confy#6ae700bb0e6e2f9f7138d0c1871f604013c8f59f"
+source = "git+https://github.com/rust-cli/confy#b42d8a6763170ce865214d6af0ec69b2f0680857"
 dependencies = [
  "directories-next",
  "serde",
