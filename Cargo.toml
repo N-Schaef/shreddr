@@ -15,7 +15,7 @@ notify = "4.0.17" # Watch directories
 pdf-extract = { git = "https://github.com/jrmuizel/pdf-extract" } # Extract PDF text
 tantivy = "0.14.0" # Full text search
 futures = "0.1.29"
-tokio = {version = "1.14.0", features = ["full"] }
+tokio = {version = "1.17.0", features = ["full"] }
 chrono = { version = "0.4.19", features = ["serde"] }
 glob = "0.3.0"
 thiserror = "1.0.30"
