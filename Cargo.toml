@@ -33,7 +33,7 @@ rocket = "0.4.10"
 rust-embed="6.3.0"
 rocket_contrib = "0.4.10"
 string_template = "0.2.1"
-rocket-multipart-form-data = "0.9.6"
+rocket-multipart-form-data = "0.10.2"
 tempfile = "3.2.0"
 crossbeam-channel = "0.5.1"
 # Meta Data extraction
