@@ -35,7 +35,7 @@ rocket_contrib = "0.4.10"
 string_template = "0.2.1"
 rocket-multipart-form-data = "0.9.6"
 tempfile = "3.2.0"
-crossbeam-channel = "0.5.1"
+crossbeam-channel = "0.5.5"
 # Meta Data extraction
 commonregex = "0.2.0"
 diligent-date-parser  = "0.1.3"
